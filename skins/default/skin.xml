@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+	<title xml:lang="ko">기본 스킨</title>
+	<description xml:lang="ko">기본 스킨</description>
+	<version>1.0.0</version>
+	<date>2021-04-05</date>
+	<author email_address="matthew218@naver.com" link="https://shop.hoto.dev">
+		<name xml:lang="ko">Waterticket</name>
+	</author>
+	<extra_vars>
+		<var name="example" type="text">
+			<title xml:lang="ko">스킨 변수 예제</title>
+			<description xml:lang="ko">스킨 변수 예제입니다.</description>
+		</var>
+	</extra_vars>
+</skin>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang>
+	<item name="cmd_hotopay">
+		<value xml:lang="ko"><![CDATA[Hoto Pay]]></value>
+	</item>
+	<item name="cmd_hotopay_general_config">
+		<value xml:lang="ko"><![CDATA[기본 설정]]></value>
+	</item>
+	<item name="cmd_hotopay_example_config">
+		<value xml:lang="ko"><![CDATA[예제 설정]]></value>
+	</item>
+</lang>

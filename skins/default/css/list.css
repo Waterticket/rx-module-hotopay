@@ -1,0 +1,133 @@
+div#r_content {
+  text-align: left;
+  max-width: 100% !important;
+}
+div#r_content h1 {
+  font-size: 22px;
+  padding: 15px;
+  margin: 0;
+}
+div#r_content ul {
+  padding-left: 0;
+  list-style: none;
+}
+div#r_content ul li {
+  padding: 15px;
+  border-bottom: 1px solid #868e96;
+  list-style: none;
+}
+div#r_content ul li img {
+  width: 200px;
+  height: 200px;
+}
+div#r_content ul li::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+div#r_content div.thumb {
+  float: left;
+  width: 200px;
+}
+div#r_content div.gdsInfo {
+  float: right;
+  width: calc(100% - 270px);
+}
+div#r_content div.gdsInfo {
+  font-size: 15px;
+  line-height: 2;
+}
+div#r_content div.gdsInfo span {
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+div#r_content div.gdsInfo .delete {
+  text-align: right;
+}
+div#r_content div.gdsInfo .delete button {
+  font-size: 22px;
+  padding: 5px 10px;
+  border: 1px solid #eee;
+  background: #eee;
+}
+div#r_content div.gdsInfo select {
+  min-width: 200px;
+  width: 60%;
+  max-width: 400px;
+  background: transparent;
+  padding: 5px;
+  border: 2px solid #868e96;
+  border-radius: 5px;
+}
+body.color_scheme_dark div#r_content div.gdsInfo option {
+  background-color: #262b30;
+}
+div#r_content hr {
+  color: #868e96;
+}
+
+section#result p {
+  max-width: 100%;
+  padding: 20px;
+  background-color: #eee;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+body.color_scheme_dark section#result p {
+  background-color: #30373d;
+}
+
+section#pay_method {
+  text-align: center;
+  font-size: 15px;
+  margin: 20px;
+  margin-top: 0;
+}
+
+section#pay_method input[type="radio"]:checked {
+  border-width: 5px;
+  border-color: #ff4757;
+}
+
+section#pay_method input[type="radio"]:checked + label {
+  color: #ff4757;
+  border-color: #ff4757;
+}
+
+section#pay_method input[type="radio"] {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  margin: -4px 0 0 0;
+  padding: 0 !important;
+  vertical-align: middle;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border-radius: 50% !important;
+  border: 1px solid #868e96;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: 0.2s ease;
+}
+
+section#pay_method input[type="radio"] + label {
+  cursor: pointer;
+  color: #868e96;
+  padding-left: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+#purchase_price {
+  font-weight: bold;
+}
+
+div#r_content h1 {
+  font-weight: bold;
+}

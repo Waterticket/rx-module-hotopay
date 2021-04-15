@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<grants>
+	</grants>
+	<actions>
+		<!-- 관리자 액션 -->
+		<action name="dispHotopayAdminConfig" type="view" menu_name="hotopay" admin_index="true" />
+		<action name="procHotopayAdminInsertConfig" type="controller" />
+
+		
+		<action name="dispHotopayAdminProductList" type="view" />
+		<action name="dispHotopayAdminInsertProduct" type="view" />
+
+		<action name="procHotopayAdminInsertConfig" type="controller" />
+		<action name="procHotopayAdminInsertProduct" type="controller" />
+
+		<!-- 주문 액션 -->
+		<action name="dispHotopayOrderPage" type="view" route="orderPage/$product_id:int" />
+		<action name="procHotopayOrderProcess" type="controller" route="OrderProcess" standalone="false" />
+		<action name="dispHotopayPayToss" type="view" route="PayToss/$order_id:int" />
+		<action name="procHotopayPayStatus" type="controller" route="payStatus/$pay_status:any/$order_id:any" standalone="false" method="GET|POST" />
+		<action name="dispHotopayOrderResult" type="view" route="OrderResult/$order_id:any" />
+
+		<!-- Callback -->
+		<action name="procHotopayPaymentCallback" type="controller" route="paymentCallback" check_csrf="false" />
+
+		<!-- 일반 액션 -->
+		<action name="dispHotopayOrderList" type="view" route="orderList" />
+	</actions>
+	<menus>
+		<menu name="hotopay" type="all">
+			<title xml:lang="ko">Hoto Pay</title>
+		</menu>
+	</menus>
+</module>

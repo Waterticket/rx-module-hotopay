@@ -1,0 +1,89 @@
+<load target="css/style.css" />
+<load target="css/list.css" />
+
+<form class="x_form-horizontal" action="./" method="post" id="hotopay">
+	<input type="hidden" name="module" value="hotopay" />
+	<input type="hidden" name="act" value="procHotopayOrderProcess" />
+	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
+
+    
+    <section class="flex-container">
+    <div id="p_content">
+    <div id="r_content">
+        <h1>주문서</h1>
+        <hr>
+        <br>
+        <ul>
+            {@ $opt_lst = array(); $org_sale = array(); }
+            <!--@foreach($product_list as $product)-->
+            {@
+                $p_srl = $product->product_srl;
+                $p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
+                $f_opt = array();
+                foreach($p_opt as $_opt):
+                    $_opt = mb_substr($_opt, 1, -1);
+                    array_push($f_opt, explode('/' , $_opt));
+                endforeach;
+                $opt_lst[$p_srl] = $f_opt;
+                $org_sale[$p_srl] = $product->product_sale_price;
+            }
+            <input type="hidden" name="buy_product[]" value="{$p_srl}" />
+            <li>
+                <div class="thumb">
+                    <img src="{$product->product_pic_src}" />
+                </div>
+                <div class="gdsInfo">
+                    <p>
+                        <span>상품명</span>{$product->product_name}<br>
+                        <span>상품 설명</span>{$product->product_des}<br>
+                        <span>판매 가격</span>{number_format($product->product_sale_price)} ₩<br><br>
+                        <span>옵션</span>
+                        <select name="opt[{$p_srl}]" onchange="optionChange(this.value,{$p_srl})">
+                            <!--@foreach($f_opt as $opt_no => $_opt)-->
+                            <option value="{$opt_no}">{$_opt[0]}<!--@if(!empty($_opt[1]))--> ({($_opt[1]>0)?'+':''}{number_format($_opt[1])}원)<!--@endif--></option>
+                            <!--@endforeach-->
+                        </select>
+                        <br>
+                    </p>
+                </div>
+            </li>
+            <!--@endforeach-->
+        </ul>
+
+        <br><br>
+
+        <section id="pay_method">
+            <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;
+            <input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>
+        </section>
+        <section id="result">
+            <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
+        </section>
+        
+        <div id="btn_layer">
+            <input type="submit" id="ok_btn" value="구매하기">
+        </div>
+    </div>
+    </div>
+    </section>
+</form>
+
+<script>
+var opt_var = {json_encode($opt_lst)};
+var org_sale = {json_encode($org_sale)};
+
+$(document).ready(function() {
+    var t_price = 0;
+    for(key in org_sale)
+    {
+        t_price += org_sale[key];
+    }
+    $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
+});
+
+function optionChange(value,srl)
+{
+    var int_price = parseInt(opt_var[srl][value][1]);
+    $('#purchase_price').html((org_sale[srl]+int_price).toLocaleString('ko-KR'));
+}
+</script>

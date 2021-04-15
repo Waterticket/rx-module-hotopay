@@ -1,0 +1,29 @@
+<load target="css/style.css" />
+
+<section class="flex-container">
+    <div id="p_content">
+        <img id="p_icn" src="/modules/hotopay/skins/default/img/abort-circle.svg">
+        <p id="p_title">
+            <!--@if($pay_data->status == "CANCELED")-->구매를 취소하였습니다.<!--@else-->구매를 실패하였습니다.<!--@endif-->
+        </p>
+    
+        <div id="s_content">
+            <p id="s_title">결제 ID</p>
+            <p id="s_value">{$pay_data->orderId}</p>
+        </div>
+        <br>
+        <div id="s_content">
+            <p id="s_title">실패 코드</p>
+            <p id="s_value">{$pay_data->code}</p>
+        </div>
+        <br>
+        <div id="s_content">
+            <p id="s_title">실패 이유</p>
+            <p id="s_value">{$pay_data->message}</p>
+        </div>
+    
+        <div id="btn_layer">
+            <input type="button" id="ok_btn" onclick="window.location = ('{getUrl("","mid","hotopay","act","dispHotopayOrderList")}')" value="확인">
+        </div>
+    </div>
+</section>

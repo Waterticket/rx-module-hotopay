@@ -1,0 +1,34 @@
+<include target="__header.html" />
+
+<form class="x_form-horizontal" action="./" method="post" id="hotopay">
+	<input type="hidden" name="module" value="hotopay" />
+	<input type="hidden" name="act" value="procHotopayAdminInsertConfig" />
+	<input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
+	
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/hotopay/tpl/config/1'">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+	
+	<section class="section">
+		<h1>Toss Payments 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="toss_payments_client_key">클라이언트 키</label>
+			<div class="x_controls">
+				<input type="text" name="toss_payments_client_key" id="toss_payments_client_key" value="{$hotopay_config->toss_payments_client_key}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="toss_payments_secret_key">시크릿 키</label>
+			<div class="x_controls">
+				<input type="text" name="toss_payments_secret_key" id="toss_payments_secret_key" value="{$hotopay_config->toss_payments_secret_key}"><br>
+			</div>
+		</div>
+	</section>
+	
+	<div class="btnArea x_clearfix">
+		<button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
+	</div>
+	
+</form>

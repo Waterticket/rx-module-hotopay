@@ -1,0 +1,23 @@
+<include target="__header.html" />
+
+<table>
+    <thead>
+        <th>
+            <td>no</td>
+            <td>이름</td>
+            <td>가격</td>
+        </th>
+    </thead>
+    <tbody>
+        <!--@foreach($products as $no => $product)-->
+        <tr>
+            <td>{$product->product_srl}</td>
+            <td>{$product->product_name}</td>
+            <td>{$product->product_sale_price} 원</td>
+        </tr>
+        <!--@endforeach-->
+    </tbody>
+</table>
+
+{@ $newProductUrl = getUrl('','mid','admin','act','dispHotopayAdminInsertProduct'); }
+<input type="button" onclick="window.location='{$newProductUrl}'" value="상품 등록" />

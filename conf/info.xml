@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title xml:lang="ko">Hoto Pay</title>
+	<description xml:lang="ko">간단 쇼핑몰 모듈 Hoto Pay 입니다</description>
+	<version>1.0.0</version>
+	<date>2021-04-05</date>
+	<category>service</category>
+	<author email_address="matthew218@naver.com" link="https://shop.hoto.dev">
+		<name xml:lang="ko">Waterticket</name>
+	</author>
+</module>

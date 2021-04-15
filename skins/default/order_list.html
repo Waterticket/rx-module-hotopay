@@ -1,0 +1,71 @@
+<load target="css/style.css" />
+<load target="css/list.css" />
+<style>
+div#r_content div.gdsInfo {
+  float: right;
+  width: 100%;
+}
+
+section#result p {
+    margin: 10px;
+}
+
+section#result p.orange {
+    background-color:#FF6F3B;
+    color:white;
+}
+</style>
+
+{@
+$oHotopayModel = getModel('hotopay');
+}
+
+<section class="flex-container">
+    <div id="p_content">
+    <div id="r_content">
+        <h1>구매 목록</h1>
+        <section id="result">
+            <p class="orange">※ 가상계좌에 경우 입금 후 자동 입금 확인까지 최대 10분정도 소요될 수 있습니다.</p>
+            <p>2021년 4월 9일 이후 구매한 것만 리스트에 나옵니다<br><a href="//shop.hoto.dev/buy_request" style="color: #ff4757;">이전 구매 기록 확인하기</a></p>
+        </section>
+        <br>
+        <hr>
+        <ul>
+            <!--@foreach($purchase_list as $purchase)-->
+            <li>
+                <div class="gdsInfo">
+                    <p>
+                        {@
+                            $product_data = json_decode($purchase->products);
+                            $pay_data = json_decode($purchase->pay_data);
+                            $option = (array)$product_data->opt;
+                            $option_array = $oHotopayModel->getProductOptions($product_data->bp[0]);
+                        }
+                        <span>주문번호</span>HT{$purchase->purchase_srl}<br>
+                        <span>상품명</span>{$product_data->t}<br>
+                        <span>가격</span>{number_format($pay_data->totalAmount)} ₩<br>
+                        <span>옵션</span>{$option_array[$option[$product_data->bp[0]]][0]}<br><br>
+                        <span>구매일</span>{date("Y년 m월 d일 H시 i분",$purchase->regdate)}<br>
+                        <span>결제 수단</span>{$pay_data->method}<br>
+                        <span>결제 상태</span>{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}<br>
+                        <br>
+                    </p>
+                </div>
+            </li>
+            <!--@endforeach-->
+
+            <!--@if(count($purchase_list) < 1)-->
+            <li>
+                <div class="gdsInfo">
+                    주문 목록이 없습니다.
+                </div>
+            </li>
+            <!--@endif-->
+        </ul>
+    </div>
+    </div>
+</section>
+
+
+
+{@ debugPrint($purchase_list); }

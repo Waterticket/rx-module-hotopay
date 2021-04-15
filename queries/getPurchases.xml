@@ -1,0 +1,11 @@
+<query id="getPurchases" action="select">
+	<tables>
+		<table name="hotopay_purchase" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="in" column="member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

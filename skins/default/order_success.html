@@ -1,0 +1,66 @@
+<load target="css/style.css" />
+
+<section class="flex-container">
+<div id="p_content">
+    <img id="p_icn" src="/modules/hotopay/skins/default/img/check-circle-outline.svg">
+    <p id="p_title">
+        <!--@if($pay_data->status == "DONE")-->구매가 완료되었습니다.<!--@else-->구매를 완료해주세요.<!--@endif-->
+    </p>
+
+    <!--@if($pay_data->method == "카드")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">{$pay_data->method}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->totalAmount)} 원</p>
+    </div>
+    <!--@elseif($pay_data->method == "가상계좌")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">{$pay_data->method}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->totalAmount)} 원</p>
+    </div>
+
+    <br>
+    <hr id="s_hr">
+    <br>
+
+    <div id="s_content">
+        <p id="s_title">입금 계좌</p>
+        <p id="s_value">{$pay_data->virtualAccount->bank} {$pay_data->virtualAccount->accountNumber}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">입금자 이름</p>
+        <p id="s_value">{$pay_data->virtualAccount->customerName}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">입금 기한</p>
+        <p id="s_value">{date("Y년 m월 d일 H시 i분 까지",strtotime($pay_data->virtualAccount->dueDate))}</p>
+    </div>
+    <!--@endif-->
+
+    <div id="btn_layer">
+        <input type="button" id="ok_btn" cond="$pay_data->method == '카드'" onclick="window.open('{$pay_data->card->receiptUrl}')" value="영수증 보기" />
+        <input type="button" id="ok_btn" onclick="window.location = ('{getUrl("","mid","hotopay","act","dispHotopayOrderList")}')" value="확인">
+    </div>
+</div>
+</section>

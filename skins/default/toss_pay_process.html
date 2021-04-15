@@ -1,0 +1,47 @@
+<load target="css/style.css" />
+
+<section class="flex-container">
+  <div id="p_content">
+      <p id="p_title">결제 진행중입니다.</p>
+  
+      <div id="btn_layer">
+          <input type="button" id="ok_btn" class="btn_nm" value="결제창 열기" onclick="openTossPay();">
+          <input type="button" id="ok_btn" class="btn_nm" value="결제 취소하기" onclick="abortPay();">
+      </div>
+  </div>
+</section>
+
+<script src="https://js.tosspayments.com/v1"></script>
+<script>
+var clientKey = '{$hotopay_config->toss_payments_client_key}';
+var tossPayments = TossPayments(clientKey);
+
+function openTossPay()
+{
+  tossPayments.requestPayment('{$purchase->pay_method_korean}', {
+    amount: {$purchase->product_purchase_price},
+    orderId: 'HT{$vars->order_id}',
+    orderName: '{$purchase->title}',
+    customerName: '{$logged_info->user_name}',
+    successUrl: window.location.origin + '/hotopay/payStatus/success/HT{$vars->order_id}',
+    failUrl: window.location.origin + '/hotopay/payStatus/fail/HT{$vars->order_id}',
+    maxCardInstallmentPlan: 3,
+    customerEmail: '{$logged_info->email_address}',
+    useEscrow: false
+  }).catch(function (error) {
+    if (error.code === 'USER_CANCEL') {
+      console.log('USER CANCEL');
+      // 취소 이벤트 처리
+    }
+  });
+}
+
+function abortPay()
+{
+  window.location = window.location.origin + '/hotopay/payStatus/fail/HT{$vars->order_id}' + encodeURI('?code=PAY_PROCESS_CANCELED&message=유저가 결제를 취소하였습니다.');
+}
+
+$(document).ready(function() {
+  openTossPay();
+});
+</script>

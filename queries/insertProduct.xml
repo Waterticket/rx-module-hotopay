@@ -1,0 +1,17 @@
+<query id="insertProduct" action="insert">
+	<tables>
+		<table name="hotopay_product" />
+	</tables>
+	<columns>
+        <column name="product_srl" var="product_srl" notnull="notnull" />
+        <column name="product_name" var="product_name" notnull="notnull" />
+        <column name="product_des" var="product_des" />
+        <column name="product_pic_src" var="product_pic_src" />
+        <column name="product_pic_srl" var="product_pic_srl" />
+        <column name="product_sale_price" var="product_sale_price" />
+        <column name="product_original_price" var="product_original_price" />
+        <column name="product_option" var="product_option" />
+        <column name="product_buyer_group" var="product_buyer_group" />
+        <column name="regdate" var="regdate" />
+	</columns>
+</query>

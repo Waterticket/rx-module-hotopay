@@ -1,0 +1,12 @@
+<table name="hotopay_product"> 
+	<column name="product_srl" type="number" size="10" notnull="notnull" primary_key="primary_key" />
+	<column name="product_name" type="varchar" size="100" notnull="notnull" />
+	<column name="product_des" type="varchar" size="500" default="" />
+    <column name="product_pic_src" type="varchar" size="500" default="" />
+	<column name="product_pic_srl" type="number" size="10" default="0" />
+	<column name="product_sale_price" type="number" size="10" default="0" />
+	<column name="product_original_price" type="number" size="10" default="0" />
+    <column name="product_option" type="varchar" size="1000" default="{}" />
+    <column name="product_buyer_group" type="number" size="10" default="0" />
+	<column name="regdate" type="number" size="10" notnull="notnull" />
+</table>
