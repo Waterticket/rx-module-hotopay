@@ -65,4 +65,34 @@ class HotopayAdminView extends Hotopay
 		// 스킨 파일 지정
 		$this->setTemplateFile('insert_product');
 	}
+
+	public function dispHotopayAdminPurchaseList()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+
+		$args = new stdClass;
+		$args->page = Context::get('page') ?: 1; ///< 페이지
+		$args->list_count = 20; ///< 한페이지에 보여줄 기록 수
+		$args->page_count = 10; ///< 페이지 네비게이션에 나타날 페이지의 수
+		$args->order_type = 'desc';
+		$output = executeQueryArray('hotopay.getPurchasesPage', $args);
+
+		if(!$output->toBool())
+		{
+			return $this->createObject(-1, "DB Error: ".$output->message);
+		}
+
+		Context::set('total_count', $output->total_count);
+		Context::set('total_page', $output->total_page);
+		Context::set('page', $output->page);
+		Context::set('page_navigation', $output->page_navigation);
+		Context::set('purchase_list', $output->data);
+
+		// 스킨 파일 지정
+		$this->setTemplateFile('purchase_list');
+	}
 }

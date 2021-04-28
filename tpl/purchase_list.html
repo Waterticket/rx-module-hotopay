@@ -1,0 +1,84 @@
+<include target="__header.html" />
+
+{@
+	if($oMemberModel === null) $oMemberModel = getModel('member');
+}
+
+<section class="section">
+	<p class="x_well x_well-small" cond="!$purchase_list">결제 기록이 없습니다</p>
+	<div class="dl_module_block"></div>
+
+	<table class="x_table x_table-striped x_table-hover" style="margin-top:20px;">
+		<thead>
+		<tr>
+			<th scope="col">결제 id</th>
+            <th scope="col">구매자</th>
+            <th scope="col">물품</th>
+            <th scope="col">가격</th>
+            <th scope="col">결제 수단</th>
+            <th scope="col">결제 상태</th>
+            <th scope="col">결제일</th>
+            <th scope="col">속성</th>
+		</tr>
+		</thead>
+		<tbody>
+		<!--@foreach($purchase_list as $no => $val)-->
+        {@
+            debugPrint($val);
+
+            $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
+            $product_data = json_decode($val->products);
+        }
+		<tr>
+			<td>{$val->purchase_srl}</td>
+			<td><a href="#popup_menu_area" class="member_{$val->member_srl}">{$member_data->nick_name}</a> ({$val->member_srl})</td>
+            <td>{$product_data->t}</td>
+            <td>{number_format($val->product_purchase_price)}</td>
+            <td>{$val->pay_method}</td>
+            <td>{$val->pay_status}</td>
+            <td>{date("Y-m-d H:i:s",$val->regdate)}</td>
+            <td><a href="{getUrl('','module','admin','act','dispHotopayAdminPurchaseData','purchase_srl',$val->purchase_srl)}">데이터</a></td>
+		</tr>
+		<!--@end-->
+		</tbody>
+	</table>
+
+	<form action="" class="x_pagination">
+		<input type="hidden" name="error_return_url" value="" />
+		<input type="hidden" name="module" value="{$module}" />
+		<input type="hidden" name="act" value="{$act}" />
+		<input cond="$search_keyword" type="hidden" name="search_keyword" value="{$search_keyword}" />
+		<input cond="$search_target" type="hidden" name="search_target" value="{$search_target}" />
+
+		<ul>
+			<li class="x_disabled"|cond="!$page || $page == 1"><a href="{getUrl('page', '')}">&laquo; {$lang->first_page}</a></li>
+			<block cond="$page_navigation->first_page != 1 && $page_navigation->first_page + $page_navigation->page_count > $page_navigation->last_page - 1 && $page_navigation->page_count != $page_navigation->total_page">
+				{@$isGoTo = true}
+				<li>
+					<a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+					<span cond="$isGoTo" id="goTo" class="x_input-append">
+				<input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+				<button type="submit" class="x_add-on">Go</button>
+			</span>
+				</li>
+			</block>
+
+			<!--@while($page_no = $page_navigation->getNextPage())-->
+			{@$last_page = $page_no}
+			<li class="x_active"|cond="$page_no == $page"><a  href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+			<!--@end-->
+
+			<block cond="$last_page != $page_navigation->last_page && $last_page + 1 != $page_navigation->last_page">
+				{@$isGoTo = true}
+				<li>
+					<a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+					<span cond="$isGoTo" id="goTo" class="x_input-append">
+				<input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+				<button type="submit" class="x_add-on">Go</button>
+			</span>
+				</li>
+			</block>
+			<li class="x_disabled"|cond="$page == $page_navigation->last_page"><a href="{getUrl('page', $page_navigation->last_page)}" title="{$page_navigation->last_page}">{$lang->last_page} &raquo;</a></li>
+		</ul>
+	</form>
+</section>
