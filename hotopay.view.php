@@ -29,8 +29,6 @@ class HotopayView extends Hotopay
 
 	public function dispHotopayOrderPage()
 	{
-		if((Context::get('logged_info')->member_srl != 5153) && (Context::get('logged_info')->is_admin != 'Y')) return $this->createObject(-1, '현재 결제 기능이 완성되지 않았습니다.<br>이전 결제 방식을 사용해주세요.');
-
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 		Context::set('hotopay_config', $config);
@@ -52,7 +50,6 @@ class HotopayView extends Hotopay
 
 	public function dispHotopayPayToss()
 	{
-		if((Context::get('logged_info')->member_srl != 5153) && (Context::get('logged_info')->is_admin != 'Y')) return $this->createObject(-1, '현재 결제 기능이 완성되지 않았습니다.<br>이전 결제 방식을 사용해주세요.');
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 		$logged_info = Context::get('logged_info');
