@@ -74,7 +74,7 @@ class HotopayAdminView extends Hotopay
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
 
-		$args = new stdClass;
+		$args = new stdClass();
 		$args->page = Context::get('page') ?: 1; ///< 페이지
 		$args->list_count = 20; ///< 한페이지에 보여줄 기록 수
 		$args->page_count = 10; ///< 페이지 네비게이션에 나타날 페이지의 수
@@ -94,5 +94,31 @@ class HotopayAdminView extends Hotopay
 
 		// 스킨 파일 지정
 		$this->setTemplateFile('purchase_list');
+	}
+
+	public function dispHotopayAdminPurchaseData()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		$vars = Context::getRequestVars();
+
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+
+		$args = new stdClass();
+		$args->purchase_srl = $vars->purchase_srl;
+		
+		$output = executeQuery('hotopay.getPurchase', $args);
+
+		if(!$output->toBool())
+		{
+			return $this->createObject(-1, "DB Error: ".$output->message);
+		}
+
+		Context::set('purchase_data', $output->data);
+
+		// 스킨 파일 지정
+		$this->setTemplateFile('purchase_data');
 	}
 }

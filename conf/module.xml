@@ -11,6 +11,7 @@
 		<action name="dispHotopayAdminProductList" type="view" />
 		<action name="dispHotopayAdminInsertProduct" type="view" />
 		<action name="dispHotopayAdminPurchaseList" type="view" />
+		<action name="dispHotopayAdminPurchaseData" type="view" />
 
 		<action name="procHotopayAdminInsertConfig" type="controller" />
 		<action name="procHotopayAdminInsertProduct" type="controller" />
