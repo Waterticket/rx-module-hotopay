@@ -32,6 +32,20 @@ class HotopayModel extends Hotopay
         return $f_opt;
     }
 
+    public function getProduct($product_srl)
+    {
+        $args = new stdClass();
+        $args->product_srl = $product_srl;
+        $output = executeQuery('hotopay.getProducts', $args);
+
+        if(!$output->toBool() || empty($output->data))
+        {
+            return $this->createObject(-1, "Product does not exist.");
+        }
+
+        return $output->data;
+    }
+
     public function payStatusCodeToString($code)
     {
         switch($code)

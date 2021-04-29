@@ -95,4 +95,27 @@ class HotopayAdminController extends Hotopay
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(Context::get('success_return_url'));
 	}
+
+	public function procHotopayAdminPurchaseStatusChange()
+	{
+		$vars = Context::getRequestVars();
+		$oHotopayController = getController('hotopay');
+		$oHotopayModel = getModel('hotopay');
+
+		$status = $vars->status; //"DONE"
+		$purchase_srl = $vars->purchase_srl;
+		$purchase_data = $oHotopayModel->getProduct($product_srl);
+
+		if(strcmp($status, "DONE") === 0)
+		{
+			$oHotopayController->_ActivePurchase($purchase_srl, $purchase_data->member_srl);
+		}
+		else if(strcmp($status, "CANCEL") === 0)
+		{
+			// @todo 취소 코드 짜기
+		}
+
+		$this->setMessage('success_registed');
+		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminPurchaseList"));
+	}
 }

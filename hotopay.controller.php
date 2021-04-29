@@ -231,10 +231,10 @@ class HotopayController extends Hotopay
 		die();
 	}
 
-	public function _ActivePurchase($purchase_id, $member_srl = -1)
+	public function _ActivePurchase($purchase_srl, $member_srl = -1)
 	{
 		$args = new stdClass();
-		$args->purchase_srl = $purchase_id;
+		$args->purchase_srl = $purchase_srl;
 		$purchase = executeQuery('hotopay.getPurchase', $args);
 
 		$args->pay_status = "DONE";

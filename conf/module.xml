@@ -15,6 +15,7 @@
 
 		<action name="procHotopayAdminInsertConfig" type="controller" />
 		<action name="procHotopayAdminInsertProduct" type="controller" />
+		<action name="procHotopayAdminPurchaseStatusChange" type="controller" method="GET|POST" />
 
 		<!-- 주문 액션 -->
 		<action name="dispHotopayOrderPage" type="view" route="orderPage/$product_id:int" />

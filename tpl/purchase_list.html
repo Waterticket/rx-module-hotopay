@@ -28,6 +28,7 @@
 
             $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
             $product_data = json_decode($val->products);
+			$purchase_done_url = getUrl("","module","hotopay","act","procHotopayAdminPurchaseStatusChange","purchase_srl",$val->purchase_srl,"status","DONE");
         }
 		<tr>
 			<td>{$val->purchase_srl}</td>
@@ -35,7 +36,7 @@
             <td>{$product_data->t}</td>
             <td>{number_format($val->product_purchase_price)}</td>
             <td>{$val->pay_method}</td>
-            <td>{$val->pay_status}</td>
+            <td>{$val->pay_status} <!--@if(strcmp($val->pay_status, "PENDING") === 0)--><a href="{$purchase_done_url}">(결제처리)</a><!--@endif--></td>
             <td>{date("Y-m-d H:i:s",$val->regdate)}</td>
             <td><a href="{getUrl('','module','admin','act','dispHotopayAdminPurchaseData','purchase_srl',$val->purchase_srl)}">데이터</a></td>
 		</tr>
