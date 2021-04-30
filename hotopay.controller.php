@@ -271,4 +271,9 @@ class HotopayController extends Hotopay
 			}
 		}
 	}
+
+	public function _CancelPurchase($purchase_srl, $member_srl = -1)
+	{
+		
+	}
 }

@@ -41,9 +41,23 @@ class HotopayAdminView extends Hotopay
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
 
+		$args = new stdClass();
+		$args->page = Context::get('page') ?: 1; ///< 페이지
+		$args->list_count = 20; ///< 한페이지에 보여줄 기록 수
+		$args->page_count = 10; ///< 페이지 네비게이션에 나타날 페이지의 수
+		$args->order_type = 'desc';
+		$output = executeQueryArray('hotopay.getProductsPage', $args);
 
-		$products = executeQueryArray('hotopay.getProducts');
-		Context::set('products', $products->data); // 상품 데이터 추가
+		if(!$output->toBool())
+		{
+			return $this->createObject(-1, "DB Error: ".$output->message);
+		}
+
+		Context::set('total_count', $output->total_count);
+		Context::set('total_page', $output->total_page);
+		Context::set('page', $output->page);
+		Context::set('page_navigation', $output->page_navigation);
+		Context::set('products', $output->data); // 상품 데이터 추가
 		
 		// 스킨 파일 지정
 		$this->setTemplateFile('product_list');

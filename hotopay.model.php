@@ -67,4 +67,18 @@ class HotopayModel extends Hotopay
                 break;
         }
     }
+
+    public function stringCut($str,$length)
+    {
+        $result = "";
+         
+        if(strlen($str) > length) {
+            $result = mb_substr($str, 0, $length - 1);
+            $result = $result."...";
+        }else{
+            $result = $str;
+        }
+
+        return $result; 
+    }
 }

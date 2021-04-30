@@ -1,0 +1,14 @@
+<query id="getProductsPage" action="select">
+	<tables>
+		<table name="hotopay_product" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<navigation>
+		<index var="sort_index" default="product_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>
