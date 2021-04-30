@@ -30,6 +30,7 @@ class HotopayAdminView extends Hotopay
 		Context::set('hotopay_config', $config);
 		
 		// 스킨 파일 지정
+		Context::setBrowserTitle('모듈 설정 - Hotopay');
 		$this->setTemplateFile('config');
 	}
 
@@ -60,6 +61,7 @@ class HotopayAdminView extends Hotopay
 		Context::set('products', $output->data); // 상품 데이터 추가
 		
 		// 스킨 파일 지정
+		Context::setBrowserTitle('상품 목록 - Hotopay');
 		$this->setTemplateFile('product_list');
 	}
 
@@ -77,6 +79,7 @@ class HotopayAdminView extends Hotopay
 		Context::set('groups', $groups);
 
 		// 스킨 파일 지정
+		Context::setBrowserTitle('상품 추가 - Hotopay');
 		$this->setTemplateFile('insert_product');
 	}
 
@@ -107,6 +110,7 @@ class HotopayAdminView extends Hotopay
 		Context::set('purchase_list', $output->data);
 
 		// 스킨 파일 지정
+		Context::setBrowserTitle('결제 목록 - Hotopay');
 		$this->setTemplateFile('purchase_list');
 	}
 
@@ -133,6 +137,7 @@ class HotopayAdminView extends Hotopay
 		Context::set('purchase_data', $output->data);
 
 		// 스킨 파일 지정
+		Context::setBrowserTitle('결제 데이터 - Hotopay');
 		$this->setTemplateFile('purchase_data');
 	}
 }
