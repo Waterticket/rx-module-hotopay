@@ -1,5 +1,15 @@
 <include target="__header.html" />
 
+{@
+    if(!isset($product)):
+        $product = new stdClass();
+    endif;
+
+    if(!isset($product->product_option)):
+        $product->product_option = '[기본옵션/0]';
+    endif;
+}
+
 <form class="x_form-horizontal" action="./" method="post" id="hotopay" enctype="multipart/form-data">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayAdminInsertProduct" />
