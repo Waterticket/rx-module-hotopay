@@ -72,7 +72,7 @@ class HotopayModel extends Hotopay
     {
         $result = "";
          
-        if(strlen($str) > length) {
+        if(mb_strlen($str) > $length) {
             $result = mb_substr($str, 0, $length - 1);
             $result = $result."...";
         }else{
