@@ -21,13 +21,17 @@
     }
 
     div#r_content div.gdsInfo span {
-        margin-top: 10px;
-        display:block;
-    }
+		margin-top: 10px;
+		display: block;
+	}
+}
+
+section#purchase_check {
+	margin: 15px 5px 5px;
 }
 </style>
 
-<form class="x_form-horizontal" action="./" method="post" id="hotopay">
+<form class="x_form-horizontal" action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit();">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayOrderProcess" />
 	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
@@ -85,6 +89,10 @@
         <section id="result">
             <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
         </section>
+
+		<section id="purchase_check">
+			<label><input type="checkbox" id="purchase_checkbox" name="purchase_checkbox">&nbsp;위 결제 사항과 <a href="{$hotopay_config->purchase_term_url}" style="text-decoration: underline; color: #ff4757;" target="_blank">전자금융거래 이용약관</a>을 확인하고 결제를 진행합니다.</label>
+		</section>
         
         <div id="btn_layer">
             <input type="submit" id="ok_btn" value="구매하기">
@@ -111,5 +119,17 @@ function optionChange(value,srl)
 {
     var int_price = parseInt(opt_var[srl][value][1]);
     $('#purchase_price').html((org_sale[srl]+int_price).toLocaleString('ko-KR'));
+}
+
+function _purchaseSubmit()
+{
+	var purchase_checkbox = $('#purchase_checkbox');
+	if(!purchase_checkbox.is(":checked"))
+	{
+		alert('결제 사항 확인을 체크해주세요!');
+		return false;
+	}
+	
+	return true;
 }
 </script>
