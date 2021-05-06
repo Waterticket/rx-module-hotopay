@@ -77,10 +77,19 @@ class HotopayAdminController extends Hotopay
             
             $oFileController->setFilesValid($upload_target_srl);
         }else{
-			return $this->createObject(-1,  ('msg_upload_file_not_exist'));
+			$product_pic_org_srl = Context::get('product_pic_org_srl');
+			$product_pic_org_src = Context::get('product_pic_org_src');
 
-            $args->product_pic_src = Context::get('product_pic_org_src');
-            $args->product_pic_srl = Context::get('product_pic_org_srl');
+			if(empty($product_pic_org_srl) || empty($product_pic_org_src)) // 물품 수정이 아니라면 + 이미지를 업로드 하지 않았다면
+			{
+				$args->product_pic_src = './modules/hotopay/skins/default/img/no_image.jpg'; // No Image
+            	$args->product_pic_srl = 0;
+			}
+			else
+			{
+				$args->product_pic_src = Context::get('product_pic_org_src');
+				$args->product_pic_srl = Context::get('product_pic_org_srl');
+			}
         }
 
 		// \n을 <br>로 변환하는 함수
