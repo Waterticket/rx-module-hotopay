@@ -17,6 +17,7 @@ $oHotopayModel = getModel('hotopay');
             <th scope="col">이름</th>
             <th scope="col">가격</th>
             <th scope="col">설명</th>
+            <th scope="col">작업</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -27,6 +28,12 @@ $oHotopayModel = getModel('hotopay');
             <td>{$product->product_name}</td>
             <td>{number_format($product->product_sale_price)} 원</td>
             <td>{$oHotopayModel->stringCut($product->product_des, 30)}</td>
+            <td>
+				<a href="{getUrl('','mid','hotopay','act','dispHotopayOrderPage','product_id',$product->product_srl)}">구매</a>&nbsp;
+				<a href="{getUrl('','mid','admin','act','dispHotopayAdminModifyProduct','product_srl',$product->product_srl)}">수정</a>&nbsp;
+
+                {@ $productDeleteUrl = getUrl('','mid','admin','act','procHotopayAdminDeleteProduct','product_srl',$product->product_srl)}
+                <a href="#" onclick="var _u='{$productDeleteUrl}';var _a=function(){if(confirm('물품을 삭제하시겠습니까?')){window.location=_u}};_a();">삭제</a></td>
         </tr>
         <!--@endforeach-->
 		</tbody>
