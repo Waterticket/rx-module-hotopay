@@ -25,7 +25,7 @@
 		<action name="dispHotopayOrderResult" type="view" route="OrderResult/$order_id:any" />
 
 		<!-- Callback -->
-		<action name="procHotopayPaymentCallback" type="controller" route="paymentCallback" check_csrf="false" />
+		<action name="procHotopayTossPaymentsCallback" type="controller" route="api/v1/toss/paymentCallback" check_csrf="false" />
 
 		<!-- 일반 액션 -->
 		<action name="dispHotopayOrderList" type="view" route="orderList" />

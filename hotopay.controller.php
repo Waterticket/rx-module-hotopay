@@ -184,7 +184,7 @@ class HotopayController extends Hotopay
 		}
 	}
 
-	public function procHotopayPaymentCallback()
+	public function procHotopayTossPaymentsCallback()
 	{
 		Context::setRequestMethod('JSON');
     	Context::setResponseMethod('JSON');
@@ -215,6 +215,7 @@ class HotopayController extends Hotopay
 			if(strcmp($vars->status, "DONE") === 0) // 결제 성공일 경우
 			{
 				$this->_ActivePurchase($purchase_srl, $purchase->data->member_srl);
+				$this->_Mailer("DONE", $purchase->data);
 			}
 			else if(strcmp($vars->status, "CANCELED") === 0)
 			{
@@ -224,9 +225,6 @@ class HotopayController extends Hotopay
 				executeQuery('hotopay.updatePurchaseStatus', $args);
 			}
 		}
-
-		
-		
 
 		die();
 	}
@@ -251,7 +249,7 @@ class HotopayController extends Hotopay
 		if($member_srl == -1) $member_srl = $logged_info->member_srl;
 
 		$oCommController = getController('communication');
-		$oCommController->sendMessage($member_srl, 4, '물품 결제가 완료되었습니다.', "'{$purchase_data->t}' 물품이 성공적으로 결제되었습니다.<br><br>파일은 상단바에 [스토어] > [다운로드]에서 받으실 수 있습니다.<br><br><a href=\"".getUrl("","mid","hotopay","act","dispHotopayOrderList")."\">[결제 확인하기]</a>");
+		$oCommController->sendMessage(4, $member_srl, '물품 결제가 완료되었습니다.', "'{$purchase_data->t}' 물품이 성공적으로 결제되었습니다.<br><br>파일은 상단바에 [스토어] > [다운로드]에서 받으실 수 있습니다.<br><br><a href=\"".getUrl("","mid","hotopay","act","dispHotopayOrderList")."\">[결제 확인하기]</a>");
 
 		$args = new stdClass();
 		$args->product_srl = $purchase_data->bp;
@@ -275,5 +273,35 @@ class HotopayController extends Hotopay
 	public function _CancelPurchase($purchase_srl, $member_srl = -1)
 	{
 		
+	}
+
+	public function _Mailer($status, $purchase_data)
+	{
+		$member_srl = $purchase_data->member_srl;
+		$oMemberModel = getModel('member');
+		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+		$pay_data = json_decode($purchase_data->pay_data);
+		$price = number_format($purchase_data->product_purchase_price);
+		$purchase_date = date("Y-m-d H:i:s", $purchase_data->regdate);
+
+		switch($status)
+		{
+			case "DONE":
+				$message_body = "결제 완료 알림 메일입니다.<br><br>결제 코드: HT{$purchase_data->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$pay_data->t}<br>결제 금액: {$price}<br>결제시각: {$purchase_date}<br>";
+				$this->_sendMail(4, "[HotoPay] 회원의 결제가 완료되었습니다.", $message_body);
+				break;
+		}
+	}
+
+	public function _sendMail($member_srl, $mail_title, $mail_content)
+	{
+		$oMemberModel = getModel('member');
+		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+
+		$oMail = new \Rhymix\Framework\Mail();
+		$oMail->setSubject($mail_title);
+		$oMail->setBody($mail_content);
+		$oMail->addTo($member_info->email_address, $member_info->nick_name);
+		$oMail->send();
 	}
 }
