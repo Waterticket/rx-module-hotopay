@@ -28,6 +28,23 @@
 	</section>
 
 	<section class="section">
+		<h1>Paypal 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="paypal_client_key">클라이언트 키 (Client ID)</label>
+			<div class="x_controls">
+				<input type="text" name="paypal_client_key" id="paypal_client_key" value="{$hotopay_config->paypal_client_key}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="paypal_secret_key">시크릿 키 (Secret)</label>
+			<div class="x_controls">
+				<input type="text" name="paypal_secret_key" id="paypal_secret_key" value="{$hotopay_config->paypal_secret_key}"><br>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
 		<h1>기본 설정</h1>
 		<div class="x_control-group">
 			<label class="x_control-label" for="purchase_term_url">전자금융거래 이용약관 URL</label>

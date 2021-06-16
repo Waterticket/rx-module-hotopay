@@ -22,6 +22,8 @@ class HotopayAdminController extends Hotopay
 		
 		$config->toss_payments_client_key = $vars->toss_payments_client_key;
 		$config->toss_payments_secret_key = $vars->toss_payments_secret_key;
+		$config->paypal_client_key = $vars->paypal_client_key;
+		$config->paypal_secret_key = $vars->paypal_secret_key;
 		$config->purchase_term_url = $vars->purchase_term_url;
 		
 		// 변경된 설정을 저장
