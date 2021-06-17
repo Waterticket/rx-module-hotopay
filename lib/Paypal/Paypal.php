@@ -74,7 +74,7 @@ class Paypal extends Hotopay {
         $_SESSION['Paypal_AccessToken_Expires'] = self::$AccessToken_Expires;
     }
 
-    public function createOrder($value, $currency_code = 'USD')
+    public function createOrder($order)
     {
         $accessToken = $this->getAccessToken();
         $post_field = array(
@@ -82,12 +82,26 @@ class Paypal extends Hotopay {
             "purchase_units" => array(
                 array(
                     "amount" => array(
-                        "currency_code" => $currency_code,
-                        "value" => $value
-                    )
+                        "currency_code" => $order->purchase->currency_code,
+                        "value" => $order->purchase->total,
+                        "breakdown" => array("item_total"=>array("value" => $order->purchase->total, "currency_code" => $order->purchase->currency_code))
+                    ),
+                    "items" => array()
                 )
             )
         );
+
+        foreach($order->items as $item)
+        {
+            $temp_item = new stdClass();
+            $temp_item->name = $item->name;
+            $temp_item->description = $item->description;
+            $temp_item->quantity = $item->count;
+            $temp_item->unit_amount = array("value" => $item->value, "currency_code" => $order->purchase->currency_code);
+
+            array_push($post_field['purchase_units'][0]['items'], $temp_item);
+        }
+
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, self::$PAYPAL_URL.'/v2/checkout/orders');
