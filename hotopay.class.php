@@ -1,5 +1,8 @@
 <?php
 
+include __DIR__ . '/lib/autoload.php';
+// Hotopay Autoloader load
+
 /**
  * Hoto Pay
  * 
@@ -54,7 +57,7 @@ class Hotopay extends ModuleObject
 		if (self::$_config_cache === null)
 		{
 			$oModuleModel = getModel('module');
-			self::$_config_cache = $oModuleModel->getModuleConfig($this->module) ?: new stdClass;
+			self::$_config_cache = $oModuleModel->getModuleConfig('hotopay') ?: new stdClass;
 
 			if(!isset(self::$_config_cache->toss_payments_client_key)) self::$_config_cache->toss_payments_client_key = ''; // 토스 클라이언트 키
 			if(!isset(self::$_config_cache->toss_payments_secret_key)) self::$_config_cache->toss_payments_secret_key = ''; // 토스 시크릿 키
