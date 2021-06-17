@@ -73,4 +73,50 @@ class Paypal extends Hotopay {
         $_SESSION['Paypal_AccessToken'] = self::$AccessToken;
         $_SESSION['Paypal_AccessToken_Expires'] = self::$AccessToken_Expires;
     }
+
+    public function createOrder($value, $currency_code = 'USD')
+    {
+        $accessToken = $this->getAccessToken();
+        $post_field = array(
+            "intent" => "CAPTURE",
+            "purchase_units" => array(
+                array(
+                    "amount" => array(
+                        "currency_code" => $currency_code,
+                        "value" => $value
+                    )
+                )
+            )
+        );
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, self::$PAYPAL_URL.'/v2/checkout/orders');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_field));
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer '.$accessToken;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
+
+        $result_data = json_decode($result);
+        
+        $pay_object = new stdClass();
+        $pay_object->id = $result_data->id;
+        $pay_object->status = $result_data->status;
+        
+        foreach($result_data->links as $link)
+        {
+            $pay_object->links->{$link->rel} = $link;
+        }
+
+        return $pay_object;
+    }
 }
