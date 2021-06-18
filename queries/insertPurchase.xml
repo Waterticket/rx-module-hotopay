@@ -10,6 +10,7 @@
 	<column name="product_purchase_price" var="product_purchase_price" />
 	<column name="product_original_price" var="product_original_price" />
 	<column name="pay_status" var="pay_status" />
+	<column name="pay_data" var="pay_data" />
 	<column name="regdate" var="regdate" notnull="notnull" />
 	</columns>
 </query>

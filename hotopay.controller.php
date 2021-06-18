@@ -62,6 +62,33 @@ class HotopayController extends Hotopay
 		$args->product_original_price = $original_price;
 		$args->pay_status = "PENDING";
 		$args->regdate = time();
+		$args->pay_data = '';
+
+		switch($vars->pay_method)
+		{
+			case 'paypal':
+				$usd_total = round($total_price/1000, 2);
+
+				$paypalController = new Paypal();
+		
+				$obj1 = (object) array(
+					"name" => $title,
+					"description" => "결제 설명입니다",
+					"value" => $usd_total,
+					"count" => 1,
+				);
+				$order = new stdClass();
+				$order->purchase = new stdClass();
+				$order->purchase->total = $usd_total;
+				$order->purchase->currency_code = 'USD';
+				$order->items = array(
+					$obj1,
+				);
+		
+				$order_obj = $paypalController->createOrder($order);
+				$args->pay_data = json_encode($order_obj);
+				break;
+		}
 
 		executeQuery("hotopay.insertPurchase", $args);
 
