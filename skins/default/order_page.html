@@ -85,7 +85,7 @@ section#purchase_check {
         <section id="pay_method">
             <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;
             <input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>&nbsp;
-            <!--@if($logged_info->member_srl == 4)--><input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> PayPal</label><!--@endif-->
+            <input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> PayPal</label>
         </section>
         <section id="result">
             <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
@@ -133,4 +133,8 @@ function _purchaseSubmit()
 	
 	return true;
 }
+
+$('#pm_payp').click(function(){
+    alert('Paypal 결제는 한국 거주자는 이용할 수 없습니다.\n\n해외 거주자를 위한 기능입니다.');
+});
 </script>
