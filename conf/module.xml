@@ -20,8 +20,8 @@
 		<!-- 주문 액션 -->
 		<action name="dispHotopayOrderPage" type="view" route="orderPage/$product_id:int" />
 		<action name="procHotopayOrderProcess" type="controller" route="OrderProcess" standalone="false" />
-		<action name="dispHotopayPayToss" type="view" route="PayToss/$order_id:int" />
-		<action name="procHotopayPayStatus" type="controller" route="payStatus/$pay_status:any/$order_id:any" standalone="false" method="GET|POST" />
+		<action name="dispHotopayPayProcess" type="view" route="PayProcess/$order_id:int" />
+		<action name="procHotopayPayStatus" type="controller" route="payStatus/$pay_pg:any/$pay_status:any/$order_id:any" standalone="false" method="GET|POST" />
 		<action name="dispHotopayOrderResult" type="view" route="OrderResult/$order_id:any" />
 
 		<!-- Callback -->

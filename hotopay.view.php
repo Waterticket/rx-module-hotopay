@@ -48,7 +48,7 @@ class HotopayView extends Hotopay
 		$this->setTemplateFile('order_page');
 	}
 
-	public function dispHotopayPayToss()
+	public function dispHotopayPayProcess()
 	{
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
@@ -79,17 +79,24 @@ class HotopayView extends Hotopay
 		{
 			case 'card':
 				$purchase_data->pay_method_korean = '카드';
+				$purchase_data->pay_pg = 'toss';
 				break;
 
 			case 'v_account':
 				$purchase_data->pay_method_korean = '가상계좌';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'paypal':
+				$purchase_data->pay_method_korean = 'PayPal';
+				$purchase_data->pay_pg = 'paypal';
 				break;
 		}
 
 
 		Context::set('purchase', $purchase_data);
 
-		$this->setTemplateFile('toss_pay_process');
+		$this->setTemplateFile('pay_process');
 	}
 
 	public function dispHotopayOrderResult()

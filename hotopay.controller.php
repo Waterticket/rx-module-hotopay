@@ -85,14 +85,14 @@ class HotopayController extends Hotopay
 					$obj1,
 				);
 		
-				$order_obj = $paypalController->createOrder($order);
+				$order_obj = $paypalController->createOrder($order, $order_id);
 				$args->pay_data = json_encode($order_obj);
 				break;
 		}
 
 		executeQuery("hotopay.insertPurchase", $args);
 
-		$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayPayToss','order_id',$order_id));
+		$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
 	}
 
 	public function procHotopayPayStatus()
@@ -102,12 +102,7 @@ class HotopayController extends Hotopay
 
 		if(strcmp($vars->pay_status, "success") === 0) // 결제 성공
 		{
-			if(strcmp($vars->order_id, $vars->orderId) !== 0)
-			{
-				return $this->createObject(-1, "결제 실패. (code: 1003)");
-			}
-
-			$purchase_srl = substr($vars->orderId, 2);
+			$purchase_srl = substr($vars->order_id, 2);
 
 			$args = new stdClass();
 			$args->purchase_srl = $purchase_srl;
@@ -117,68 +112,122 @@ class HotopayController extends Hotopay
 				return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
 			}
 
-			if($purchase->data->product_purchase_price != $vars->amount)
+			if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
 			{
-				return $this->createObject(-1, "결제 실패.");
-			}
+				if(strcmp($vars->order_id, $vars->orderId) !== 0)
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1003)");
+				}
+	
+				if($purchase->data->product_purchase_price != $vars->amount)
+				{
+					return $this->createObject(-1, "결제 실패.");
+				}
 
-			$url = "https://api.tosspayments.com/v1/payments/{$vars->paymentKey}";
-			$headers = array(
-				'Content-Type: application/json',
-				'Authorization: Basic '. base64_encode("$config->toss_payments_secret_key:")
-			);
-			$post_field_string = json_encode(array(
-				"orderId" => $vars->orderId,
-				"amount" => $purchase->data->product_purchase_price
-			));
-
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
-			curl_setopt($ch, CURLOPT_POST, true);
-			$response = curl_exec($ch);
-			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close ($ch);
-
-			$response_json = json_decode($response);
-
-			$args->pay_data = json_encode($response_json);
-			$args->pay_status = $response_json->status;
-			executeQuery('hotopay.updatePurchaseStatus', $args);
-			executeQuery('hotopay.updatePurchaseData', $args);
-
-			if($http_code !== 200)
-			{
-				$_SESSION['hotopay_'.$vars->orderId] = array(
-					"p_status" => "failed",
-					"orderId" => $vars->orderId,
-					"code" => $response_json->code,
-					"message" => $response_json->message
+				$url = "https://api.tosspayments.com/v1/payments/{$vars->paymentKey}";
+				$headers = array(
+					'Content-Type: application/json',
+					'Authorization: Basic '. base64_encode("$config->toss_payments_secret_key:")
 				);
+				$post_field_string = json_encode(array(
+					"orderId" => $vars->orderId,
+					"amount" => $purchase->data->product_purchase_price
+				));
 
-				$args = new stdClass();
-				$args->purchase_srl = substr($vars->orderId, 2);
-				$args->pay_status = "FAILED";
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
+				curl_setopt($ch, CURLOPT_POST, true);
+				$response = curl_exec($ch);
+				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close ($ch);
+
+				$response_json = json_decode($response);
+
+				$args->pay_data = json_encode($response_json);
+				$args->pay_status = $response_json->status;
 				executeQuery('hotopay.updatePurchaseStatus', $args);
+				executeQuery('hotopay.updatePurchaseData', $args);
 
+				if($http_code !== 200)
+				{
+					$_SESSION['hotopay_'.$vars->orderId] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->orderId,
+						"code" => $response_json->code,
+						"message" => $response_json->message
+					);
+
+					$args = new stdClass();
+					$args->purchase_srl = substr($vars->orderId, 2);
+					$args->pay_status = "FAILED";
+					executeQuery('hotopay.updatePurchaseStatus', $args);
+
+					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					return;
+					//echo $http_code; //{"code":"ALREADY_PROCESSED_PAYMENT","message":"이미 처리된 결제 입니다."}
+				}
+
+				if(strcmp($response_json->status,"DONE") === 0) // 결제 완료에 경우
+				{
+					$this->_ActivePurchase($purchase_srl);
+				}
+
+				$response_json->p_status = "success";
+				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
-				//echo $http_code; //{"code":"ALREADY_PROCESSED_PAYMENT","message":"이미 처리된 결제 입니다."}
 			}
-
-			if(strcmp($response_json->status,"DONE") === 0) // 결제 완료에 경우
+			else if(strcmp($vars->pay_pg, "paypal") === 0) // PayPal 처리
 			{
-				$this->_ActivePurchase($purchase_srl);
-			}
+				if(empty($vars->token) || empty($vars->PayerID))
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1004)");
+				}
 
-			$response_json->p_status = "success";
-			$_SESSION['hotopay_'.$vars->orderId] = $response_json;
-			$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
-			return;
+				$pay_data = json_decode($purchase->data->pay_data);
+				$paypalController = new Paypal();
+				$order_detail = $paypalController->getOrderDetails($pay_data->id);
+
+				if(strcmp($order_detail->status,"APPROVED") === 0) // 결제 완료에 경우
+				{
+					$paypalController->captureOrder($pay_data->id);
+
+					$this->_ActivePurchase($purchase_srl);
+				}
+				else
+				{
+					$_SESSION['hotopay_'.$vars->orderId] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->orderId,
+						"code" => $order_detail->status,
+						"message" => "PayPal 결제에 실패하였습니다."
+					);
+
+					$args = new stdClass();
+					$args->purchase_srl = substr($vars->orderId, 2);
+					$args->pay_status = "FAILED";
+					executeQuery('hotopay.updatePurchaseStatus', $args);
+
+					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					return;
+				}
+
+				$order_detail->orderId = $vars->order_id;
+				$order_detail->p_status = "success";
+				$order_detail->method = "paypal";
+				$_SESSION['hotopay_'.$vars->orderId] = $order_detail;
+				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+				return;
+			}
+			else
+			{
+				return $this->createObject(-1, "결제 실패. (code: 3002)");
+			}
 		}
 		else // 결제 실패
 		{

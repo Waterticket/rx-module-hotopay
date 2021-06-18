@@ -74,11 +74,20 @@ class Paypal extends Hotopay {
         $_SESSION['Paypal_AccessToken_Expires'] = self::$AccessToken_Expires;
     }
 
-    public function createOrder($order)
+    public function createOrder($order, $order_srl)
     {
         $accessToken = $this->getAccessToken();
+        $http_host = getenv('HTTP_HOST');
         $post_field = array(
             "intent" => "CAPTURE",
+            "application_context" => array(
+                "return_url" => "https://{$http_host}/hotopay/payStatus/paypal/success/HT{$order_srl}",
+                "cancel_url" => "https://{$http_host}/hotopay/payStatus/paypal/fail/HT{$order_srl}",
+                "brand_name" => "HotoPay",
+                "locale" => "ko-KR",
+                "landing_page" => "LOGIN",
+                "user_action" => "PAY_NOW"
+            ),
             "purchase_units" => array(
                 array(
                     "amount" => array(
@@ -132,5 +141,70 @@ class Paypal extends Hotopay {
         }
 
         return $pay_object;
+    }
+
+    public function getOrderDetails($id)
+    {
+        $accessToken = $this->getAccessToken();
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, self::$PAYPAL_URL.'/v2/checkout/orders/'.$id);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer '.$accessToken;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
+
+        return json_decode($result);
+    }
+
+    public function authorizeOrder($id)
+    {
+        $accessToken = $this->getAccessToken();
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, self::$PAYPAL_URL.'/v2/checkout/orders/'.$id.'/authorize');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer '.$accessToken;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
+    }
+
+    public function captureOrder($id)
+    {
+        $accessToken = $this->getAccessToken();
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, self::$PAYPAL_URL.'/v2/checkout/orders/'.$id.'/capture');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer '.$accessToken;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
     }
 }

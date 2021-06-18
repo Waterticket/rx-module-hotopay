@@ -43,7 +43,7 @@ $oHotopayModel = getModel('hotopay');
                         }
                         <span>주문번호</span>HT{$purchase->purchase_srl}<br>
                         <span>상품명</span>{$product_data->t}<br>
-                        <span>가격</span>{number_format($pay_data->totalAmount)} ₩<br>
+                        <span>가격</span>{number_format($purchase->product_purchase_price)} ₩<br>
                         <span>옵션</span>{$option_array[$option[$product_data->bp[0]]][0]}<br><br>
                         <span>구매일</span>{date("Y년 m월 d일 H시 i분",$purchase->regdate)}<br>
                         <span>결제 수단</span>{$pay_data->method}<br>
