@@ -1,7 +1,7 @@
 <?php
 
 class Paypal extends Hotopay {
-    public static $PAYPAL_URL = 'https://api-m.sandbox.paypal.com';
+    public static $PAYPAL_URL = 'https://api-m.paypal.com';
 
     private static $AccessToken = '';
     private static $AccessToken_Expires = 0;
