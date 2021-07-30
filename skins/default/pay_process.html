@@ -13,7 +13,7 @@
 
 {@
 if($vars->order_id < 1000):
-  $vars->order_id = $vars->order_id.'_';
+  $vars->order_id = str_pad($vars->order_id, 4, "0", STR_PAD_LEFT);
 endif;
 }
 
