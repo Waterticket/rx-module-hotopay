@@ -63,12 +63,18 @@ class Paypal extends Hotopay {
         if (curl_errno($ch)) {
             debugPrint('Error:' . curl_error($ch));
         }
+
+        if($http_code != 200)
+        {
+            debugPrint('Error: Http_code: '.$http_code);
+        }
         curl_close($ch);
 
         $result_data = json_decode($result);
+        debugPrint($result_data);
 
         self::$AccessToken = $result_data->access_token;
-        self::$AccessToken_Expires = time() + $result_data->expires_in - 60; // 1분정도 만료를 앞당김
+        self::$AccessToken_Expires = time() + $result_data->expires_in - 300; // 5분정도 만료를 앞당김
 
         $_SESSION['Paypal_AccessToken'] = self::$AccessToken;
         $_SESSION['Paypal_AccessToken_Expires'] = self::$AccessToken_Expires;

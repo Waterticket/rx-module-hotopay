@@ -11,6 +11,11 @@
   </div>
 </section>
 
+{@
+if($vars->order_id < 1000):
+  $vars->order_id = $vars->order_id.'_';
+endif;
+}
 
 <!--@if($purchase->pay_pg == 'toss')-->
 <script src="https://js.tosspayments.com/v1"></script>

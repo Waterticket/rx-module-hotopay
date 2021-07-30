@@ -29,6 +29,9 @@ class HotopayView extends Hotopay
 
 	public function dispHotopayOrderPage()
 	{
+		$paypalController = new Paypal();
+		$paypalController->clearAccessToken();
+		debugPrint($paypalController->getAccessToken());
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 		Context::set('hotopay_config', $config);
