@@ -52,8 +52,7 @@ $pay_data = json_decode($purchase->pay_data);
 function openPay()
 {
   var url ='{$pay_data->links->approve->href}';
-  // var ret = window.open(url, '_blank', "");
-  location.href = url;
+  if(url != '') location.href = url;
 }
 </script>
 
@@ -62,7 +61,7 @@ function openPay()
 <script>
 function abortPay()
 {
-  window.location = window.location.origin + '/hotopay/payStatus/fail/HT{$vars->order_id}' + encodeURI('?code=PAY_PROCESS_CANCELED&message=유저가 결제를 취소하였습니다.');
+  window.location = window.location.origin + '/hotopay/payStatus/pg/fail/HT{$vars->order_id}' + encodeURI('?code=PAY_PROCESS_CANCELED&message=유저가 결제를 취소하였습니다.');
 }
 
 $(document).ready(function() {

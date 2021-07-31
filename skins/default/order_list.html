@@ -1,9 +1,56 @@
 <include target="_header.html" />
 <load target="css/list.css" />
 <style>
-div#r_content div.gdsInfo {
-  float: right;
-  width: 100%;
+.ht-table {
+    width: 100%;
+    border-spacing: 0;
+    font-size: 15px;
+}
+
+.ht-table tbody tr:first-child td, .ht-table thead tr:first-child th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.ht-order-status[data-status="DONE"] {
+    border-color: #00a754;
+    color: #00a754;
+}
+
+.ht-order-status[data-status="CANCELED"] {
+    border-color:#eb331c;
+    color:#eb331c;
+}
+
+.ht-tag {
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    padding: 2px 6px;
+    border: #636363 1px solid;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #636363;
+}
+
+.ht-table thead tr td, .ht-table thead tr th {
+    padding-bottom: 8px;
+    border-bottom: #868e96 1px solid;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 400;
+    color: #555;
+}
+
+.ht-order .ht-order-id {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.ht-order-thumbnail img {
+    width: 80px;
+    height: 80px;
 }
 
 section#result p {
@@ -18,6 +65,7 @@ section#result p.orange {
 
 {@
 $oHotopayModel = getModel('hotopay');
+$daily = array('일','월','화','수','목','금','토');
 }
 
 <section class="flex-container">
@@ -29,39 +77,51 @@ $oHotopayModel = getModel('hotopay');
             <p>2021년 5월 7일 이후 구매한 것만 리스트에 나옵니다<br><a href="//shop.hoto.dev/buy_request" style="color: #ff4757;">이전 구매 기록 확인하기</a></p>
         </section>
         <br>
-        <hr>
-        <ul>
-            <!--@foreach($purchase_list as $purchase)-->
-            <li>
-                <div class="gdsInfo">
-                    <p>
-                        {@
-                            $product_data = json_decode($purchase->products);
-                            $pay_data = json_decode($purchase->pay_data);
-                            $option = (array)$product_data->opt;
-                            $option_array = $oHotopayModel->getProductOptions($product_data->bp[0]);
-                        }
-                        <span>주문번호</span>HT{$purchase->purchase_srl}<br>
-                        <span>상품명</span>{$product_data->t}<br>
-                        <span>가격</span>{number_format($purchase->product_purchase_price)} ₩<br>
-                        <span>옵션</span>{$option_array[$option[$product_data->bp[0]]][0]}<br><br>
-                        <span>구매일</span>{date("Y년 m월 d일 H시 i분",$purchase->regdate)}<br>
-                        <span>결제 수단</span>{$pay_data->method}<br>
-                        <span>결제 상태</span>{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}<br>
-                        <br>
-                    </p>
-                </div>
-            </li>
-            <!--@endforeach-->
+        <table class="ht-table ht-orders">
+            <thead>
+                <tr>
+                    <th>주문 번호</th>
+                    <th colspan="2">구매 상품 정보</th>
+                    <th>주문 금액</th>
+                    <th>주문 일시</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--@foreach($purchase_list as $purchase)-->
+                <tr class="ht-order">
+                    {@
+                        $product_data = json_decode($purchase->products);
+                        $product = $oHotopayModel->getProduct($product_data->bp[0]);
+                        $pay_data = json_decode($purchase->pay_data);
+                        $option = (array)$product_data->opt;
+                        $option_array = $oHotopayModel->getProductOptions($product_data->bp[0]);
+                    }
+                    <td>
+                        <span class="ht-order-id">HT{$purchase->purchase_srl}</span>
+                        <span class="ht-tag ht-order-status" data-status="{$purchase->pay_status}">{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}</span>
+                    </td>
+                    <td>
+                        <span class="ht-order-thumbnail"><img src="{$product->product_pic_src}"></span>
+                    </td>
+                    <td>
+                        <span class="ht-order-first-item">{$product_data->t}<br>({$option_array[$option[$product_data->bp[0]]][0]})</span>
+                    </td>
+                    <td>
+                        <span class="ht-order-total">₩{number_format($purchase->product_purchase_price)}</span>
+                    </td>
+                    <td>
+                        <span class="ht-order-created-at">{date("Y년 m월 d일 ",$purchase->regdate).$daily[date('w',$purchase->regdate)].'요일'}</span>
+                    </td>
+                </tr>
+                <!--@endforeach-->
 
-            <!--@if(count($purchase_list) < 1)-->
-            <li>
-                <div class="gdsInfo">
-                    주문 목록이 없습니다.
-                </div>
-            </li>
-            <!--@endif-->
-        </ul>
+                <!--@if(count($purchase_list) < 1)-->
+                <tr class="ht-order">
+                    <td colspan="5">주문 목록이 없습니다.</td>
+                </tr>
+                <!--@endif-->
+            </tbody>
+        </table>
     </div>
     </div>
 </section>

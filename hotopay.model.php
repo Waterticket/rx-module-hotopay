@@ -50,12 +50,16 @@ class HotopayModel extends Hotopay
     {
         switch($code)
         {
+            case 'PENDING':
+                return "결제 대기중";
+                break;
+            
             case 'WAITING_FOR_DEPOSIT':
                 return "결제 대기중";
                 break;
 
             case 'DONE':
-                return "완료";
+                return "결제 완료";
                 break;
 
             case "CANCELED":
