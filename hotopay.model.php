@@ -46,6 +46,19 @@ class HotopayModel extends Hotopay
         return $output->data;
     }
 
+    public function getPurchase($purchase_srl)
+    {
+        $args = new stdClass();
+        $args->purchase_srl = $purchase_srl;
+        $purchase = executeQuery('hotopay.getPurchase', $args);
+        if(!$purchase->toBool())
+        {
+            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+        }
+
+        return $purchase->data;
+    }
+
     public function payStatusCodeToString($code)
     {
         switch($code)

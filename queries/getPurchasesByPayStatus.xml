@@ -1,0 +1,12 @@
+<query id="getPurchasesByPayStatus" action="select">
+	<tables>
+		<table name="hotopay_purchase" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" notnull="notnull" />
+		<condition operation="equal" column="pay_status" var="pay_status" notnull="notnull" pipe="and" />
+	</conditions>
+</query>

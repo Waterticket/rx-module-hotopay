@@ -1,0 +1,68 @@
+<include target="__header.html" />
+
+{@
+    if(!isset($product)):
+        $product = new stdClass();
+    endif;
+
+    if(!isset($product->product_option)):
+        $product->product_option = '[기본옵션/0]';
+    endif;
+}
+
+<form class="x_form-horizontal" action="./" method="post" id="hotopay" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="hotopay" />
+	<input type="hidden" name="act" value="procHotopayAdminInsertPurchase" />
+	<input type="hidden" name="success_return_url" value="{getUrl('','mid','admin','act','dispHotopayAdminPurchaseList')}" />
+	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
+	
+    <h1>결제 데이터 등록</h1>
+
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/hotopay/tpl/config/1'">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="target_member_srl">멤버 SRL</label>
+        <div class="x_controls">
+            <input type="number" name="target_member_srl" id="target_member_srl"><br>
+            멤버 SRL입니다
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="product_srl">상품 SRL</label>
+        <div class="x_controls">
+            <input type="number" name="product_srl" id="product_srl"><br>
+            상품 SRL입니다.
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="option_srl">옵션 SRL</label>
+        <div class="x_controls">
+            <input type="number" name="option_srl" id="option_srl" value="0"><br>
+            옵션 SRL입니다.
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="purchase_price">결제금액</label>
+        <div class="x_controls">
+            <input type="number" name="purchase_price" id="purchase_price" ><br>
+            결제금액입니다.
+        </div>
+    </div>
+    
+    <div class="x_control-group">
+        <label class="x_control-label" for="purchase_date">결제일</label>
+        <div class="x_controls">
+            <input type="text" name="purchase_date" id="purchase_date"><br>
+            결제일입니다. yyyymmdd 형식으로 입력해주세요.
+        </div>
+    </div>
+	
+	<div class="btnArea x_clearfix">
+		<button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
+	</div>
+</form>

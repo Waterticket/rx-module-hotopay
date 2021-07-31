@@ -130,4 +130,40 @@ class HotopayAdminController extends Hotopay
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminPurchaseList"));
 	}
+
+	public function procHotopayAdminInsertPurchase()
+	{
+		$vars = Context::getRequestVars();
+		$oHotopayController = getController('hotopay');
+		$oHotopayModel = getModel('hotopay');
+
+		$product = $oHotopayModel->getProduct($vars->product_srl);
+		$order_id = getNextSequence();
+		$title = $product->product_name;
+		$target_member_srl = $vars->target_member_srl;
+		$purchase_price = $vars->purchase_price;
+		$product_srl = $vars->product_srl;
+		$option = $vars->option_srl;
+		$date = strtotime($vars->purchase_date);
+
+		$args = new stdClass();
+		$args->purchase_srl = $order_id;
+		$args->member_srl = $target_member_srl;
+		$args->products = json_encode(array(
+			"t" => $title,
+			"bp" => array($product_srl),
+			"opt" => array($product_srl => $option)
+		));
+		$args->pay_method = 'n_account';
+		$args->product_purchase_price = $purchase_price;
+		$args->product_original_price = $product->product_sale_price;
+		$args->pay_status = 'DONE';
+		$args->pay_data = '';
+		$args->regdate = $date;
+
+		executeQuery('hotopay.insertPurchase', $args);
+
+		$this->setMessage('success_registed');
+		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminInsertPurchase"));
+	}
 }
