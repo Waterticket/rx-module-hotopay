@@ -76,7 +76,11 @@ class HotopayModel extends Hotopay
                 break;
 
             case "CANCELED":
-                return "취소됨";
+                return "결제 취소";
+                break;
+
+            case "FAILED":
+                return "결제 실패";
                 break;
 
             default:

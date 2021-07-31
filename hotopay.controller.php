@@ -15,6 +15,7 @@ class HotopayController extends Hotopay
 		$vars = Context::getRequestVars();
 		$logged_info = Context::get('logged_info');
 		if($logged_info == null) return $this->createObject(-1, "로그인이 필요합니다");
+		// if($logged_info->member_srl != 4) return $this->createObject(-1, "현재 결제기능 점검중입니다. 잠시 뒤에 다시시도 해주세요.");
 
 		$order_id = getNextSequence();
 
@@ -73,7 +74,7 @@ class HotopayController extends Hotopay
 		
 				$obj1 = (object) array(
 					"name" => $title,
-					"description" => "결제 설명입니다",
+					"description" => "결제 되는 상품입니다.",
 					"value" => $usd_total,
 					"count" => 1,
 				);

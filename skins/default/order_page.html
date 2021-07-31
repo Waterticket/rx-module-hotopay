@@ -83,9 +83,13 @@ section#purchase_check {
         <br><br>
 
         <section id="pay_method">
+            <!--@if($toss_enabled)-->
             <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;
             <input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>&nbsp;
-            <!--@if($logged_info->member_srl == 4)--><input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> PayPal</label><!--@endif-->
+            <!--@endif-->
+            <!--@if($paypal_enabled)-->
+            <input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> PayPal</label>
+            <!--@endif-->
         </section>
         <section id="result">
             <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
