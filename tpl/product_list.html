@@ -27,7 +27,7 @@ $oHotopayModel = getModel('hotopay');
             <td><img src="{$product->product_pic_src}" width="40" height="40" /></td>
             <td>{$product->product_name}</td>
             <td>{number_format($product->product_sale_price)} 원</td>
-            <td>{$oHotopayModel->stringCut($product->product_des, 30)}</td>
+            <td title="{$product->product_des}">{$oHotopayModel->stringCut($product->product_des, 30)}</td>
             <td>
 				<a href="{getUrl('','mid','hotopay','act','dispHotopayOrderPage','product_id',$product->product_srl)}">구매</a>&nbsp;
 				<a href="{getUrl('','mid','admin','act','dispHotopayAdminModifyProduct','product_srl',$product->product_srl)}">수정</a>&nbsp;
