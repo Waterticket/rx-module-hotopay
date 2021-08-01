@@ -94,6 +94,11 @@ class HotopayView extends Hotopay
 				$purchase_data->pay_pg = 'toss';
 				break;
 
+			case 'n_account':
+				$purchase_data->pay_method_korean = '무통장 입금';
+				$purchase_data->pay_pg = 'n_account';
+				break;
+
 			case 'paypal':
 				$purchase_data->pay_method_korean = 'PayPal';
 				$purchase_data->pay_pg = 'paypal';
@@ -117,6 +122,12 @@ class HotopayView extends Hotopay
 		if(empty($pay_data)) return $this->createObject(-1, "결제 데이터가 없습니다.");
 
 		Context::set('pay_data', (object)$pay_data);
+
+		if(strcmp($pay_data->method, "n_account") === 0)
+		{
+			$n_account_html = nl2br($config->n_account_string);
+			Context::set('n_account_html', $n_account_html);
+		}
 
 		if($pay_data->p_status == "success")
 			$this->setTemplateFile('order_success');

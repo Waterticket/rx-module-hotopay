@@ -56,6 +56,40 @@
         <p id="s_title">입금 기한</p>
         <p id="s_value">{date("Y년 m월 d일 H시 i분 까지",strtotime($pay_data->virtualAccount->dueDate))}</p>
     </div>
+    <!--@elseif($pay_data->method == "n_account")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">무통장 입금</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->totalAmount)} 원</p>
+    </div>
+
+    <br>
+    <hr id="s_hr">
+    <br>
+
+    <div id="s_content">
+        <p id="s_title">입금 계좌</p>
+        <p id="s_value">{$n_account_html}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">입금자 이름</p>
+        <p id="s_value">{$pay_data->depositor_name}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">입금 기한</p>
+        <p id="s_value">{date("Y년 m월 d일 H시 i분 까지",time() + 72*3600)}</p>
+    </div>
     <!--@elseif($pay_data->method == "paypal")-->
     <div id="s_content">
         <p id="s_title">결제 ID</p>

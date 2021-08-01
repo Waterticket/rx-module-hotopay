@@ -107,6 +107,9 @@ class HotopayModel extends Hotopay
 
             case "gpay":
                 return "구글 페이";
+
+            default:
+                return $pay_method;
         }
     }
 

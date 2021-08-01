@@ -15,7 +15,7 @@ class HotopayController extends Hotopay
 		$vars = Context::getRequestVars();
 		$logged_info = Context::get('logged_info');
 		if($logged_info == null) return $this->createObject(-1, "로그인이 필요합니다");
-		// if($logged_info->member_srl != 4) return $this->createObject(-1, "현재 결제기능 점검중입니다. 잠시 뒤에 다시시도 해주세요.");
+		// if($logged_info->member_srl != 4) return $this->createObject(-1, "현재 결제 기능 점검중입니다. 잠시 뒤에 다시 시도 해주세요.");
 
 		$order_id = getNextSequence();
 
@@ -87,6 +87,12 @@ class HotopayController extends Hotopay
 				);
 		
 				$order_obj = $paypalController->createOrder($order, $order_id);
+				$args->pay_data = json_encode($order_obj);
+				break;
+
+			case "n_account":
+				$order_obj = new stdClass();
+				$order_obj->depositor_name = mb_substr(($logged_info->user_name ?: ('구매자'.rand(100, 999))), 0, 6);
 				$args->pay_data = json_encode($order_obj);
 				break;
 		}
@@ -223,6 +229,23 @@ class HotopayController extends Hotopay
 				$order_detail->method = "paypal";
 				$_SESSION['hotopay_'.$vars->orderId] = $order_detail;
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+				return;
+			}
+			else if(strcmp($vars->pay_pg, "n_account") === 0) // 무통장 처리
+			{
+				$args->pay_status = 'WAITING_FOR_DEPOSIT';
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				$pay_data = json_decode($purchase->data->pay_data);
+
+				$order_detail = new stdClass();
+				$order_detail->orderId = $vars->order_id;
+				$order_detail->p_status = "success";
+				$order_detail->method = "n_account";
+				$order_detail->totalAmount = $purchase->data->product_purchase_price;
+				$order_detail->depositor_name = $pay_data->depositor_name;
+
+				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
+				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
 			else

@@ -56,6 +56,14 @@ function openPay()
 }
 </script>
 
+<!--@elseif($purchase->pay_pg == 'n_account')-->
+<script>
+function openPay()
+{
+  var url = window.location.origin + '/hotopay/payStatus/n_account/success/HT{$vars->order_id}';
+  location.href = url;
+}
+</script>
 <!--@endif-->
 
 <script>
