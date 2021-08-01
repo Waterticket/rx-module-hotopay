@@ -89,6 +89,27 @@ class HotopayModel extends Hotopay
         }
     }
 
+    public function purchaseMethodToString($pay_method)
+    {
+        switch($pay_method)
+        {
+            case "n_account":
+                return "무통장 입금";
+
+            case "v_account":
+                return "가상계좌";
+
+            case "card":
+                return "신용카드";
+
+            case "paypal":
+                return "페이팔";
+
+            case "gpay":
+                return "구글 페이";
+        }
+    }
+
     public function stringCut($str,$length)
     {
         $result = "";
