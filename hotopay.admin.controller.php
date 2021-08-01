@@ -166,4 +166,85 @@ class HotopayAdminController extends Hotopay
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminInsertPurchase"));
 	}
+
+	public function procHotopayAdminModifyProduct()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// 제출받은 데이터 불러오기
+		$vars = Context::getRequestVars();
+
+		$args = new stdClass();
+		$args->product_srl = $vars->product_srl;
+		$args->product_name = $vars->product_name;
+		$args->product_des = $vars->product_des;
+		$args->product_sale_price = $vars->product_sale_price;
+		$args->product_original_price = $vars->product_original_price;
+		$args->product_pic_src = $vars->product_pic_org_src;
+		$args->product_pic_srl = $vars->product_pic_org_srl;
+
+        $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
+		$upfile = $vars->product_pic;
+		if(!empty($upfile)){
+            if(!in_array($upfile['type'], $allow_mime_type)){
+                return $this->createObject(-1, "file ext error");
+            }
+
+			// 기존에 파일이 있을 경우
+			// $oFileController = getController('file');
+            // $mainstream_srl = json_decode(base64_decode(Context::get('guild_logo_urls')))->tg_srl;
+			// $oFileController->deleteFiles($mainstream_srl);
+
+			$module_info = Context::get("module_info");
+			$module_srl = $module_info->module_srl;
+            $upload_target_srl = getNextSequence();
+
+			$oFileController = getController('file');
+			$output = $oFileController->insertFile($upfile, $module_srl, $upload_target_srl,0,true);
+			$args->product_pic_src = $output->get('uploaded_filename');
+			$args->product_pic_srl = $upload_target_srl;
+            
+            $oFileController->setFilesValid($upload_target_srl);
+			if($vars->product_pic_org_srl != 0 || !empty($vars->remove_img)) $oFileController->deleteFile($vars->product_pic_org_srl);
+        }else{
+			$product_pic_org_srl = Context::get('product_pic_org_srl');
+			$product_pic_org_src = Context::get('product_pic_org_src');
+
+			if(empty($product_pic_org_srl) || empty($product_pic_org_src) || !empty($vars->remove_img)) // 물품 수정이 아니라면 or 이미지를 업로드 하지 않았다면 or 이미지 제거에 체크했다면
+			{
+				$args->product_pic_src = './modules/hotopay/skins/default/img/no_image.jpg'; // No Image
+            	$args->product_pic_srl = 0;
+			}
+        }
+
+		// \n을 <br>로 변환하는 함수
+		// $contents = nl2br($vars->product_option);
+		$args->product_option = $vars->product_option;
+		$args->product_buyer_group = $vars->product_buyer_group ?: 0;
+		$args->regdate = time();
+
+		executeQuery("hotopay.updateProduct", $args);
+		
+		// 설정 화면으로 리다이렉트
+		$this->setMessage('success_registed');
+		$this->setRedirectUrl(Context::get('success_return_url'));
+	}
+
+	public function procHotopayAdminDeleteProduct()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// 제출받은 데이터 불러오기
+		$vars = Context::getRequestVars();
+
+		$args = new stdClass();
+		$args->product_srl = $vars->product_srl;
+		executeQuery('hotopay.deleteProduct', $args);
+
+		// 설정 화면으로 리다이렉트
+		$this->setMessage('success_registed');
+		$this->setRedirectUrl(getUrl('','mid','admin','act','dispHotopayAdminProductList'));
+	}
 }

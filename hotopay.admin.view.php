@@ -153,4 +153,29 @@ class HotopayAdminView extends Hotopay
 		Context::setBrowserTitle('결제 데이터 - Hotopay');
 		$this->setTemplateFile('purchase_data');
 	}
+
+	public function dispHotopayAdminModifyProduct()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+
+		$product_srl = $vars->product_srl;
+		
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+
+		$oMemberModel = getModel('member');
+		$groups = $oMemberModel->getGroups();
+		
+		Context::set('groups', $groups);
+
+		$oHotopayModel = getModel('hotopay');
+		$product = $oHotopayModel->getProduct($product_srl);
+		Context::set('product', $product);
+
+		// 스킨 파일 지정
+		Context::setBrowserTitle('상품 수정 - Hotopay');
+		$this->setTemplateFile('modify_product');
+	}
 }

@@ -10,14 +10,17 @@
 		
 		<action name="dispHotopayAdminProductList" type="view" />
 		<action name="dispHotopayAdminInsertProduct" type="view" />
+		<action name="dispHotopayAdminModifyProduct" type="view" />
 		<action name="dispHotopayAdminInsertPurchase" type="view" />
 		<action name="dispHotopayAdminPurchaseList" type="view" />
 		<action name="dispHotopayAdminPurchaseData" type="view" />
 
 		<action name="procHotopayAdminInsertConfig" type="controller" />
 		<action name="procHotopayAdminInsertProduct" type="controller" />
+		<action name="procHotopayAdminModifyProduct" type="controller" />
 		<action name="procHotopayAdminInsertPurchase" type="controller" />
 		<action name="procHotopayAdminPurchaseStatusChange" type="controller" method="GET|POST" />
+		<action name="procHotopayAdminDeleteProduct" type="controller" method="GET|POST" />
 
 		<!-- 주문 액션 -->
 		<action name="dispHotopayOrderPage" type="view" route="orderPage/$product_id:int" />
