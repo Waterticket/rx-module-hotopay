@@ -31,25 +31,29 @@
     </div>
 
     <div class="x_control-group">
-        <label class="x_control-label" for="product_srl">상품 SRL</label>
+        <label class="x_control-label" for="product_srl">구매 상품</label>
         <div class="x_controls">
-            <input type="number" name="product_srl" id="product_srl"><br>
+            <select name="product_srl">
+                <!--@foreach($products as $item)-->
+                    <option value="{$item->product_srl}"><strong>{$item->product_name}</strong> ({$item->product_srl})</option>
+                <!--@endforeach-->
+            </select><br>
             상품 SRL입니다.
         </div>
     </div>
 
     <div class="x_control-group">
-        <label class="x_control-label" for="option_srl">옵션 SRL</label>
+        <label class="x_control-label" for="option_srl">옵션 번호</label>
         <div class="x_controls">
             <input type="number" name="option_srl" id="option_srl" value="0"><br>
-            옵션 SRL입니다.
+            옵션 번호입니다. 0부터 시작합니다.
         </div>
     </div>
 
     <div class="x_control-group">
         <label class="x_control-label" for="purchase_price">결제금액</label>
         <div class="x_controls">
-            <input type="number" name="purchase_price" id="purchase_price" ><br>
+            <input type="number" name="purchase_price" id="purchase_price" value="0"><br>
             결제금액입니다.
         </div>
     </div>
@@ -57,7 +61,7 @@
     <div class="x_control-group">
         <label class="x_control-label" for="purchase_date">결제일</label>
         <div class="x_controls">
-            <input type="text" name="purchase_date" id="purchase_date"><br>
+            <input type="text" name="purchase_date" id="purchase_date" value="{date('Ymd')}"><br>
             결제일입니다. yyyymmdd 형식으로 입력해주세요.
         </div>
     </div>
@@ -66,3 +70,14 @@
 		<button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
 	</div>
 </form>
+
+<script>
+    $(function () {
+        $('#purchase_date').datepicker({ 
+            dateFormat: 'yymmdd',
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true
+        });
+    });
+</script>

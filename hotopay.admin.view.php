@@ -91,6 +91,10 @@ class HotopayAdminView extends Hotopay
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
 
+		$oHotopayModel = getModel('hotopay');
+		$products = $oHotopayModel->getProductsAll();
+		Context::set('products', $products);
+
 		// 스킨 파일 지정
 		Context::setBrowserTitle('결제 데이터 추가 - Hotopay');
 		$this->setTemplateFile('insert_purchase');
