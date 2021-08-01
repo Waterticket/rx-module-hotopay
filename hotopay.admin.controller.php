@@ -169,6 +169,8 @@ class HotopayAdminController extends Hotopay
 
 		executeQuery('hotopay.insertPurchase', $args);
 
+		$oHotopayController->_ActivePurchase($order_id, $target_member_srl); // 결제 물품 활성화
+
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminInsertPurchase"));
 	}
