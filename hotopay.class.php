@@ -58,12 +58,17 @@ class Hotopay extends ModuleObject
 		{
 			$oModuleModel = getModel('module');
 			self::$_config_cache = $oModuleModel->getModuleConfig('hotopay') ?: new stdClass;
+			
+			if(!isset(self::$_config_cache->toss_enabled)) self::$_config_cache->toss_enabled = 'N'; // 토스 활성화
+			if(!isset(self::$_config_cache->paypal_enabled)) self::$_config_cache->paypal_enabled = 'N'; // 페이팔 활성화
+			if(!isset(self::$_config_cache->n_account_enabled)) self::$_config_cache->n_account_enabled = 'N'; // 무통장입금 활성화
 
 			if(!isset(self::$_config_cache->toss_payments_client_key)) self::$_config_cache->toss_payments_client_key = ''; // 토스 클라이언트 키
 			if(!isset(self::$_config_cache->toss_payments_secret_key)) self::$_config_cache->toss_payments_secret_key = ''; // 토스 시크릿 키
 			if(!isset(self::$_config_cache->paypal_client_key)) self::$_config_cache->paypal_client_key = ''; // 페이팔 클라이언트 키
 			if(!isset(self::$_config_cache->paypal_secret_key)) self::$_config_cache->paypal_secret_key = ''; // 페이팔 시크릿 키
 
+			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
 		}
 		return self::$_config_cache;

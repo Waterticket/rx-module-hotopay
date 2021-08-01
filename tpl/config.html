@@ -13,6 +13,13 @@
 	<section class="section">
 		<h1>Toss Payments 설정</h1>
 		<div class="x_control-group">
+			<label class="x_control-label" for="toss_enabled">Toss 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="toss_enabled" id="toss_enabled" checked="checked"|cond="$hotopay_config->toss_enabled == 'Y'">&nbsp;Toss 결제 방식을 활성화 합니다.</label>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="toss_payments_client_key">클라이언트 키</label>
 			<div class="x_controls">
 				<input type="text" name="toss_payments_client_key" id="toss_payments_client_key" value="{$hotopay_config->toss_payments_client_key}"><br>
@@ -30,6 +37,13 @@
 	<section class="section">
 		<h1>Paypal 설정</h1>
 		<div class="x_control-group">
+			<label class="x_control-label" for="paypal_enabled">Paypal 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="paypal_enabled" id="paypal_enabled" checked="checked"|cond="$hotopay_config->paypal_enabled == 'Y'">&nbsp;Paypal 결제 방식을 활성화 합니다.</label>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="paypal_client_key">클라이언트 키 (Client ID)</label>
 			<div class="x_controls">
 				<input type="text" name="paypal_client_key" id="paypal_client_key" value="{$hotopay_config->paypal_client_key}"><br>
@@ -40,6 +54,24 @@
 			<label class="x_control-label" for="paypal_secret_key">시크릿 키 (Secret)</label>
 			<div class="x_controls">
 				<input type="text" name="paypal_secret_key" id="paypal_secret_key" value="{$hotopay_config->paypal_secret_key}"><br>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<h1>무통장 입금 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="n_account_enabled">무통장 입금 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="n_account_enabled" id="n_account_enabled" checked="checked"|cond="$hotopay_config->n_account_enabled == 'Y'">&nbsp;무통장 입금 결제 방식을 활성화 합니다.</label>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="n_account_string">무통장 입금 계좌</label>
+			<div class="x_controls">
+				<textarea name="n_account_string" id="n_account_string" placeholder="[신한 000-000-000 홍길동]&#13;&#10;[농협 000-000-000 홍길동]&#13;&#10;...">{$hotopay_config->n_account_string}</textarea><br>
+				무통장 입금 계좌를 입력해주세요. 형식은 [은행명 계좌번호 예금주] 형식이며 엔터로 구분합니다.
 			</div>
 		</div>
 	</section>

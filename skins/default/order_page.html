@@ -87,6 +87,9 @@ section#purchase_check {
             <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;
             <input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>&nbsp;
             <!--@endif-->
+            <!--@if($n_account_enabled)-->
+            <input type="radio" name="pay_method" id="pm_nacc" value="n_account"><label for="pm_nacc"> 무통장</label>&nbsp;
+            <!--@endif-->
             <!--@if($paypal_enabled)-->
             <input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> PayPal</label>
             <!--@endif-->

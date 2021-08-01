@@ -20,10 +20,16 @@ class HotopayAdminController extends Hotopay
 		// 제출받은 데이터 불러오기
 		$vars = Context::getRequestVars();
 		
+		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_client_key = $vars->toss_payments_client_key;
 		$config->toss_payments_secret_key = $vars->toss_payments_secret_key;
+
+		$config->paypal_enabled = empty($vars->paypal_enabled) ? 'N' : 'Y';
 		$config->paypal_client_key = $vars->paypal_client_key;
 		$config->paypal_secret_key = $vars->paypal_secret_key;
+
+		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
+		$config->n_account_string = $vars->n_account_string;
 		$config->purchase_term_url = $vars->purchase_term_url;
 		
 		// 변경된 설정을 저장

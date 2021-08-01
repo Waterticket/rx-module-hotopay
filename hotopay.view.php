@@ -37,8 +37,9 @@ class HotopayView extends Hotopay
 		Context::set('hotopay_config', $config);
 		Context::set('vars', $vars);
 
-		Context::set('toss_enabled', (!empty($config->toss_payments_client_key) && !empty($config->toss_payments_secret_key)));
-		Context::set('paypal_enabled', (!empty($config->paypal_client_key) && !empty($config->paypal_secret_key)));
+		Context::set('toss_enabled', $config->toss_enabled == 'Y' && !empty($config->toss_payments_client_key) && !empty($config->toss_payments_secret_key));
+		Context::set('paypal_enabled', $config->paypal_enabled == 'Y' && !empty($config->paypal_client_key) && !empty($config->paypal_secret_key));
+		Context::set('n_account_enabled', $config->n_account_enabled == 'Y' && !empty($config->n_account_string));
 
 		$args = new stdClass();
 		$args->product_srl = array($vars->product_id);
