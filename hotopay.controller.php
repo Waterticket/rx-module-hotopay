@@ -405,6 +405,36 @@ class HotopayController extends Hotopay
 		$oMail->setSubject($mail_title);
 		$oMail->setBody($mail_content);
 		$oMail->addTo($member_info->email_address, $member_info->nick_name);
-		$oMail->send();
+		$output = $oMail->send();
+
+		return $output;
+	}
+
+	public function _sendSMS($member_srl, $content)
+	{
+		$oMemberModel = getModel('member');
+		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+
+		$oSmsHandler = new Rhymix\Framework\SMS();
+		$phone_country = $member_info->phone_country;
+		$phone_number = $member_info->phone_number;
+
+		// Sending SMS outside of Korea is currently not supported.
+		if($phone_country !== 'KOR')
+		{
+			return false;
+		}
+
+		$phone_format = Rhymix\Framework\Korea::isValidPhoneNumber($phone_number);
+		if($phone_format === false)
+		{
+			return false;
+		}
+
+		$oSmsHandler->addTo($phone_number);
+		$oSmsHandler->setContent($content);
+		$output = $oSmsHandler->send();
+
+		return $output;
 	}
 }
