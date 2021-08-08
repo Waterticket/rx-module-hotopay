@@ -419,6 +419,11 @@ class HotopayController extends Hotopay
 		$phone_country = $member_info->phone_country;
 		$phone_number = $member_info->phone_number;
 
+		if(empty($phone_number))
+		{
+			return false;
+		}
+
 		// Sending SMS outside of Korea is currently not supported.
 		if($phone_country !== 'KOR')
 		{
