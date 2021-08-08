@@ -9,6 +9,25 @@
 	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/hotopay/tpl/config/1'">
 		<p>{$XE_VALIDATOR_MESSAGE}</p>
 	</div>
+
+	<section class="section">
+		<h1>기본 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="shop_name">쇼핑몰 이름</label>
+			<div class="x_controls">
+				<input type="text" name="shop_name" id="shop_name" value="{$hotopay_config->shop_name}"><br>
+				회원에게 노출될 쇼핑몰 이름입니다.
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_term_url">전자금융거래 이용약관 URL</label>
+			<div class="x_controls">
+				<input type="text" name="purchase_term_url" id="purchase_term_url" value="{$hotopay_config->purchase_term_url}"><br>
+				전자금융거래법 제 24조 1항에 명시된 금융거래 이용약관 명시에 따른 이용약관 URL입니다. 결제시 체크박스에 링크가 걸리게 됩니다.
+			</div>
+		</div>
+	</section>
 	
 	<section class="section">
 		<h1>Toss Payments 설정</h1>
@@ -72,17 +91,6 @@
 			<div class="x_controls">
 				<textarea name="n_account_string" id="n_account_string" placeholder="신한 000-000-000 홍길동&#13;&#10;농협 000-000-000 홍길동&#13;&#10;...">{$hotopay_config->n_account_string}</textarea><br>
 				무통장 입금 계좌를 입력해주세요. 형식은 "은행명 계좌번호 예금주" 형식이며 엔터로 구분합니다.
-			</div>
-		</div>
-	</section>
-
-	<section class="section">
-		<h1>기본 설정</h1>
-		<div class="x_control-group">
-			<label class="x_control-label" for="purchase_term_url">전자금융거래 이용약관 URL</label>
-			<div class="x_controls">
-				<input type="text" name="purchase_term_url" id="purchase_term_url" value="{$hotopay_config->purchase_term_url}"><br>
-				전자금융거래법 제 24조 1항에 명시된 금융거래 이용약관 명시에 따른 이용약관 URL입니다. 결제시 체크박스에 링크가 걸리게 됩니다.
 			</div>
 		</div>
 	</section>
