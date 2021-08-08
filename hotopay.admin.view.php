@@ -182,4 +182,18 @@ class HotopayAdminView extends Hotopay
 		Context::setBrowserTitle('상품 수정 - Hotopay');
 		$this->setTemplateFile('modify_product');
 	}
+
+	public function dispHotopayAdminNotification()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+		
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+
+		// 스킨 파일 지정
+		Context::setBrowserTitle('알림 설정 - Hotopay');
+		$this->setTemplateFile('notify_config');
+	}
 }
