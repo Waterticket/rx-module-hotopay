@@ -16,6 +16,15 @@ class HotopayAdminView extends Hotopay
 	{
 		// 관리자 화면 템플릿 경로 지정
 		$this->setTemplatePath($this->module_path . 'tpl');
+		
+		$update_needed = $_COOKIE['ht_update_check'];
+		if(empty($_COOKIE['ht_update_check']))
+		{
+			$update_needed = $this->githubUpdateCheck();
+			setcookie('ht_update_check', (int)$update_needed, time() + 3600);
+		}
+
+		Context::set('update_needed', (int)$update_needed);
 	}
 	
 	/**

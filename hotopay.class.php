@@ -31,6 +31,35 @@ class Hotopay extends ModuleObject
 		// array('comment.updateComment', 'after', 'controller', 'triggerAfterUpdateComment'),
 		// array('comment.deleteComment', 'after', 'controller', 'triggerAfterDeleteComment'),
 	);
+
+	public function githubUpdateCheck()
+	{
+		$api_url = 'https://api.github.com/repos/Waterticket/rx-module-hotopay/releases/latest';
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $api_url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'hotopay/1.0');
+		curl_setopt($ch, CURLOPT_REFERER, 'https://hotopay.hotoproject.com/');
+
+		$response = json_decode(curl_exec($ch));
+		curl_close($ch);
+
+		$oModuleModel = getModel('module');
+		$module_list = $oModuleModel->getModuleList();
+
+		foreach($module_list as $module)
+		{
+			if($module->module === 'hotopay')
+			{
+				return ($response->tag_name !== $module->version);
+			}
+		}
+
+		return false;
+	}
 	
 	// =========================== 이 부분 아래는 수정하지 않아도 된다 ============================
 	
