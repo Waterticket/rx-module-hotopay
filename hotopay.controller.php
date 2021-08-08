@@ -315,7 +315,6 @@ class HotopayController extends Hotopay
 			if(strcmp($vars->status, "DONE") === 0) // 결제 성공일 경우
 			{
 				$this->_ActivePurchase($purchase_srl, $purchase->data->member_srl);
-				$this->_Mailer("DONE", $purchase->data);
 			}
 			else if(strcmp($vars->status, "CANCELED") === 0)
 			{
@@ -353,6 +352,7 @@ class HotopayController extends Hotopay
 
 		$oCommController = getController('communication');
 		$oCommController->sendMessage(4, $member_srl, '물품 결제가 완료되었습니다.', "'{$purchase_data->t}' 물품이 성공적으로 결제되었습니다.<br><br>파일은 상단바에 [스토어] > [다운로드]에서 받으실 수 있습니다.<br><br><a href=\"".getUrl("","mid","hotopay","act","dispHotopayOrderList")."\">[결제 확인하기]</a>");
+		$this->_AdminMailer("DONE", $purchase->data);
 
 		$args = new stdClass();
 		$args->product_srl = $purchase_data->bp;
@@ -378,7 +378,7 @@ class HotopayController extends Hotopay
 		
 	}
 
-	public function _Mailer($status, $purchase_data)
+	public function _AdminMailer($status, $purchase_data)
 	{
 		$member_srl = $purchase_data->member_srl;
 		$oMemberModel = getModel('member');
