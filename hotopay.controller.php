@@ -184,6 +184,14 @@ class HotopayController extends Hotopay
 					$this->_ActivePurchase($purchase_srl);
 				}
 
+				if($purchase->data->pay_method == 'v_account')
+				{
+					if($response_json->status == 'WAITING_FOR_DEPOSIT')
+					{
+						$this->_MessageMailer("WAITING_FOR_DEPOSIT", $purchase->data);
+					}
+				}
+
 				$response_json->p_status = "success";
 				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
@@ -350,8 +358,7 @@ class HotopayController extends Hotopay
 		$logged_info = Context::get('logged_info');
 		if($member_srl == -1) $member_srl = $logged_info->member_srl;
 
-		$oCommController = getController('communication');
-		$oCommController->sendMessage(4, $member_srl, '물품 결제가 완료되었습니다.', "'{$purchase_data->t}' 물품이 성공적으로 결제되었습니다.<br><br>파일은 상단바에 [스토어] > [다운로드]에서 받으실 수 있습니다.<br><br><a href=\"".getUrl("","mid","hotopay","act","dispHotopayOrderList")."\">[결제 확인하기]</a>");
+		$this->_MessageMailer("DONE", $purchase->data);
 		$this->_AdminMailer("DONE", $purchase->data);
 
 		$args = new stdClass();
@@ -376,6 +383,58 @@ class HotopayController extends Hotopay
 	public function _CancelPurchase($purchase_srl, $member_srl = -1)
 	{
 		
+	}
+
+	public function _MessageMailer($status, $purchase_data)
+	{
+		$config = $this->getConfig();
+		$member_srl = $purchase->data->member_srl;
+		$oHotopayModel = getModel('hotopay');
+
+		switch($status)
+		{
+			case 'DONE':
+				if(in_array(1, $config->purchase_success_notification_method))
+				{
+					// 쪽지 알림
+					$oCommController = getController('communication');
+					$oCommController->sendMessage(4, $member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_note_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_note, $purchase_data));
+				}
+
+				if(in_array(2, $config->purchase_success_notification_method))
+				{
+					// 메일 알림
+					$this->_sendMail($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_mail_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_mail, $purchase_data));
+				}
+
+				if(in_array(3, $config->purchase_success_notification_method))
+				{
+					// SMS 알림
+					$this->_sendSMS($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_sms, $purchase_data));
+				}
+				break;
+
+			case 'WAITING_FOR_DEPOSIT':
+				if(in_array(1, $config->purchase_account_notification_method))
+				{
+					// 쪽지 알림
+					$oCommController = getController('communication');
+					$oCommController->sendMessage(4, $member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_note_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_note, $purchase_data));
+				}
+
+				if(in_array(2, $config->purchase_account_notification_method))
+				{
+					// 메일 알림
+					$this->_sendMail($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_mail_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_mail, $purchase_data));
+				}
+
+				if(in_array(3, $config->purchase_account_notification_method))
+				{
+					// SMS 알림
+					$this->_sendSMS($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_sms, $purchase_data));
+				}
+				break;
+		}
 	}
 
 	public function _AdminMailer($status, $purchase_data)
