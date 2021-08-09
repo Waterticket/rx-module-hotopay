@@ -387,8 +387,10 @@ class HotopayController extends Hotopay
 
 	public function _MessageMailer($status, $purchase_data)
 	{
+		if($purchase_data == null) return false;
+
 		$config = $this->getConfig();
-		$member_srl = $purchase->data->member_srl;
+		$member_srl = $purchase_data->member_srl;
 		$oHotopayModel = getModel('hotopay');
 
 		switch($status)

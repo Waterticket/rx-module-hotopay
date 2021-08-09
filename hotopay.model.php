@@ -148,7 +148,7 @@ class HotopayModel extends Hotopay
         $account = '';
 
         if(isset($pay_data->virtualAccount->accountNumber))
-            $account = $pay_data->virtualAccount->$pay_data->virtualAccount->accountNumber.' '.$pay_data->virtualAccount->accountNumber;
+            $account = $pay_data->virtualAccount->bank.' '.$pay_data->virtualAccount->accountNumber;
         
         if($purchase_data->pay_method == 'n_account')
         {
@@ -160,7 +160,7 @@ class HotopayModel extends Hotopay
         $string = str_replace("[상품명]", mb_substr($purchase_data->t, 0, 10), $string);
         $string = str_replace("[주문확인링크]", '<a href="'.getUrl("","mid","hotopay","act","dispHotopayOrderList").'" target="_blank" title="주문 확인하기">[주문 확인하기]</a>', $string);
         $string = str_replace("[계좌번호]", $account, $string);
-        $string = str_replace("[주문금액]", number_format($purchase_data->product_purchase_price), $string);
+        $string = str_replace("[주문금액]", number_format($purchase->product_purchase_price), $string);
 
         return $string;
     }
