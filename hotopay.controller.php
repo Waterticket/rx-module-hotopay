@@ -74,7 +74,7 @@ class HotopayController extends Hotopay
 		
 				$obj1 = (object) array(
 					"name" => $title,
-					"description" => "결제 되는 상품입니다.",
+					"description" => $config->shop_name."에서 판매하는 상품입니다.",
 					"value" => $usd_total,
 					"count" => 1,
 				);
