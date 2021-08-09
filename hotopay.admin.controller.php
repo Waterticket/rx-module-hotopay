@@ -19,6 +19,8 @@ class HotopayAdminController extends Hotopay
 		
 		// 제출받은 데이터 불러오기
 		$vars = Context::getRequestVars();
+
+		$config->shop_name = $vars->shop_name;
 		
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_client_key = $vars->toss_payments_client_key;
