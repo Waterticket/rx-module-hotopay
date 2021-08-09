@@ -35,7 +35,7 @@
 			<td>HT{$val->purchase_srl}</td>
 			<td><a href="#popup_menu_area" class="member_{$val->member_srl}">{$member_data->nick_name}</a> ({$val->member_srl})</td>
             <td>{$product_data->t}</td>
-            <td>\{number_format($val->product_purchase_price)}</td>
+            <td>₩{number_format($val->product_purchase_price)}</td>
             <td>{$oHotopayModel->purchaseMethodToString($val->pay_method)}</td>
             <td>{$val->pay_status} <!--@if(strcmp($val->pay_status, "PENDING") === 0 || strcmp($val->pay_status, "WAITING_FOR_DEPOSIT") === 0)--><a href="#" onclick="var _u='{$purchase_done_url}';var _a=function(){if(confirm('정상 결제 처리를 하시겠습니까?')){window.location=_u}};_a();">(결제처리)</a><!--@endif--></td>
             <td>{date("Y-m-d H:i:s",$val->regdate)}</td>
