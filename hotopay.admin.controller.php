@@ -124,7 +124,7 @@ class HotopayAdminController extends Hotopay
 
 		$status = $vars->status; //"DONE"
 		$purchase_srl = $vars->purchase_srl;
-		$purchase_data = $oHotopayModel->getProduct($product_srl);
+		$purchase_data = $oHotopayModel->getPurchase($purchase_srl);
 
 		if(strcmp($status, "DONE") === 0)
 		{
