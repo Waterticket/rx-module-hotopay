@@ -47,6 +47,8 @@ class Hotopay extends ModuleObject
 		$response = json_decode(curl_exec($ch));
 		curl_close($ch);
 
+		if(empty($response->tag_name)) return false;
+
 		$oModuleModel = getModel('module');
 		$module_list = $oModuleModel->getModuleList();
 
@@ -100,6 +102,22 @@ class Hotopay extends ModuleObject
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
+			
+			if(!isset(self::$_config_cache->purchase_success_notification_message_note_title)) self::$_config_cache->purchase_success_notification_message_note_title = '상품 결제가 완료되었습니다'; // 결제성공 쪽지 제목
+			if(!isset(self::$_config_cache->purchase_success_notification_message_note)) self::$_config_cache->purchase_success_notification_message_note = '<p>"[상품명]" 상품이 성공적으로 결제되었습니다.</p><br><p>[주문확인링크]</p>'; // 결제성공 쪽지 내용
+			if(!isset(self::$_config_cache->purchase_success_notification_message_mail_title)) self::$_config_cache->purchase_success_notification_message_mail_title = '[[쇼핑몰명]] 상품 결제가 완료되었습니다'; // 결제성공 메일 제목
+			if(!isset(self::$_config_cache->purchase_success_notification_message_mail)) self::$_config_cache->purchase_success_notification_message_mail = '<p>"[상품명]" 상품이 성공적으로 결제되었습니다.</p><br><p>[주문확인링크]</p>'; // 결제성공 메일 내용
+			if(!isset(self::$_config_cache->purchase_success_notification_message_sms)) self::$_config_cache->purchase_success_notification_message_sms = '[[쇼핑몰명]] "[상품명]" 상품이 정상적으로 결제되었습니다'; // 결제성공 SMS 내용
+
+			if(!isset(self::$_config_cache->purchase_success_notification_method)) self::$_config_cache->purchase_success_notification_method = array(1,); // 결제 성공 알림 수단
+
+			if(!isset(self::$_config_cache->purchase_account_notification_message_note_title)) self::$_config_cache->purchase_account_notification_message_note_title = '상품 결제를 완료해주세요'; // 계좌알림 쪽지 제목
+			if(!isset(self::$_config_cache->purchase_account_notification_message_note)) self::$_config_cache->purchase_account_notification_message_note = '<p>"[상품명]" 상품 결제를 완료해주세요.</p><br><br><p>계좌번호: [계좌번호]</p><br><p>주문 금액: [주문금액]원</p>'; // 계좌알림 쪽지 내용
+			if(!isset(self::$_config_cache->purchase_account_notification_message_mail_title)) self::$_config_cache->purchase_account_notification_message_mail_title = '[[쇼핑몰명]] 상품 결제를 완료해주세요'; // 계좌알림 메일 제목
+			if(!isset(self::$_config_cache->purchase_account_notification_message_mail)) self::$_config_cache->purchase_account_notification_message_mail = '<p>"[상품명]" 상품 결제를 완료해주세요.</p><br><br><p>계좌번호: [계좌번호]</p><br><p>주문 금액: [주문금액]원</p>'; // 계좌알림 메일 내용
+			if(!isset(self::$_config_cache->purchase_account_notification_message_sms)) self::$_config_cache->purchase_account_notification_message_sms = '[[쇼핑몰명]] [결제금액] [계좌번호] 결제를 완료해주세요.'; // 계좌알림 SMS 내용
+
+			if(!isset(self::$_config_cache->purchase_account_notification_method)) self::$_config_cache->purchase_account_notification_method = array(1,); // 결제 계좌 알림 수단
 		}
 		return self::$_config_cache;
 	}

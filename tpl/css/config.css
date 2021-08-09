@@ -1,1 +1,22 @@
+.no-block {
+    display: inline !important;
+}
 
+.ht-table {
+    width: 100%;
+    max-width: 800px;
+    border: 1px solid black;
+}
+
+.ht-table thead tr{
+    background-color: lightgray;
+}
+
+.ht-table tbody tr{
+    border-top: 1px solid black;
+}
+
+.ht-table tbody td{
+    border-left: 1px solid black;
+    padding-left: 10px;
+}

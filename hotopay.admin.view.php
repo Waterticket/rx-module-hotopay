@@ -18,10 +18,10 @@ class HotopayAdminView extends Hotopay
 		$this->setTemplatePath($this->module_path . 'tpl');
 		
 		$update_needed = $_COOKIE['ht_update_check'];
-		if(empty($_COOKIE['ht_update_check']))
+		if(!isset($_COOKIE['ht_update_check']))
 		{
 			$update_needed = $this->githubUpdateCheck();
-			setcookie('ht_update_check', (int)$update_needed, time() + 3600);
+			setcookie('ht_update_check', (int)$update_needed, time() + 21600);
 		}
 
 		Context::set('update_needed', (int)$update_needed);

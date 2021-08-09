@@ -255,4 +255,38 @@ class HotopayAdminController extends Hotopay
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(getUrl('','mid','admin','act','dispHotopayAdminProductList'));
 	}
+
+	public function procHotopayAdminInsertNotification()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// 제출받은 데이터 불러오기
+		$vars = Context::getRequestVars();
+		
+		$config->purchase_success_notification_method = $vars->purchase_success_notification_method ?? array();
+		$config->purchase_success_notification_message_note_title = $vars->purchase_success_notification_message_note_title;
+		$config->purchase_success_notification_message_note = $vars->purchase_success_notification_message_note;
+		$config->purchase_success_notification_message_mail_title = $vars->purchase_success_notification_message_mail_title;
+		$config->purchase_success_notification_message_mail = $vars->purchase_success_notification_message_mail;
+		$config->purchase_success_notification_message_sms = $vars->purchase_success_notification_message_sms;
+
+		$config->purchase_account_notification_method = $vars->purchase_account_notification_method ?? array();
+		$config->purchase_account_notification_message_note_title = $vars->purchase_account_notification_message_note_title;
+		$config->purchase_account_notification_message_note = $vars->purchase_account_notification_message_note;
+		$config->purchase_account_notification_message_mail_title = $vars->purchase_account_notification_message_mail_title;
+		$config->purchase_account_notification_message_mail = $vars->purchase_account_notification_message_mail;
+		$config->purchase_account_notification_message_sms = $vars->purchase_account_notification_message_sms;
+		
+		// 변경된 설정을 저장
+		$output = $this->setConfig($config);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		
+		// 설정 화면으로 리다이렉트
+		$this->setMessage('success_registed');
+		$this->setRedirectUrl(Context::get('success_return_url'));
+	}
 }

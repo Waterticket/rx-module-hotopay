@@ -20,6 +20,7 @@
 		<action name="procHotopayAdminInsertProduct" type="controller" />
 		<action name="procHotopayAdminModifyProduct" type="controller" />
 		<action name="procHotopayAdminInsertPurchase" type="controller" />
+		<action name="procHotopayAdminInsertNotification" type="controller" />
 		<action name="procHotopayAdminPurchaseStatusChange" type="controller" method="GET|POST" />
 		<action name="procHotopayAdminDeleteProduct" type="controller" method="GET|POST" />
 

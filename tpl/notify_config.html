@@ -1,2 +1,162 @@
 <include target="__header.html" />
 
+<form class="x_form-horizontal" action="./" method="post" id="hotopay">
+	<input type="hidden" name="module" value="hotopay" />
+	<input type="hidden" name="act" value="procHotopayAdminInsertNotification" />
+	<input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
+	
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/hotopay/tpl/config/1'">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+
+	<table class="ht-table">
+		<thead>
+		  <tr>
+			<th>예약어<br></th>
+			<th>설명<br></th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr>
+			<td>[쇼핑몰명]</td>
+			<td>쇼핑몰 이름입니다.</td>
+		  </tr>
+		  <tr>
+			<td>[상품명]</td>
+			<td>상품 이름입니다.</td>
+		  </tr>
+		  <tr>
+			<td>[주문확인링크]</td>
+			<td>주문확인 링크를 넣습니다.</td>
+		  </tr>
+		  <tr>
+			<td>[계좌번호]</td>
+			<td>계좌번호입니다.</td>
+		  </tr>
+		  <tr>
+			<td>[주문금액]</td>
+			<td>주문 금액입니다. 3자리마다 콤마(,)가 찍혀 나옵니다. 예시) 100,000</td>
+		  </tr>
+		</tbody>
+	</table>
+
+	<section class="section">
+		<h1>결제완료 알림 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label">알림 전송 수단</label>
+			<div class="x_controls">
+				<label class="no-block"><input type="checkbox" name="purchase_success_notification_method[]" id="purchase_success_notification_method_1" value="1" checked="checked"|cond="in_array(1, $hotopay_config->purchase_success_notification_method)"> 쪽지</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="no-block"><input type="checkbox" name="purchase_success_notification_method[]" id="purchase_success_notification_method_2" value="2" checked="checked"|cond="in_array(2, $hotopay_config->purchase_success_notification_method)"> 메일</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="no-block"><input type="checkbox" name="purchase_success_notification_method[]" id="purchase_success_notification_method_3" value="3" checked="checked"|cond="in_array(3, $hotopay_config->purchase_success_notification_method)"> SMS(알림톡)</label>&nbsp;
+                <br>
+				결제 완료 알림을 회원에게 전송할 수단입니다.
+			</div>
+		</div>
+
+        <h2>쪽지</h2>
+        <div class="x_control-group">
+			<label class="x_control-label" for="purchase_success_notification_message_note_title">쪽지 메세지 제목</label>
+			<div class="x_controls">
+				<input type="text" name="purchase_success_notification_message_note_title" id="purchase_success_notification_message_note_title" style="width: 500px;" value="{$hotopay_config->purchase_success_notification_message_note_title}"><br>
+				쪽지 제목을 적어주세요
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_success_notification_message_note">쪽지 메세지 내용</label>
+			<div class="x_controls">
+				<textarea name="purchase_success_notification_message_note" id="purchase_success_notification_message_note" style="width: 500px; height: 100px;">{$hotopay_config->purchase_success_notification_message_note}</textarea><br>
+				쪽지 내용을 적어주세요
+			</div>
+		</div>
+
+        <h2>메일</h2>
+        <div class="x_control-group">
+			<label class="x_control-label" for="purchase_success_notification_message_mail_title">메일 메세지 제목</label>
+			<div class="x_controls">
+				<input type="text" name="purchase_success_notification_message_mail_title" id="purchase_success_notification_message_mail_title" style="width: 500px;" value="{$hotopay_config->purchase_success_notification_message_mail_title}"><br>
+				메일 제목을 적어주세요
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_success_notification_message_mail">메일 메세지 내용</label>
+			<div class="x_controls">
+				<textarea name="purchase_success_notification_message_mail" id="purchase_success_notification_message_mail" style="width: 500px; height: 100px;">{$hotopay_config->purchase_success_notification_message_mail}</textarea><br>
+				메일 내용을 적어주세요
+			</div>
+		</div>
+
+        <h2>SMS</h2>
+        <div class="x_control-group">
+			<label class="x_control-label" for="purchase_success_notification_message_sms">SMS 메세지 내용</label>
+			<div class="x_controls">
+				<textarea name="purchase_success_notification_message_sms" id="purchase_success_notification_message_sms" style="width: 500px; height: 100px;">{$hotopay_config->purchase_success_notification_message_sms}</textarea><br>
+				SMS 내용을 적어주세요
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<h1>가상계좌/무통장입금 계좌 알림 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label">알림 전송 수단</label>
+			<div class="x_controls">
+				<label class="no-block"><input type="checkbox" name="purchase_account_notification_method[]" id="purchase_account_notification_method_1" value="1" checked="checked"|cond="in_array(1, $hotopay_config->purchase_account_notification_method)"> 쪽지</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="no-block"><input type="checkbox" name="purchase_account_notification_method[]" id="purchase_account_notification_method_2" value="2" checked="checked"|cond="in_array(2, $hotopay_config->purchase_account_notification_method)"> 메일</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="no-block"><input type="checkbox" name="purchase_account_notification_method[]" id="purchase_account_notification_method_3" value="3" checked="checked"|cond="in_array(3, $hotopay_config->purchase_account_notification_method)"> SMS(알림톡)</label>&nbsp;
+                <br>
+				결제 완료 알림을 회원에게 전송할 수단입니다.
+			</div>
+		</div>
+
+        <h2>쪽지</h2>
+        <div class="x_control-group">
+			<label class="x_control-label" for="purchase_account_notification_message_note_title">쪽지 메세지 제목</label>
+			<div class="x_controls">
+				<input type="text" name="purchase_account_notification_message_note_title" id="purchase_account_notification_message_note_title" style="width: 500px;" value="{$hotopay_config->purchase_account_notification_message_note_title}"><br>
+				쪽지 제목을 적어주세요
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_account_notification_message_note">쪽지 메세지 내용</label>
+			<div class="x_controls">
+				<textarea name="purchase_account_notification_message_note" id="purchase_account_notification_message_note" style="width: 500px; height: 100px;">{$hotopay_config->purchase_account_notification_message_note}</textarea><br>
+				쪽지 내용을 적어주세요
+			</div>
+		</div>
+
+        <h2>메일</h2>
+        <div class="x_control-group">
+			<label class="x_control-label" for="purchase_account_notification_message_mail_title">메일 메세지 제목</label>
+			<div class="x_controls">
+				<input type="text" name="purchase_account_notification_message_mail_title" id="purchase_account_notification_message_mail_title" style="width: 500px;" value="{$hotopay_config->purchase_account_notification_message_mail_title}"><br>
+				메일 제목을 적어주세요
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_account_notification_message_mail">메일 메세지 내용</label>
+			<div class="x_controls">
+				<textarea name="purchase_account_notification_message_mail" id="purchase_account_notification_message_mail" style="width: 500px; height: 100px;">{$hotopay_config->purchase_account_notification_message_mail}</textarea><br>
+				메일 내용을 적어주세요
+			</div>
+		</div>
+
+        <h2>SMS</h2>
+        <div class="x_control-group">
+			<label class="x_control-label" for="purchase_account_notification_message_sms">SMS 메세지 내용</label>
+			<div class="x_controls">
+				<textarea name="purchase_account_notification_message_sms" id="purchase_account_notification_message_sms" style="width: 500px; height: 100px;">{$hotopay_config->purchase_account_notification_message_sms}</textarea><br>
+				SMS 내용을 적어주세요
+			</div>
+		</div>
+	</section>
+	
+	<div class="btnArea x_clearfix">
+		<button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
+	</div>
+	
+</form>
