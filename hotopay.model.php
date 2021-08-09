@@ -138,4 +138,30 @@ class HotopayModel extends Hotopay
 
         return $result; 
     }
+
+    public function changeMessageRegisterKey($string, $purchase = null)
+    {
+        $config = $this->getConfig();
+        if($purchase == null) $purchase = new stdClass();
+        $purchase_data = json_decode($purchase->products);
+        $pay_data = json_decode($purchase->pay_data);
+        $account = '';
+
+        if(isset($pay_data->virtualAccount->accountNumber))
+            $account = $pay_data->virtualAccount->$pay_data->virtualAccount->accountNumber.' '.$pay_data->virtualAccount->accountNumber;
+        
+        if($purchase_data->pay_method == 'n_account')
+        {
+            $n_account_arr = preg_split('/\r\n|\r|\n/', $config->n_account_string);
+            $account = $n_account_arr[0];
+        }
+
+        $string = str_replace("[쇼핑몰명]", $config->shop_name, $string);
+        $string = str_replace("[상품명]", mb_substr($purchase_data->t, 0, 10), $string);
+        $string = str_replace("[주문확인링크]", getUrl("","mid","hotopay","act","dispHotopayOrderList"), $string);
+        $string = str_replace("[계좌번호]", $account, $string);
+        $string = str_replace("[주문금액]", number_format($purchase_data->product_purchase_price), $string);
+
+        return $string;
+    }
 }
