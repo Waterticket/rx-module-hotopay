@@ -68,7 +68,7 @@ class HotopayController extends Hotopay
 		switch($vars->pay_method)
 		{
 			case 'paypal':
-				$usd_total = round($total_price/1000, 2);
+				$usd_total = $oHotopayModel->changeCurrency('KRW', 'USD', $total_price);
 
 				$paypalController = new Paypal();
 		
@@ -393,7 +393,7 @@ class HotopayController extends Hotopay
 
 			case 'paypal':
 				$paypalController = new Paypal();
-				$output = $paypalController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
+				$output = $paypalController->cancelOrder($purchase_srl, $cancel_reason, $oHotopayModel->changeCurrency('KRW', 'USD', $cancel_amount));
 				break;
 			
 			case 'n_account':

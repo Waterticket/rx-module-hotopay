@@ -216,7 +216,7 @@ class Paypal extends Hotopay {
         return json_decode($result);
     }
 
-    public function cancelOrder($order_srl, $cancel_reason, $cancel_amount)
+    public function cancelOrder($order_srl, $cancel_reason = '', $cancel_amount = 0)
     {
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($order_srl);
@@ -234,7 +234,50 @@ class Paypal extends Hotopay {
 
         if($refund_link == '')
             return $this->createObject(-1, 'Paypal 환불 링크를 가져올 수 없습니다.');
-        else
-            return $this->createObject(-1, 'Refund_link: '.$refund_link);
+
+        $post_field = array(
+            "invoice_number" => 'HT'.$purchase->purchase_srl
+        );
+
+        if($cancel_reason != '')
+        {
+            $post_field["reason"] = $cancel_reason;
+        }
+
+        if($cancel_amount != 0)
+        {
+            $post_field["amount"] = array(
+                "value" => $cancel_amount,
+                "currency_code" => "USD"
+            );
+        }
+
+        $accessToken = $this->getAccessToken();
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $refund_link);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_field));
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer '.$accessToken;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
+        $response_data = json_decode($result);
+
+        $response = new stdClass();
+        $response->error = ($http_code == 201) ? 0 : -1;
+        $response->message = ($http_code == 201) ? 'success' : '환불을 실패하였습니다. 데이터를 확인해주세요.';
+        $response->data = $response_data;
+
+        return $response;
     }
 }

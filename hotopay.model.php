@@ -184,4 +184,27 @@ class HotopayModel extends Hotopay
 
         return $string;
     }
+
+    public function changeCurrency($original_currency, $change_currency, $amount)
+    {
+        if($original_currency == 'KRW')
+        {
+            switch($change_currency)
+            {
+                case 'USD':
+                    return round($amount/1000, 2);
+                    break;
+            }
+        }
+
+        if($original_currency == 'USD')
+        {
+            switch($change_currency)
+            {
+                case 'KRW':
+                    return $amount*1000;
+                    break;
+            }
+        }
+    }
 }
