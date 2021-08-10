@@ -58,7 +58,7 @@
             <td>{$oHotopayModel->purchaseMethodToString($val->pay_method)}</td>
             <td>{$val->pay_status}
 				<!--@if(strcmp($val->pay_status, "PENDING") === 0 || strcmp($val->pay_status, "WAITING_FOR_DEPOSIT") === 0)-->&nbsp;<a href="#" onclick="var _u='{$purchase_done_url}';var _a=function(){if(confirm('정상 결제 처리를 하시겠습니까?')){window.location=_u}};_a();">(결제처리)</a><!--@endif-->
-				<!--@if(strcmp($val->pay_status, "DONE") === 0 || strcmp($val->pay_status, "APPROVED") === 0)-->&nbsp;<a href="#" onclick="opendialog('HT{$val->purchase_srl}',{$val->product_purchase_price},'{$val->pay_method}');" style="color: #ff4757;">(결제취소)</a><!--@endif-->
+				<!--@if(strcmp($val->pay_status, "DONE") === 0 || strcmp($val->pay_status, "APPROVED") === 0)-->&nbsp;<a href="#" onclick="opendialog('HT{$val->purchase_srl}',{$val->product_purchase_price},'{$val->pay_method}');" style="color: #ff4757;">(환불)</a><!--@endif-->
 			</td>
             <td>{date("Y-m-d H:i:s",$val->regdate)}</td>
             <td><a href="{getUrl('','module','admin','act','dispHotopayAdminPurchaseData','purchase_srl',$val->purchase_srl)}">데이터</a></td>
@@ -162,7 +162,7 @@
 		</div>
    
 		<!-- Allow form submission with keyboard without duplicating the dialog button -->
-		<input type="submit" tabindex="-1" style="width: 100%; padding: 5px; margin-top: 15px; margin-bottom: 10px;" value="주문 취소">
+		<input type="submit" tabindex="-1" style="width: 100%; padding: 5px; margin-top: 15px; margin-bottom: 10px;" value="환불 처리">
 	  </fieldset>
 	</form>
 </div>
