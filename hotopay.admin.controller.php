@@ -298,6 +298,13 @@ class HotopayAdminController extends Hotopay
 		$config->purchase_account_notification_message_mail_title = $vars->purchase_account_notification_message_mail_title;
 		$config->purchase_account_notification_message_mail = $vars->purchase_account_notification_message_mail;
 		$config->purchase_account_notification_message_sms = $vars->purchase_account_notification_message_sms;
+
+		$config->purchase_refund_notification_method = $vars->purchase_refund_notification_method ?? array();
+		$config->purchase_refund_notification_message_note_title = $vars->purchase_refund_notification_message_note_title;
+		$config->purchase_refund_notification_message_note = $vars->purchase_refund_notification_message_note;
+		$config->purchase_refund_notification_message_mail_title = $vars->purchase_refund_notification_message_mail_title;
+		$config->purchase_refund_notification_message_mail = $vars->purchase_refund_notification_message_mail;
+		$config->purchase_refund_notification_message_sms = $vars->purchase_refund_notification_message_sms;
 		
 		// 변경된 설정을 저장
 		$output = $this->setConfig($config);
