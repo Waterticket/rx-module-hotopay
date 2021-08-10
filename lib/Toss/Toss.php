@@ -27,7 +27,7 @@ class Toss extends Hotopay {
             $post_field["cancelAmount"] = $cancel_amount;
         }
 
-        $url = self::$TOSS_URL."/v1/payments/{$payment_key}";
+        $url = self::$TOSS_URL."/v1/payments/{$payment_key}/cancel";
         $headers = array(
             'Content-Type: application/json',
             'Authorization: Basic '.$this->getAccessToken()
