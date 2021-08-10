@@ -109,6 +109,10 @@ class HotopayModel extends Hotopay
                 return "결제 실패";
                 break;
 
+            case "REFUNDED":
+                return "환불됨";
+                break;
+
             default:
                 return $code;
                 break;
