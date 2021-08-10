@@ -416,7 +416,7 @@ class HotopayController extends Hotopay
 			$args = new stdClass();
 			$args->purchase_srl = $purchase_srl;
 			$args->pay_status = 'CANCELED';
-			$args->pay_data = $output->data;
+			$args->pay_data = json_encode($output->data);
 			executeQuery('hotopay.updatePurchaseStatus', $args);
 			executeQuery('hotopay.updatePurchaseData', $args);
 
