@@ -148,8 +148,11 @@ class HotopayAdminController extends Hotopay
                 "holderName" => $vars->holderName,
             );
 
-			$oHotopayController->_CancelPurchase($purchase_srl, $cancel_reason, $cancel_amount, $bank_info);
+			$output = $oHotopayController->_CancelPurchase($purchase_srl, $cancel_reason, $cancel_amount, $bank_info);
 		}
+
+		if($output->error != 0)
+            return $this->createObject(-1, $output->message);
 
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminPurchaseList"));
