@@ -213,4 +213,9 @@ class Paypal extends Hotopay {
         }
         curl_close($ch);
     }
+
+    public function cancelOrder($order_srl, $cancel_reason, $cancel_amount)
+    {
+        
+    }
 }

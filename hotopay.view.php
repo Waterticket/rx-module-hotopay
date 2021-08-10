@@ -29,6 +29,23 @@ class HotopayView extends Hotopay
 
 	public function dispHotopayOrderPage()
 	{
+		$oMemberController = getController('member');
+		$oMemberModel = getModel('member');
+		$member_groups_raw = $oMemberModel->getMemberGroups(4);
+		$member_groups = array_keys($member_groups_raw);
+		$group_list = array(5373);
+
+		$final_groups = array_diff($member_groups, $group_list); // 최종 유저에게 부여할 그룹
+		debugPrint($final_groups);
+
+		$args = new stdClass();
+		$args->member_srl = array(4);
+		$args->group_srl = $final_groups;
+		if($member_srl)
+			$oMemberController->replaceMemberGroup($args);
+
+		debugPrint($oMemberModel->getMemberGroups(4));
+
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 		Context::set('hotopay_config', $config);

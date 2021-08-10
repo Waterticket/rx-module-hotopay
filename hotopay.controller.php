@@ -406,6 +406,12 @@ class HotopayController extends Hotopay
 				break;
 
 			case 'paypal':
+				$paypalController = new Paypal();
+				$output = $paypalController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
+				break;
+			
+			case 'n_account':
+				$output = $this->createObject();
 				break;
 		}
 
@@ -431,18 +437,18 @@ class HotopayController extends Hotopay
 				}
 			}
 
-			$oMemberController = getController('member');
-			$oMemberModel = getModel('hotopay');
-			$member_groups_raw = $oMemberModel->getMemberGroups($member_srl);
-			$member_groups = array_keys($member_groups_raw);
+			// $oMemberController = getController('member');
+			// $oMemberModel = getModel('member');
+			// $member_groups_raw = $oMemberModel->getMemberGroups($member_srl);
+			// $member_groups = array_keys($member_groups_raw);
 
-			$final_groups = array_diff($member_groups, $group_list); // 최종 유저에게 부여할 그룹
+			// $final_groups = array_diff($member_groups, $group_list); // 최종 유저에게 부여할 그룹
 
-			$args = new stdClass();
-			$args->member_srl = $member_srl;
-			$args->group_srl = $final_groups;
-			if($member_srl)
-				$oMemberController->replaceMemberGroup($args);
+			// $args = new stdClass();
+			// $args->member_srl = array($member_srl);
+			// $args->group_srl = $final_groups;
+			// if($member_srl)
+			// 	$oMemberController->replaceMemberGroup($args);
 
 			return $this->createObject();
 		}
