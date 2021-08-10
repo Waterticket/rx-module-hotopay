@@ -120,6 +120,14 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->purchase_account_notification_message_sms)) self::$_config_cache->purchase_account_notification_message_sms = '[[쇼핑몰명]] [주문금액] [계좌번호] 결제를 완료해주세요.'; // 계좌알림 SMS 내용
 
 			if(!isset(self::$_config_cache->purchase_account_notification_method)) self::$_config_cache->purchase_account_notification_method = array(1,); // 결제 계좌 알림 수단
+
+			if(!isset(self::$_config_cache->purchase_refund_notification_message_note_title)) self::$_config_cache->purchase_refund_notification_message_note_title = '상품이 환불되었습니다.'; // 환불 쪽지 제목
+			if(!isset(self::$_config_cache->purchase_refund_notification_message_note)) self::$_config_cache->purchase_refund_notification_message_note = '<p>"[상품명]" 상품이 환불되었습니다.</p><br><br><p>주문번호: [주문번호]</p>'; // 환불 쪽지 내용
+			if(!isset(self::$_config_cache->purchase_refund_notification_message_mail_title)) self::$_config_cache->purchase_refund_notification_message_mail_title = '[[쇼핑몰명]] 상품이 환불되었습니다'; // 환불 메일 제목
+			if(!isset(self::$_config_cache->purchase_refund_notification_message_mail)) self::$_config_cache->purchase_refund_notification_message_mail = '<p>"[상품명]" 상품이 환불되었습니다.</p><br><br><p>주문번호: [주문번호]</p>'; // 환불 메일 내용
+			if(!isset(self::$_config_cache->purchase_refund_notification_message_sms)) self::$_config_cache->purchase_refund_notification_message_sms = '[[쇼핑몰명]] 주문번호 [주문번호] "[상품명]" 상품이 환불되었습니다.'; // 환불 SMS 내용
+
+			if(!isset(self::$_config_cache->purchase_refund_notification_method)) self::$_config_cache->purchase_refund_notification_method = array(1,); // 환불 알림 수단
 		}
 		return self::$_config_cache;
 	}

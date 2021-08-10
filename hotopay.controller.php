@@ -431,6 +431,8 @@ class HotopayController extends Hotopay
 			$oMemberController = getController('member');
 			$oMemberController->clearMemberCache($member_srl);
 
+			$this->_MessageMailer("REFUNDED", $purchase);
+
 			return $this->createObject();
 		}
 		else
@@ -488,6 +490,27 @@ class HotopayController extends Hotopay
 				{
 					// SMS 알림
 					$this->_sendSMS($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_sms, $purchase_data));
+				}
+				break;
+
+			case 'REFUNDED':
+				if(in_array(1, $config->purchase_refund_notification_method))
+				{
+					// 쪽지 알림
+					$oCommController = getController('communication');
+					$oCommController->sendMessage(4, $member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_note_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_note, $purchase_data));
+				}
+
+				if(in_array(2, $config->purchase_refund_notification_method))
+				{
+					// 메일 알림
+					$this->_sendMail($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_mail_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_mail, $purchase_data));
+				}
+
+				if(in_array(3, $config->purchase_refund_notification_method))
+				{
+					// SMS 알림
+					$this->_sendSMS($member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_sms, $purchase_data));
 				}
 				break;
 		}
