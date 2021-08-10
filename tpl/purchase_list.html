@@ -5,6 +5,21 @@
 	$oHotopayModel = getModel('hotopay');
 }
 
+<style>
+	label, input, select { display:block; margin: 5px;}
+    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    select { margin-bottom:12px; width:97%; padding: .4em; }
+	input:read-only {background-color: #eee;}
+    fieldset { padding:0; border:0; margin-top:25px; }
+    h1 { font-size: 1.2em; margin: .6em 0; }
+    div#users-contain { width: 350px; margin: 20px 0; }
+    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+    .ui-dialog .ui-state-error { padding: .3em; }
+    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+	.ui-dialog-title {font-size: 1.2em;}
+</style>
+
 <section class="section">
 	<p class="x_well x_well-small" cond="!$purchase_list">결제 기록이 없습니다</p>
 	<div class="dl_module_block"></div>
@@ -37,7 +52,10 @@
             <td>{$product_data->t}</td>
             <td>₩{number_format($val->product_purchase_price)}</td>
             <td>{$oHotopayModel->purchaseMethodToString($val->pay_method)}</td>
-            <td>{$val->pay_status} <!--@if(strcmp($val->pay_status, "PENDING") === 0 || strcmp($val->pay_status, "WAITING_FOR_DEPOSIT") === 0)--><a href="#" onclick="var _u='{$purchase_done_url}';var _a=function(){if(confirm('정상 결제 처리를 하시겠습니까?')){window.location=_u}};_a();">(결제처리)</a><!--@endif--></td>
+            <td>{$val->pay_status}
+				<!--@if(strcmp($val->pay_status, "PENDING") === 0 || strcmp($val->pay_status, "WAITING_FOR_DEPOSIT") === 0)-->&nbsp;<a href="#" onclick="var _u='{$purchase_done_url}';var _a=function(){if(confirm('정상 결제 처리를 하시겠습니까?')){window.location=_u}};_a();">(결제처리)</a><!--@endif-->
+				<!--@if(strcmp($val->pay_status, "DONE") === 0 || strcmp($val->pay_status, "APPROVED") === 0)-->&nbsp;<a href="#" onclick="opendialog('HT{$val->purchase_srl}',{$val->product_purchase_price},'{$val->pay_method}');" style="color: #ff4757;">(결제취소)</a><!--@endif-->
+			</td>
             <td>{date("Y-m-d H:i:s",$val->regdate)}</td>
             <td><a href="{getUrl('','module','admin','act','dispHotopayAdminPurchaseData','purchase_srl',$val->purchase_srl)}">데이터</a></td>
 		</tr>
@@ -88,3 +106,87 @@
 		<a class="x_btn x_btn-inverse" href="{getUrl('','mid','admin','act','dispHotopayAdminInsertPurchase')}">결제 데이터 등록</a>
 	</span>
 </section>
+
+<div id="dialog" title="주문 취소">
+	<p class="validateTips">주문 취소를 위해 아래 폼을 입력해주세요.</p>
+
+	<form action="./" method="POST">
+	  <input type="hidden" name="mid" value="admin">
+	  <input type="hidden" name="act" value="procHotopayAdminPurchaseStatusChange">
+	  <fieldset>
+		<label for="purchase_id">주문번호</label>
+		<input type="text" name="purchase_id" id="purchase_id" value="" class="text ui-widget-content ui-corner-all" readonly="readonly" required>
+		<label for="cancel_reason">취소 이유</label>
+		<input type="text" name="cancel_reason" id="cancel_reason" value="고객이 취소 원함" class="text ui-widget-content ui-corner-all" required>
+		<label for="cancel_amount">취소 금액</label>
+		<input type="number" name="cancel_amount" id="cancel_amount" value="0" class="text ui-widget-content ui-corner-all" required>
+
+		<div class="bank_input">
+		<hr>
+		<p class="validateTips">환불계좌를 입력해주세요</p>
+		<label for="bank">환불 은행</label>
+		<select name="bank" id="bank">
+			<option value="">-- 은행을 선택해주세요 --</option>
+			<option value="농협">NH농협은행</option>
+			<option value="국민">KB국민은행</option>
+			<option value="우리">우리은행</option>
+			<option value="신한">신한은행</option>
+			<option value="기업">IBK기업은행</option>
+			<option value="하나">하나은행</option>
+			<option value="경남">경남은행</option>
+			<option value="대구">대구은행</option>
+			<option value="부산">부산은행</option>
+			<option value="수협">Sh수협은행</option>
+			<option value="우체국">우체국예금보험</option>
+			<option value="산업">KDB산업은행</option>
+			<option value="SC제일">SC제일은행</option>
+			<option value="씨티">씨티은행</option>
+			<option value="대구">DGB대구은행</option>
+			<option value="광주">광주은행</option>
+			<option value="제주">제주은행</option>
+			<option value="전북">전북은행</option>
+			<option value="새마을">새마을금고</option>
+			<option value="신협">신협</option>
+			<option value="케이">케이뱅크</option>
+			<option value="카카오">카카오뱅크</option>
+		</select>
+		<label for="accountNumber">환불 계좌번호</label>
+		<input type="number" name="accountNumber" id="accountNumber" placeholder=" - 기호 없이 입력해주세요" class="text ui-widget-content ui-corner-all">
+		<label for="holderName">계좌 예금주명</label>
+		<input type="text" name="holderName" id="holderName" placeholder="홍길동" class="text ui-widget-content ui-corner-all">
+		</div>
+   
+		<!-- Allow form submission with keyboard without duplicating the dialog button -->
+		<input type="submit" tabindex="-1" style="width: 100%; padding: 5px; margin-top: 15px; margin-bottom: 10px;" value="주문 취소">
+	  </fieldset>
+	</form>
+</div>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+	function opendialog(purchase_id, amount, payment_type)
+	{
+		$('#dialog').dialog(dialog_variable);
+		$('#dialog input[name="purchase_id"]').val(purchase_id);
+		$('#dialog input[name="cancel_amount"]').val(amount);
+		if(payment_type == 'v_account')
+		{
+			$('.bank_input').css("display","");
+			$("[name=bank]").attr("required" , true);
+			$("[name=accountNumber]").attr("required" , true);
+			$("[name=holderName]").attr("required" , true);
+		}else{
+			$('.bank_input').css("display","none");
+			$("[name=bank]").attr("required" , false);
+			$("[name=accountNumber]").attr("required" , false);
+			$("[name=holderName]").attr("required" , false);
+		}
+	}
+	var dialog_variable = {
+	  resizable: false,
+      height: "auto",
+	  width: '500px',
+      modal: true,
+	};
+</script>

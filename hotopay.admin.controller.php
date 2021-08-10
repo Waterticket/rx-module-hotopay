@@ -125,6 +125,13 @@ class HotopayAdminController extends Hotopay
 
 		$status = $vars->status; //"DONE"
 		$purchase_srl = $vars->purchase_srl;
+
+		$purchase_id = $vars->purchase_id;
+		if(isset($purchase_id) && empty($purchase_srl))
+		{
+			$purchase_srl = substr($purchase_id, 2); // HTxxxx 형식일경우 자르기
+		}
+
 		$purchase_data = $oHotopayModel->getPurchase($purchase_srl);
 
 		if(strcmp($status, "DONE") === 0)
