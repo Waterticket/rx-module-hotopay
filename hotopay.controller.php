@@ -376,6 +376,8 @@ class HotopayController extends Hotopay
 		$oHotopayModel = getModel('hotopay');
 		$purchase = $oHotopayModel->getPurchase($purchase_srl);
 		$member_srl = $purchase->member_srl;
+		if(empty($member_srl))
+			return $this->createObject(-1, "member_srl을 찾을 수 없습니다.");
 
 		switch($purchase->pay_method)
 		{
@@ -413,28 +415,20 @@ class HotopayController extends Hotopay
 			$purchase_data = json_decode($purchase->products);
 			$products = $oHotopayModel->getProducts($purchase_data->bp);
 
-			$group_list = array();
 			foreach($products as $product)
 			{
 				$group_srl = $product->product_buyer_group;
 				if($group_srl != 0)
 				{
-					array_push($group_list, $group_srl);
+					$args = new stdClass();
+					$args->member_srl = $member_srl;
+					$args->group_srl = $group_srl;
+					$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
 				}
 			}
 
-			// $oMemberController = getController('member');
-			// $oMemberModel = getModel('member');
-			// $member_groups_raw = $oMemberModel->getMemberGroups($member_srl);
-			// $member_groups = array_keys($member_groups_raw);
-
-			// $final_groups = array_diff($member_groups, $group_list); // 최종 유저에게 부여할 그룹
-
-			// $args = new stdClass();
-			// $args->member_srl = array($member_srl);
-			// $args->group_srl = $final_groups;
-			// if($member_srl)
-			// 	$oMemberController->replaceMemberGroup($args);
+			$oMemberController = getController('member');
+			$oMemberController->clearMemberCache($member_srl);
 
 			return $this->createObject();
 		}
