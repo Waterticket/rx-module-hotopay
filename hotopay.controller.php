@@ -197,7 +197,7 @@ class HotopayController extends Hotopay
 					$capture_output = $paypalController->captureOrder($pay_data->id);
 					
 					$args = new stdClass();
-					$args->purchase_srl = substr($vars->orderId, 2);
+					$args->purchase_srl = substr($vars->order_id, 2);
 					$args->pay_data = json_encode($capture_output);
 					executeQuery('hotopay.updatePurchaseData', $args);
 

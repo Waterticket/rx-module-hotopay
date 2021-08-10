@@ -223,7 +223,7 @@ class Paypal extends Hotopay {
         $pay_data = json_decode($purchase->pay_data);
         $refund_link = '';
         
-        foreach($pay_data["purchase_units"][0]["payments"]["captures"][0]["links"] as $link)
+        foreach($pay_data->purchase_units[0]->payments->captures[0]->links as $link)
         {
             if($link->rel == "refund")
             {
