@@ -194,7 +194,12 @@ class HotopayController extends Hotopay
 
 				if(strcmp($order_detail->status,"APPROVED") === 0) // 결제 완료에 경우
 				{
-					$paypalController->captureOrder($pay_data->id);
+					$capture_output = $paypalController->captureOrder($pay_data->id);
+					
+					$args = new stdClass();
+					$args->purchase_srl = substr($vars->orderId, 2);
+					$args->pay_data = json_encode($capture_output);
+					executeQuery('hotopay.updatePurchaseData', $args);
 
 					$this->_ActivePurchase($purchase_srl);
 				}

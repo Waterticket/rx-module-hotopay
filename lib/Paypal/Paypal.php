@@ -212,10 +212,29 @@ class Paypal extends Hotopay {
             echo 'Error:' . curl_error($ch);
         }
         curl_close($ch);
+
+        return json_decode($result);
     }
 
     public function cancelOrder($order_srl, $cancel_reason, $cancel_amount)
     {
-        return $this->createObject(-1, 'Paypal 환불은 아직 구현되지 않았습니다.');
+        $oHotopayModel = getModel('hotopay');
+        $purchase = $oHotopayModel->getPurchase($order_srl);
+        $pay_data = json_decode($purchase->pay_data);
+        $refund_link = '';
+        
+        foreach($pay_data["purchase_units"][0]["payments"]["captures"][0]["links"] as $link)
+        {
+            if($link->rel == "refund")
+            {
+                $refund_link = $link->href;
+                break;
+            }
+        }
+
+        if($refund_link == '')
+            return $this->createObject(-1, 'Paypal 환불 링크를 가져올 수 없습니다.');
+        else
+            return $this->createObject(-1, 'Refund_link: '.$refund_link);
     }
 }
