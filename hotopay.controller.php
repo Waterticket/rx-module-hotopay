@@ -409,8 +409,6 @@ class HotopayController extends Hotopay
 				break;
 		}
 
-		debugPrint($output);
-
 		if($output->error == 0)
 		{
 			$args = new stdClass();

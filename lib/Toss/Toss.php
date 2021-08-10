@@ -61,7 +61,7 @@ class Toss extends Hotopay {
         $output = json_decode($response);
 
         $response = new stdClass();
-        $response->error = 0;
+        $response->error = ($http_code == 200) ? 0 : -1;
         $response->http_code = $http_code;
         $response->data = $output;
 
