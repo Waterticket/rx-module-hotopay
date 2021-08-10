@@ -234,7 +234,7 @@ class HotopayController extends Hotopay
 			{
 				$args->pay_status = 'WAITING_FOR_DEPOSIT';
 				executeQuery('hotopay.updatePurchaseStatus', $args);
-				
+
 				$this->_MessageMailer("WAITING_FOR_DEPOSIT", $purchase->data);
 				$pay_data = json_decode($purchase->data->pay_data);
 
@@ -518,19 +518,19 @@ class HotopayController extends Hotopay
 		}
 	}
 
-	public function _AdminMailer($status, $purchase_data)
+	public function _AdminMailer($status, $purchase)
 	{
-		$member_srl = $purchase_data->member_srl;
+		$member_srl = $purchase->member_srl;
 		$oMemberModel = getModel('member');
 		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
-		$purchase_data = json_decode($purchase_data->products);
-		$price = number_format($purchase_data->product_purchase_price);
-		$purchase_date = date("Y-m-d H:i:s", $purchase_data->regdate);
+		$purchase_data = json_decode($purchase->products);
+		$price = number_format($purchase->product_purchase_price);
+		$purchase_date = date("Y-m-d H:i:s", $purchase->regdate);
 
 		switch($status)
 		{
 			case "DONE":
-				$message_body = "결제 완료 알림 메일입니다.<br><br>결제 코드: HT{$purchase_data->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$purchase_data->t}<br>결제 금액: {$price}<br>결제시각: {$purchase_date}<br>";
+				$message_body = "결제 완료 알림 메일입니다.<br><br>결제 코드: HT{$purchase->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$purchase_data->t}<br>결제 금액: {$price}<br>결제시각: {$purchase_date}<br>";
 				$this->_sendMail(4, "[HotoPay] 회원의 결제가 완료되었습니다.", $message_body);
 				break;
 		}

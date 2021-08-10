@@ -174,7 +174,7 @@ class HotopayModel extends Hotopay
         if(isset($pay_data->virtualAccount->accountNumber))
             $account = $pay_data->virtualAccount->bank.' '.$pay_data->virtualAccount->accountNumber;
         
-        if($purchase_data->pay_method == 'n_account')
+        if($purchase->pay_method == 'n_account')
         {
             $n_account_arr = preg_split('/\r\n|\r|\n/', $config->n_account_string);
             $account = $n_account_arr[0];
