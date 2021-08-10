@@ -17,6 +17,7 @@ class HotopayController extends Hotopay
 		if($logged_info == null) return $this->createObject(-1, "로그인이 필요합니다");
 		// if($logged_info->member_srl != 4) return $this->createObject(-1, "현재 결제 기능 점검중입니다. 잠시 뒤에 다시 시도 해주세요.");
 
+		$oHotopayModel = getModel('hotopay');
 		$order_id = getNextSequence();
 
 		$args = new stdClass();
