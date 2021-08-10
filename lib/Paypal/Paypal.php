@@ -216,6 +216,6 @@ class Paypal extends Hotopay {
 
     public function cancelOrder($order_srl, $cancel_reason, $cancel_amount)
     {
-        
+        return $this->createObject(-1, 'Paypal 환불은 아직 구현되지 않았습니다.');
     }
 }
