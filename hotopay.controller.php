@@ -385,13 +385,12 @@ class HotopayController extends Hotopay
 		}
 	}
 
-	public function _CancelPurchase($purchase_srl, $member_srl = -1, $cancel_reason = 'Hotopay Refund', $cancel_amount = -1, $bank_info = array())
+	public function _CancelPurchase($purchase_srl, $cancel_reason = 'Hotopay Refund', $cancel_amount = -1, $bank_info = array())
 	{
-		$logged_info = Context::get('logged_info');
-		if($member_srl == -1) $member_srl = $logged_info->member_srl;
-
 		$oHotopayModel = getModel('hotopay');
 		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$member_srl = $purchase->member_srl;
+
 		switch($purchase->pay_method)
 		{
 			case 'card':
@@ -410,6 +409,8 @@ class HotopayController extends Hotopay
 				break;
 		}
 
+		debugPrint($output);
+
 		if($output->error == 0)
 		{
 			$args = new stdClass();
@@ -418,6 +419,20 @@ class HotopayController extends Hotopay
 			$args->pay_data = $output->data;
 			executeQuery('hotopay.updatePurchaseStatus', $args);
 			executeQuery('hotopay.updatePurchaseData', $args);
+
+			$purchase_data = json_decode($purchase->products);
+			$products = $oHotopayModel->getProducts($purchase_data->bp);
+
+			$oMemberController = getController('member');
+			foreach($products as $product)
+			{
+				$group_srl = $product->product_buyer_group;
+				if($group_srl != 0)
+				{
+					// @todo 그룹 제거하기
+					// $member_srl
+				}
+			}
 
 			return $this->createObject();
 		}

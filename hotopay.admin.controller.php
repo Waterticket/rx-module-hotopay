@@ -133,7 +133,15 @@ class HotopayAdminController extends Hotopay
 		}
 		else if(strcmp($status, "CANCEL") === 0)
 		{
-			// @todo 취소 코드 짜기
+			$cancel_reason = $vars->cancel_reason;
+			$cancel_amount = $vars->cancel_amount ?? -1;
+			$bank_info = array(
+                "bank" => $vars->bank,
+                "accountNumber" => $vars->accountNumber,
+                "holderName" => $vars->holderName,
+            );
+
+			$oHotopayController->_CancelPurchase($purchase_srl, $cancel_reason, $cancel_amount, $bank_info);
 		}
 
 		$this->setMessage('success_registed');
