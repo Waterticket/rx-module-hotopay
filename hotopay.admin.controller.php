@@ -155,7 +155,7 @@ class HotopayAdminController extends Hotopay
             return $this->createObject(-1, $output->message);
 
 		$this->setMessage('success_registed');
-		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminPurchaseList"));
+		$this->setRedirectUrl(Context::get('success_return_url') ?? getNotEncodedUrl("","module","admin","act","dispHotopayAdminPurchaseList"));
 	}
 
 	public function procHotopayAdminInsertPurchase()
