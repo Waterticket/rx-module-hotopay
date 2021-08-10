@@ -9,7 +9,7 @@ class Toss extends Hotopay {
         return base64_encode("$config->toss_payments_secret_key:");
     }
 
-    public function cancelOrder($purchase_srl, $cancel_reason, $cancel_amount = -1)
+    public function cancelOrder($purchase_srl, $cancel_reason, $cancel_amount = -1, $bank_info = array())
     {
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($purchase_srl);
@@ -25,6 +25,18 @@ class Toss extends Hotopay {
         {
             // 부분 환불
             $post_field["cancelAmount"] = $cancel_amount;
+        }
+
+        if($purchase->pay_method == 'v_account')
+        {
+            // 가상계좌는 환불 계좌 필수
+            if(empty($bank_info)) return $this->createObject(-1, "환불 계좌를 입력해주세요.");
+            
+            $post_field["refundReceiveAccount"] = array(
+                "bank" => $bank_info["bank"],
+                "accountNumber" => $bank_info["accountNumber"],
+                "holderName" => $bank_info["holderName"],
+            );
         }
 
         $url = self::$TOSS_URL."/v1/payments/{$payment_key}/cancel";
