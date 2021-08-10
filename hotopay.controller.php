@@ -234,6 +234,8 @@ class HotopayController extends Hotopay
 			{
 				$args->pay_status = 'WAITING_FOR_DEPOSIT';
 				executeQuery('hotopay.updatePurchaseStatus', $args);
+				
+				$this->_MessageMailer("WAITING_FOR_DEPOSIT", $purchase->data);
 				$pay_data = json_decode($purchase->data->pay_data);
 
 				$order_detail = new stdClass();
