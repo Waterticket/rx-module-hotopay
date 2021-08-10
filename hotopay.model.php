@@ -114,6 +114,12 @@ class HotopayModel extends Hotopay
             case "card":
                 return "신용카드";
 
+            case "voucher":
+                return "상품권";
+
+            case "cellphone":
+                return "휴대폰";
+
             case "paypal":
                 return "페이팔";
 

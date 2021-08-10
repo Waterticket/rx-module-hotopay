@@ -39,6 +39,18 @@
 		</div>
 
 		<div class="x_control-group">
+			<label class="x_control-label">토스 결제 수단</label>
+			<div class="x_controls">
+				<label class="no-block"><input type="checkbox" name="toss_payments_list[]" id="toss_payments_list_1" value="1" checked="checked"|cond="in_array(1, $hotopay_config->toss_payments_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="toss_payments_list[]" id="toss_payments_list_2" value="2" checked="checked"|cond="in_array(2, $hotopay_config->toss_payments_list)"> 가상계좌</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="toss_payments_list[]" id="toss_payments_list_3" value="3" checked="checked"|cond="in_array(3, $hotopay_config->toss_payments_list)"> 상품권</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="toss_payments_list[]" id="toss_payments_list_4" value="4" checked="checked"|cond="in_array(4, $hotopay_config->toss_payments_list)"> 휴대폰</label>&nbsp;
+                <br>
+				토스에서 사용할 결제 수단입니다.
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="toss_payments_client_key">클라이언트 키</label>
 			<div class="x_controls">
 				<input type="text" name="toss_payments_client_key" id="toss_payments_client_key" value="{$hotopay_config->toss_payments_client_key}"><br>

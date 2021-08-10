@@ -84,8 +84,10 @@ section#purchase_check {
 
         <section id="pay_method">
             <!--@if($toss_enabled)-->
-            <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;
-            <input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>&nbsp;
+                <!--@if(in_array(1, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(2, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(3, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vouc" value="voucher"><label for="pm_vouc"> 상품권</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(4, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_cphn" value="cellphone"><label for="pm_cphn"> 휴대폰</label>&nbsp;<!--@endif-->
             <!--@endif-->
             <!--@if($n_account_enabled)-->
             <input type="radio" name="pay_method" id="pm_nacc" value="n_account"><label for="pm_nacc"> 무통장</label>&nbsp;

@@ -91,6 +91,16 @@ class HotopayView extends Hotopay
 				$purchase_data->pay_pg = 'toss';
 				break;
 
+			case 'voucher':
+				$purchase_data->pay_method_korean = '문화상품권';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'cellphone':
+				$purchase_data->pay_method_korean = '휴대폰';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
 			case 'n_account':
 				$purchase_data->pay_method_korean = '무통장 입금';
 				$purchase_data->pay_pg = 'n_account';
