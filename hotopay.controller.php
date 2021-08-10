@@ -119,6 +119,8 @@ class HotopayController extends Hotopay
 				return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
 			}
 
+			$purchase_data = json_decode($purchase->data->products);
+
 			if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
 			{
 				if(strcmp($vars->order_id, $vars->orderId) !== 0)
@@ -193,6 +195,7 @@ class HotopayController extends Hotopay
 				}
 
 				$response_json->p_status = "success";
+				$response_json->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
@@ -235,6 +238,7 @@ class HotopayController extends Hotopay
 				$order_detail->orderId = $vars->order_id;
 				$order_detail->p_status = "success";
 				$order_detail->method = "paypal";
+				$order_detail->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $order_detail;
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
@@ -251,6 +255,7 @@ class HotopayController extends Hotopay
 				$order_detail->method = "n_account";
 				$order_detail->totalAmount = $purchase->data->product_purchase_price;
 				$order_detail->depositor_name = $pay_data->depositor_name;
+				$order_detail->product_title = $purchase_data->t;
 
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
