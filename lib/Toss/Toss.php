@@ -9,12 +9,10 @@ class Toss extends Hotopay {
         return base64_encode("$config->toss_payments_secret_key:");
     }
 
-    public function acceptOrder($purchase_srl)
+    public function acceptOrder($purchase_srl, $payment_key)
     {
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($purchase_srl);
-        $pay_data = json_decode($purchase->pay_data);
-        $payment_key = $pay_data->paymentKey;
         $order_id = 'HT'.$purchase_srl;
         $amount = $purchase->product_purchase_price;
 

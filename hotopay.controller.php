@@ -134,7 +134,7 @@ class HotopayController extends Hotopay
 				}
 
 				$tossController = new Toss();
-				$output = $tossController->acceptOrder($purchase_srl);
+				$output = $tossController->acceptOrder($purchase_srl, $vars->paymentKey);
 				$response_json = $output->data;
 				$http_code = $output->http_code;
 
