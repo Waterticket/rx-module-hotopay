@@ -385,9 +385,46 @@ class HotopayController extends Hotopay
 		}
 	}
 
-	public function _CancelPurchase($purchase_srl, $member_srl = -1)
+	public function _CancelPurchase($purchase_srl, $member_srl = -1, $cancel_reason = 'Hotopay Refund', $cancel_amount = -1, $bank_info = array())
 	{
-		
+		$logged_info = Context::get('logged_info');
+		if($member_srl == -1) $member_srl = $logged_info->member_srl;
+
+		$oHotopayModel = getModel('hotopay');
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		switch($purchase->pay_method)
+		{
+			case 'card':
+			case 'voucher':
+			case 'cellphone':
+				$tossController = new Toss();
+				$output = $tossController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
+				break;
+
+			case 'v_account':
+				$tossController = new Toss();
+				$output = $tossController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount, $bank_info);
+				break;
+
+			case 'paypal':
+				break;
+		}
+
+		if($output->error == 0)
+		{
+			$args = new stdClass();
+			$args->purchase_srl = $purchase_srl;
+			$args->pay_status = 'CANCELED';
+			$args->pay_data = $output->data;
+			executeQuery('hotopay.updatePurchaseStatus', $args);
+			executeQuery('hotopay.updatePurchaseData', $args);
+
+			return $this->createObject();
+		}
+		else
+		{
+			return $output;
+		}
 	}
 
 	public function _MessageMailer($status, $purchase_data)

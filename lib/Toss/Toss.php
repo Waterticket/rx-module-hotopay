@@ -31,7 +31,7 @@ class Toss extends Hotopay {
         {
             // 가상계좌는 환불 계좌 필수
             if(empty($bank_info)) return $this->createObject(-1, "환불 계좌를 입력해주세요.");
-            
+
             $post_field["refundReceiveAccount"] = array(
                 "bank" => $bank_info["bank"],
                 "accountNumber" => $bank_info["accountNumber"],
@@ -61,6 +61,7 @@ class Toss extends Hotopay {
         $output = json_decode($response);
 
         $response = new stdClass();
+        $response->error = 0;
         $response->http_code = $http_code;
         $response->data = $output;
 
