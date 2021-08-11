@@ -177,6 +177,9 @@
 		$('#dialog input[name="purchase_id"]').val(purchase_id);
 		$('#dialog input[name="cancel_amount"]').attr("max" , amount);
 		$('#dialog input[name="cancel_amount"]').val(amount);
+		$('#dialog select[name="bank"]').val('');
+		$('#dialog input[name="accountNumber"]').val('');
+		$('#dialog input[name="holderName"]').val('');
 		if(payment_type == 'v_account')
 		{
 			$('.bank_input').css("display","");
