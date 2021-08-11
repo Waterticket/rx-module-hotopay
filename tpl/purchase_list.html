@@ -157,7 +157,7 @@
 			<option value="카카오">카카오뱅크</option>
 		</select>
 		<label for="accountNumber">환불 계좌번호</label>
-		<input type="number" name="accountNumber" id="accountNumber" placeholder=" - 기호 없이 입력해주세요" class="text ui-widget-content ui-corner-all">
+		<input type="text" name="accountNumber" id="accountNumber" placeholder=" - 기호 없이 입력해주세요" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="text ui-widget-content ui-corner-all">
 		<label for="holderName">계좌 예금주명</label>
 		<input type="text" name="holderName" id="holderName" placeholder="홍길동" class="text ui-widget-content ui-corner-all">
 		</div>
