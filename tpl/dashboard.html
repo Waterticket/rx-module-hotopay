@@ -1,1 +1,84 @@
 <include target="__header.html" />
+<style>
+.dash_square
+{
+    float: left;
+    width: 300px;
+    height: 150px;
+    border: 2px solid #bbb;
+    border-radius: 20px;
+    padding: 15px;
+    margin: 10px;
+}
+
+.dash_square .title {
+    font-size: 1.2em;
+}
+
+.dash_square .price {
+    font-size: 2.5em;
+}
+
+.dash_square .comp.positive {
+    color: green;
+}
+
+.dash_square .comp.negative {
+    color: red;
+}
+</style>
+<h1>대시보드</h1>
+
+<div class="dash_square">
+    <p class="title">오늘의 매출 ({date('Y-m-d', strtotime("today midnight"))})</p>
+    <p class="price">{number_format($today->sum_price)}원</p>
+    <p>{number_format($today->count)}개 판매</p>
+    <p class="comp {($today->sum_price - $yesterday->sum_price >= 0) ? 'positive' : 'negative'}">어제에 비해 {number_format($today->sum_price - $yesterday->sum_price)}원</p>
+    <p class="comp {($today->count - $yesterday->count >= 0) ? 'positive' : 'negative'}">어제에 비해 {number_format($today->count - $yesterday->count)}개 판매</p>
+</div>
+
+<div class="dash_square">
+    <p class="title">이번 주 매출 ({date('Y-m-d', strtotime("last Sunday"))} ~ {date('Y-m-d', strtotime("next Saturday"))})</p>
+    <p class="price">{number_format($week->sum_price)}원</p>
+    <p>{number_format($week->count)}개 판매</p>
+    <p class="comp {($week->sum_price - $last_week->sum_price >= 0) ? 'positive' : 'negative'}">지난 주에 비해 {number_format($week->sum_price - $last_week->sum_price)}원</p>
+    <p class="comp {($week->count - $last_week->count >= 0) ? 'positive' : 'negative'}">지난 주에 비해 {number_format($week->count - $last_week->count)}개 판매</p>
+</div>
+
+<div class="dash_square">
+    <p class="title">이번 달 매출 ({date('Y-m-d', strtotime("first day of this month midnight"))} ~ {date('Y-m-d', strtotime("last day of this month midnight"))})</p>
+    <p class="price">{number_format($month->sum_price)}원</p>
+    <p>{number_format($month->count)}개 판매</p>
+    <p class="comp {($month->sum_price - $last_month->sum_price >= 0) ? 'positive' : 'negative'}">지난 달에 비해 {number_format($month->sum_price - $last_month->sum_price)}원</p>
+    <p class="comp {($month->count - $last_month->count >= 0) ? 'positive' : 'negative'}">지난 달에 비해 {number_format($month->count - $last_month->count)}개 판매</p>
+</div>
+
+<div class="dash_square">
+    <p class="title">전체 매출</p>
+    <p class="price">{number_format($total->sum_price)}원</p>
+</div>
+
+<!-- 
+<p>어제의 매출</p>
+<p>{number_format($yesterday->count)}개 {number_format($yesterday->sum_price)}원</p>
+<br>
+
+<p>이번주 매출</p>
+<p>{number_format($week->count)}개 {number_format($week->sum_price)}원</p>
+<br>
+
+<p>지난주 매출</p>
+<p>{number_format($last_week->count)}개 {number_format($last_week->sum_price)}원</p>
+<br>
+
+<p>이번달 매출</p>
+<p>{number_format($month->count)}개 {number_format($month->sum_price)}원</p>
+<br>
+
+<p>지난달 매출</p>
+<p>{number_format($last_month->count)}개 {number_format($last_month->sum_price)}원</p>
+<br>
+
+<p>누적 매출</p>
+<p>{number_format($total->count)}개 {number_format($total->sum_price)}원</p>
+<br> -->

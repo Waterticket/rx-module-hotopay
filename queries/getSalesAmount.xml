@@ -1,0 +1,14 @@
+<query id="getSalesAmount" action="select">
+	<tables>
+		<table name="hotopay_purchase" />
+	</tables>
+	<columns>
+		<column name="count(*)" alias="count" />
+        <column name="sum(product_purchase_price)" alias="sum_price" />
+	</columns>
+	<conditions>
+		<condition operation="more" column="regdate" var="startPeriod" />
+		<condition operation="less" column="regdate" var="endPeriod" />
+		<condition operation="equal" column="pay_status" var="pay_status" default="DONE" />
+	</conditions>
+</query>

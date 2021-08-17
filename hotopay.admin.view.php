@@ -34,6 +34,23 @@ class HotopayAdminView extends Hotopay
 		
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
+
+		$oHotopayAdminModel = getAdminModel('hotopay');
+		$total = $oHotopayAdminModel->getSales(0);
+		$month = $oHotopayAdminModel->getSales(strtotime("first day of this month midnight"));
+		$last_month = $oHotopayAdminModel->getSales(strtotime("first day of last month midnight"), strtotime("first day of this month midnight"));
+		$week = $oHotopayAdminModel->getSales(strtotime("last Sunday"));
+		$last_week = $oHotopayAdminModel->getSales(strtotime("last Sunday") - 604800, strtotime("last Saturday"));
+		$today = $oHotopayAdminModel->getSales(strtotime("today midnight"));
+		$yesterday = $oHotopayAdminModel->getSales(strtotime("today midnight") - 86400, strtotime("today midnight"));
+
+		Context::set('total', $total);
+		Context::set('month', $month);
+		Context::set('last_month', $last_month);
+		Context::set('week', $week);
+		Context::set('last_week', $last_week);
+		Context::set('today', $today);
+		Context::set('yesterday', $yesterday);
 		
 		// 스킨 파일 지정
 		Context::setBrowserTitle('대시보드 - Hotopay');
