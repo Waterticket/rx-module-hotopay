@@ -19,4 +19,32 @@ class HotopayAdminModel extends Hotopay
         
         return $output->data;
     }
+
+    public function setNumberComp($var, $decimal_point = 0)
+    {
+        if($var > 0)
+            return '▲ '.number_format($var, $decimal_point);
+        else if($var < 0)
+            return '▼ '.number_format(abs($var), $decimal_point);
+        else
+            return 'ㅡ '.number_format($var, $decimal_point);
+    }
+
+    public function getNumberStatus($var)
+    {
+        if($var > 0)
+            return 'positive';
+        else if($var < 0)
+            return 'negative';
+        else
+            return 'neutral';
+    }
+
+    public function getPercentage($value, $compare)
+    {
+        if($value + $compare == 0) return '0%';
+        if($value == $compare) return '100%';
+
+        return $this->setNumberComp(abs(($value-$compare)/$compare) * 100 + 100, 1) . '%';
+    }
 }
