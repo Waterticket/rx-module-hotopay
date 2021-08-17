@@ -5,9 +5,6 @@
 	<actions>
 		<!-- 관리자 액션 -->
 		<action name="dispHotopayAdminConfig" type="view" menu_name="hotopay" admin_index="true" />
-		<action name="procHotopayAdminInsertConfig" type="controller" />
-
-		
 		<action name="dispHotopayAdminProductList" type="view" />
 		<action name="dispHotopayAdminInsertProduct" type="view" />
 		<action name="dispHotopayAdminModifyProduct" type="view" />
