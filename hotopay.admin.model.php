@@ -20,11 +20,11 @@ class HotopayAdminModel extends Hotopay
         return $output->data;
     }
 
-    public function setNumberComp($var, $decimal_point = 0)
+    public function setNumberComp($var, $decimal_point = 0, $compare_value = 0)
     {
-        if($var > 0)
+        if($var > $compare_value)
             return '▲ '.number_format($var, $decimal_point);
-        else if($var < 0)
+        else if($var < $compare_value)
             return '▼ '.number_format(abs($var), $decimal_point);
         else
             return 'ㅡ '.number_format($var, $decimal_point);
@@ -46,6 +46,6 @@ class HotopayAdminModel extends Hotopay
         if($compare == 0) return '-%';
         if($value == $compare) return '100%';
 
-        return $this->setNumberComp(($value-$compare)/$compare * 100 + 100, 1) . '%';
+        return $this->setNumberComp(($value-$compare)/$compare * 100 + 100, 1, 100) . '%';
     }
 }
