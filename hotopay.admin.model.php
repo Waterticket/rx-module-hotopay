@@ -43,7 +43,7 @@ class HotopayAdminModel extends Hotopay
     public function getPercentage($value, $compare = 0)
     {
         if($value + $compare == 0) return '0%';
-        if($compare == 0) $compare = 1;
+        if($compare == 0) return '-%';
         if($value == $compare) return '100%';
 
         return $this->setNumberComp(($value-$compare)/$compare * 100 + 100, 1) . '%';
