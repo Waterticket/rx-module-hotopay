@@ -51,24 +51,24 @@ $oHotopayAdminModel = getAdminModel('hotopay');
         <p class="title">오늘의 매출 ({date('Y-m-d', strtotime("today midnight"))})</p>
         <p class="price">{number_format($today->sum_price)}원</p>
         <p>{number_format($today->count)}개 판매</p>
-        <p class="comp {$oHotopayAdminModel->getNumberStatus($today->sum_price - $yesterday->sum_price)}">어제에 비해 {$oHotopayAdminModel->setNumberComp($today->sum_price - $yesterday->sum_price)}원 ({$oHotopayAdminModel->getPercentage($today->sum_price, $yesterday->sum_price)})</p>
-        <p class="comp {$oHotopayAdminModel->getNumberStatus($today->count - $yesterday->count)}">어제에 비해 {$oHotopayAdminModel->setNumberComp($today->count - $yesterday->count)}개 판매 ({$oHotopayAdminModel->getPercentage($today->count, $yesterday->count)})</p>
+        <p class="comp {$oHotopayAdminModel->getNumberStatus($today->sum_price - $yesterday->sum_price)}"><span title="{number_format($yesterday->sum_price)}원">어제</span>에 비해 {$oHotopayAdminModel->setNumberComp($today->sum_price - $yesterday->sum_price)}원 ({$oHotopayAdminModel->getPercentage($today->sum_price, $yesterday->sum_price)})</p>
+        <p class="comp {$oHotopayAdminModel->getNumberStatus($today->count - $yesterday->count)}"><span title="{number_format($yesterday->count)}개">어제</span>에 비해 {$oHotopayAdminModel->setNumberComp($today->count - $yesterday->count)}개 판매 ({$oHotopayAdminModel->getPercentage($today->count, $yesterday->count)})</p>
     </div>
 
     <div class="dash_square">
         <p class="title">이번 주 매출 ({date('Y-m-d', strtotime("last Sunday"))} ~ {date('Y-m-d', strtotime("next Saturday"))})</p>
         <p class="price">{number_format($week->sum_price)}원</p>
         <p>{number_format($week->count)}개 판매</p>
-        <p class="comp {$oHotopayAdminModel->getNumberStatus($week->sum_price - $last_week->sum_price)}">지난 주에 비해 {$oHotopayAdminModel->setNumberComp($week->sum_price - $last_week->sum_price)}원 ({$oHotopayAdminModel->getPercentage($week->sum_price, $last_week->sum_price)})</p>
-        <p class="comp {$oHotopayAdminModel->getNumberStatus($week->count - $last_week->count)}">지난 주에 비해 {$oHotopayAdminModel->setNumberComp($week->count - $last_week->count)}개 판매 ({$oHotopayAdminModel->getPercentage($week->count, $last_week->count)})</p>
+        <p class="comp {$oHotopayAdminModel->getNumberStatus($week->sum_price - $last_week->sum_price)}"><span title="{number_format($last_week->sum_price)}원">지난 주</span>에 비해 {$oHotopayAdminModel->setNumberComp($week->sum_price - $last_week->sum_price)}원 ({$oHotopayAdminModel->getPercentage($week->sum_price, $last_week->sum_price)})</p>
+        <p class="comp {$oHotopayAdminModel->getNumberStatus($week->count - $last_week->count)}"><span title="{number_format($last_week->count)}개">지난 주</span>에 비해 {$oHotopayAdminModel->setNumberComp($week->count - $last_week->count)}개 판매 ({$oHotopayAdminModel->getPercentage($week->count, $last_week->count)})</p>
     </div>
 
     <div class="dash_square">
         <p class="title">이번 달 매출 ({date('Y-m-d', strtotime("first day of this month midnight"))} ~ {date('Y-m-d', strtotime("last day of this month midnight"))})</p>
         <p class="price">{number_format($month->sum_price)}원</p>
         <p>{number_format($month->count)}개 판매</p>
-        <p class="comp {$oHotopayAdminModel->getNumberStatus($month->sum_price - $last_month->sum_price)}">지난 달에 비해 {$oHotopayAdminModel->setNumberComp($month->sum_price - $last_month->sum_price)}원 ({$oHotopayAdminModel->getPercentage($month->sum_price, $last_month->sum_price)})</p>
-        <p class="comp {$oHotopayAdminModel->getNumberStatus($month->count - $last_month->count)}">지난 달에 비해 {$oHotopayAdminModel->setNumberComp($month->count - $last_month->count)}개 판매 ({$oHotopayAdminModel->getPercentage($month->count, $last_month->count)})</p>
+        <p class="comp {$oHotopayAdminModel->getNumberStatus($month->sum_price - $last_month->sum_price)}"><span title="{number_format($last_month->sum_price)}원">지난 달</span>에 비해 {$oHotopayAdminModel->setNumberComp($month->sum_price - $last_month->sum_price)}원 ({$oHotopayAdminModel->getPercentage($month->sum_price, $last_month->sum_price)})</p>
+        <p class="comp {$oHotopayAdminModel->getNumberStatus($month->count - $last_month->count)}"><span title="{number_format($last_month->count)}개">지난 달</span>에 비해 {$oHotopayAdminModel->setNumberComp($month->count - $last_month->count)}개 판매 ({$oHotopayAdminModel->getPercentage($month->count, $last_month->count)})</p>
     </div>
 
     <div class="dash_square">
