@@ -26,6 +26,19 @@ class HotopayAdminView extends Hotopay
 
 		Context::set('update_needed', (int)$update_needed);
 	}
+
+	public function dispHotopayAdminDashBoard()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+		
+		// 스킨 파일 지정
+		Context::setBrowserTitle('대시보드 - Hotopay');
+		$this->setTemplateFile('dashboard');
+	}
 	
 	/**
 	 * 관리자 설정 화면 예제
