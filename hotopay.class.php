@@ -1,15 +1,17 @@
 <?php
+/**
+ * Hoto Pay
+ * 
+ * Generated with https://www.poesis.org/tools/modulegen/
+ * 
+ * @package HotoPay
+ * @author Waterticket
+ * @copyright Copyright (c) Waterticket
+ */
 
 include __DIR__ . '/lib/autoload.php';
 // Hotopay Autoloader load
 
-/**
- * Hoto Pay
- * 
- * Copyright (c) Waterticket
- * 
- * Generated with https://www.poesis.org/tools/modulegen/
- */
 class Hotopay extends ModuleObject
 {
 	/**
@@ -32,6 +34,11 @@ class Hotopay extends ModuleObject
 		// array('comment.deleteComment', 'after', 'controller', 'triggerAfterDeleteComment'),
 	);
 
+	/**
+	 * 깃허브로부터 업데이트 데이터를 체크합니다.
+	 * 
+	 * @return boolean
+	 */
 	public function githubUpdateCheck()
 	{
 		$api_url = 'https://api.github.com/repos/Waterticket/rx-module-hotopay/releases/latest';

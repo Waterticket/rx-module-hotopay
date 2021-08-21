@@ -1,14 +1,24 @@
 <?php
-
 /**
  * Hoto Pay
+ * Hoto Pay Controller
  * 
  * Copyright (c) Waterticket
  * 
  * Generated with https://www.poesis.org/tools/modulegen/
+ * 
+ * @package HotoPay
+ * @author Waterticket
+ * @copyright Copyright (c) Waterticket
  */
+
 class HotopayController extends Hotopay
 {
+	/**
+	 * PG사로 데이터를 넘기기 전에 Form에서 넘어온 데이터를 처리합니다
+	 * 
+	 * @return void
+	 */
 	public function procHotopayOrderProcess()
 	{
 		$config = $this->getConfig();
@@ -103,6 +113,12 @@ class HotopayController extends Hotopay
 		$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
 	}
 
+	/**
+	 * PG사에서 넘어온 결제 데이터를 처리합니다
+	 * Success라면 결제 승인 명령을 PG사로 보냅니다
+	 * 
+	 * @return void
+	 */
 	public function procHotopayPayStatus()
 	{
 		$config = $this->getConfig();
@@ -286,6 +302,11 @@ class HotopayController extends Hotopay
 		}
 	}
 
+	/**
+	 * Toss Payments에서 넘어오는 결제 Callback을 처리합니다
+	 * 
+	 * @return void
+	 */
 	public function procHotopayTossPaymentsCallback()
 	{
 		Context::setRequestMethod('JSON');
@@ -333,6 +354,13 @@ class HotopayController extends Hotopay
 		die();
 	}
 
+	/**
+	 * 결제가 완료되었다면 결제 완료 알림을 보내며, 상품 구매를 최종 승인합니다
+	 * 
+	 * @param int $purchase_srl 결제 번호를 받습니다.
+	 * @param int $member_srl RX에서 멤버 번호를 받습니다.
+	 * @return void
+	 */
 	public function _ActivePurchase($purchase_srl, $member_srl = -1)
 	{
 		$args = new stdClass();
@@ -374,6 +402,15 @@ class HotopayController extends Hotopay
 		}
 	}
 
+	/**
+	 * 결제를 환불합니다.
+	 * 
+	 * @param int $purchase_srl 결제 번호입니다.
+	 * @param string $cancel_reason 환불 사유입니다. 클라이언트에게 보여집니다.
+	 * @param int $cancel_amount 환불 금액입니다. -1이면 전체환불, 0보다 크면 입력한 금액만큼 환불합니다.
+	 * @param array $bank_info 환불 은행 정보입니다. 가상 계좌 결제에서만 사용됩니다.
+	 * @return object
+	 */
 	public function _CancelPurchase($purchase_srl, $cancel_reason = 'Hotopay Refund', $cancel_amount = -1, $bank_info = array())
 	{
 		$oHotopayModel = getModel('hotopay');
@@ -443,6 +480,13 @@ class HotopayController extends Hotopay
 		}
 	}
 
+	/**
+	 * 결제 상태에 따라서 알림을 보내주는 함수 입니다.
+	 * 
+	 * @param string $status 상태코드 입니다.
+	 * @param object $purchase_data 결제 데이터입니다. DB에서 나온 데이터를 그대로 넣어주시면 됩니다.
+	 * @return void
+	 */
 	public function _MessageMailer($status, $purchase_data)
 	{
 		if($purchase_data == null) return false;
@@ -518,6 +562,13 @@ class HotopayController extends Hotopay
 		}
 	}
 
+	/**
+	 * 결제 상태에 따라 관리자에게 알림을 보내주는 함수입니다.
+	 * 
+	 * @param string $status 상태코드 입니다.
+	 * @param object $purchase 결제 데이터입니다. DB에서 나온 데이터를 그대로 넣어주시면 됩니다.
+	 * @return void
+	 */
 	public function _AdminMailer($status, $purchase)
 	{
 		$member_srl = $purchase->member_srl;
@@ -536,6 +587,14 @@ class HotopayController extends Hotopay
 		}
 	}
 
+	/**
+	 * 멤버 정보에 있는 메일 주소로 메일을 보내는 함수입니다.
+	 * 
+	 * @param int $member_srl 멤버 번호입니다.
+	 * @param string $mail_title 메일 제목입니다.
+	 * @param string $mail_content 메일 내용입니다.
+	 * @return void
+	 */
 	public function _sendMail($member_srl, $mail_title, $mail_content)
 	{
 		$oMemberModel = getModel('member');
@@ -550,6 +609,13 @@ class HotopayController extends Hotopay
 		return $output;
 	}
 
+	/**
+	 * 멤버 정보에 있는 전화번호로 SMS를 보내는 함수입니다.
+	 * 
+	 * @param int $member_srl 멤버 번호입니다.
+	 * @param string $content SMS 내용입니다.
+	 * @return void
+	 */
 	public function _sendSMS($member_srl, $content)
 	{
 		$oMemberModel = getModel('member');
