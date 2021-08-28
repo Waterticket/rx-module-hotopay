@@ -182,7 +182,7 @@ class HotopayModel extends Hotopay
 
         $string = str_replace("[쇼핑몰명]", $config->shop_name, $string);
         $string = str_replace("[상품명]", mb_substr($purchase_data->t, 0, 10), $string);
-        $string = str_replace("[주문확인링크]", '<a href="'.getUrl("","mid","hotopay","act","dispHotopayOrderList").'" target="_blank" title="주문 확인하기">[주문 확인하기]</a>', $string);
+        $string = str_replace("[주문확인링크]", '<a href="'.mb_substr(Context::getDefaultUrl(),0,-1).getUrl("","mid","hotopay","act","dispHotopayOrderList").'" target="_blank" title="주문 확인하기">[주문 확인하기]</a>', $string);
         $string = str_replace("[계좌번호]", $account, $string);
         $string = str_replace("[주문금액]", number_format($purchase->product_purchase_price), $string);
         $string = str_replace("[주문번호]", 'HT'.$purchase->purchase_srl, $string);
