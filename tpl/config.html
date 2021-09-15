@@ -90,6 +90,37 @@
 	</section>
 
 	<section class="section">
+		<h1>카카오페이 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="kakaopay_enabled">카카오페이 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="kakaopay_enabled" id="kakaopay_enabled" checked="checked"|cond="$hotopay_config->kakaopay_enabled == 'Y'">&nbsp;카카오페이 결제 방식을 활성화 합니다.</label>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="kakaopay_admin_key">어드민 키 (ADMIN_KEY)</label>
+			<div class="x_controls">
+				<input type="text" name="kakaopay_admin_key" id="kakaopay_admin_key" value="{$hotopay_config->kakaopay_admin_key}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="kakaopay_cid_key">가맹점 코드 (cid)</label>
+			<div class="x_controls">
+				<input type="text" name="kakaopay_cid_key" id="kakaopay_cid_key" value="{$hotopay_config->kakaopay_cid_key}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="kakaopay_cid_secret_key">가맹점 코드 인증키 (cid_secret))</label>
+			<div class="x_controls">
+				<input type="text" name="kakaopay_cid_secret_key" id="kakaopay_cid_secret_key" value="{$hotopay_config->kakaopay_cid_secret_key}"><br>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
 		<h1>무통장 입금 설정</h1>
 		<div class="x_control-group">
 			<label class="x_control-label" for="n_account_enabled">무통장 입금 활성화</label>

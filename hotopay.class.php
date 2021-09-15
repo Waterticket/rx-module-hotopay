@@ -100,6 +100,7 @@ class Hotopay extends ModuleObject
 			
 			if(!isset(self::$_config_cache->toss_enabled)) self::$_config_cache->toss_enabled = 'N'; // 토스 활성화
 			if(!isset(self::$_config_cache->paypal_enabled)) self::$_config_cache->paypal_enabled = 'N'; // 페이팔 활성화
+			if(!isset(self::$_config_cache->kakaopay_enabled)) self::$_config_cache->kakaopay_enabled = 'N'; // 카카오페이 활성화
 			if(!isset(self::$_config_cache->n_account_enabled)) self::$_config_cache->n_account_enabled = 'N'; // 무통장입금 활성화
 			
 			if(!isset(self::$_config_cache->toss_payments_list)) self::$_config_cache->toss_payments_list = array(1,2); // 토스 결제 방식 목록
@@ -108,6 +109,9 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->toss_payments_secret_key)) self::$_config_cache->toss_payments_secret_key = ''; // 토스 시크릿 키
 			if(!isset(self::$_config_cache->paypal_client_key)) self::$_config_cache->paypal_client_key = ''; // 페이팔 클라이언트 키
 			if(!isset(self::$_config_cache->paypal_secret_key)) self::$_config_cache->paypal_secret_key = ''; // 페이팔 시크릿 키
+			if(!isset(self::$_config_cache->kakaopay_admin_key)) self::$_config_cache->kakaopay_admin_key = ''; // 카카오페이 어드민 키
+			if(!isset(self::$_config_cache->kakaopay_cid_key)) self::$_config_cache->kakaopay_cid_key = ''; // 카카오페이 가맹점 코드
+			if(!isset(self::$_config_cache->kakaopay_cid_secret_key)) self::$_config_cache->kakaopay_cid_secret_key = ''; // 카카오페이 가맹점 코드 인증키
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
