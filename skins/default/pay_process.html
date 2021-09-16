@@ -45,13 +45,25 @@ function openPay()
 </script>
 
 <!--@elseif($purchase->pay_pg == 'paypal')-->
-{@
-$pay_data = json_decode($purchase->pay_data);
-}
 <script>
 function openPay()
 {
-  var url ='{$pay_data->links->approve->href}';
+  var url ='{$purchase->pay_data->links->approve->href}';
+  if(url != '') location.href = url;
+}
+</script>
+
+<!--@elseif($purchase->pay_pg == 'kakaopay')-->
+<script>
+function openPay()
+{
+  var pc_url ='{$purchase->pay_data->data->next_redirect_pc_url}';
+  var mobile_url ='{$purchase->pay_data->data->next_redirect_mobile_url}';
+  var url = '';
+
+  if(mobilecheck()) {url = mobile_url;}
+  else {url = pc_url;}
+
   if(url != '') location.href = url;
 }
 </script>

@@ -141,6 +141,9 @@ class HotopayModel extends Hotopay
             case "paypal":
                 return "페이팔";
 
+            case "kakaopay":
+                return "카카오페이";
+
             case "gpay":
                 return "구글 페이";
 

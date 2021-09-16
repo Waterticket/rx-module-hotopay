@@ -4,7 +4,7 @@
 <div id="p_content">
     <img id="p_icn" src="/modules/hotopay/skins/default/img/check-circle-outline.svg">
     <p id="p_title">
-        <!--@if($pay_data->status == "DONE" || $pay_data->status == "APPROVED")-->구매가 완료되었습니다.<!--@else-->구매를 완료해주세요.<!--@endif-->
+        <!--@if($pay_data->status == "DONE" || $pay_data->status == "APPROVED" || $pay_data->p_status == 'success')-->구매가 완료되었습니다.<!--@else-->구매를 완료해주세요.<!--@endif-->
     </p>
 
     <!--@if($pay_data->method == "카드" || $pay_data->method == "문화상품권" || $pay_data->method == "휴대폰" )-->
@@ -125,7 +125,26 @@
         <p id="s_title">결제 금액</p>
         <p id="s_value">{number_format($pay_data->purchase_units[0]->amount->value)} {$pay_data->purchase_units[0]->amount->currency_code}</p>
     </div>
-    {@ debugPrint($pay_data); }
+    <!--@elseif($pay_data->method == "kakaopay")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">상품명</p>
+        <p id="s_value">{$pay_data->product_title}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">카카오페이</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->amount->total)}</p>
+    </div>
     <!--@endif-->
 
     <div id="btn_layer">

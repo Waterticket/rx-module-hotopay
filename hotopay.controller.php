@@ -101,6 +101,12 @@ class HotopayController extends Hotopay
 				$args->pay_data = json_encode($order_obj);
 				break;
 
+			case 'kakaopay':
+				$kakaoPayController = new KakaoPay();
+				$order_obj = $kakaoPayController->createOrder($args, $order_id, $logged_info->user_id);
+				$args->pay_data = json_encode($order_obj);
+				break;
+
 			case "n_account":
 				$order_obj = new stdClass();
 				$order_obj->depositor_name = mb_substr(($logged_info->user_name ?: ('구매자'.rand(100, 999))), 0, 6);
@@ -123,6 +129,7 @@ class HotopayController extends Hotopay
 	{
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
+		$logged_info = Context::get('logged_info');
 
 		if(strcmp($vars->pay_status, "success") === 0) // 결제 성공
 		{
@@ -246,6 +253,56 @@ class HotopayController extends Hotopay
 				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
 			}
+			else if(strcmp($vars->pay_pg, "kakaopay") === 0) // 카카오페이 처리
+			{
+				if(empty($vars->pg_token))
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1005)");
+				}
+
+				$pg_token = $vars->pg_token;
+
+				$kakaoPayController = new KakaoPay();
+				$output = $kakaoPayController->acceptOrder($purchase_srl, $pg_token, $logged_info->user_id);
+				$response_json = $output->data;
+				$http_code = $output->http_code;
+
+				$args->pay_data = json_encode($response_json);
+				$args->pay_status = isset($response_json->approved_at) ? 'DONE' : 'FAILED';
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				executeQuery('hotopay.updatePurchaseData', $args);
+
+				if($http_code !== 200)
+				{
+					$_SESSION['hotopay_'.$vars->order_id] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->order_id,
+						"code" => $response_json->code,
+						"message" => $response_json->msg
+					);
+
+					$args = new stdClass();
+					$args->purchase_srl = substr($vars->order_id, 2);
+					$args->pay_status = "FAILED";
+					executeQuery('hotopay.updatePurchaseStatus', $args);
+
+					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					return;
+				}
+
+				if(isset($response_json->approved_at)) // 결제 완료에 경우
+				{
+					$this->_ActivePurchase($purchase_srl);
+				}
+
+				$response_json->method = 'kakaopay';
+				$response_json->p_status = "success";
+				$response_json->product_title = $purchase_data->t;
+				$response_json->orderId = $vars->order_id;
+				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
+				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				return;
+			}
 			else if(strcmp($vars->pay_pg, "n_account") === 0) // 무통장 처리
 			{
 				$args->pay_status = 'WAITING_FOR_DEPOSIT';
@@ -290,6 +347,13 @@ class HotopayController extends Hotopay
 
 			if(strcmp($code, "PAY_PROCESS_CANCELED") === 0)
 			{
+				$res_array['status'] = "CANCELED";
+				$args->pay_status = "CANCELED";
+			}
+
+			if(strcmp($vars->pay_status, "cancel") === 0)
+			{
+				$res_array['code'] = "CANCELED";
 				$res_array['status'] = "CANCELED";
 				$args->pay_status = "CANCELED";
 			}
@@ -436,6 +500,11 @@ class HotopayController extends Hotopay
 			case 'paypal':
 				$paypalController = new Paypal();
 				$output = $paypalController->cancelOrder($purchase_srl, $cancel_reason, $oHotopayModel->changeCurrency('KRW', 'USD', $cancel_amount));
+				break;
+
+			case 'kakaopay':
+				$kakaoPayController = new KakaoPay();
+				$output = $kakaoPayController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
 				break;
 			
 			case 'n_account':

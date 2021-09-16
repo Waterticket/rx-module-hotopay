@@ -76,6 +76,9 @@ class HotopayView extends Hotopay
 		{
 			return $this->createObject(-1, "결제 실패. (CODE: -1000)");
 		}
+
+		if(!empty($purchase_data->pay_data)) // pay_data가 있다면
+			$purchase_data->pay_data = json_decode($purchase_data->pay_data);
 		
 		$products = json_decode($purchase_data->products);
 		$purchase_data->title = $products->t;
@@ -99,6 +102,11 @@ class HotopayView extends Hotopay
 			case 'cellphone':
 				$purchase_data->pay_method_korean = '휴대폰';
 				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'kakaopay':
+				$purchase_data->pay_method_korean = '카카오페이';
+				$purchase_data->pay_pg = 'kakaopay';
 				break;
 
 			case 'n_account':
