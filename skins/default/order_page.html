@@ -95,6 +95,9 @@ section#purchase_check {
             <!--@if($paypal_enabled)-->
             <input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> PayPal</label>
             <!--@endif-->
+            <!--@if($kakaopay_enabled)-->
+            <input type="radio" name="pay_method" id="pm_kapy" value="kakaopay"><label for="pm_kapy"> 카카오</label>
+            <!--@endif-->
         </section>
         <section id="result">
             <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
