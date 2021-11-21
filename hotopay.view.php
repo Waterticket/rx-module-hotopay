@@ -23,6 +23,12 @@ class HotopayView extends Hotopay
 	 */
 	public function dispHotopayIndex()
 	{
+		$logged_info = Context::get('logged_info');
+		if($logged_info->member_srl != 4)
+		{
+			throw new \Rhymix\Framework\Exception('잘못된 접근입니다.');
+		}
+
 		// 스킨 파일명 지정
 		$this->setTemplateFile('index');
 	}
