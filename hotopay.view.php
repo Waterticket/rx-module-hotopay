@@ -125,6 +125,11 @@ class HotopayView extends Hotopay
 				$purchase_data->pay_method_korean = 'PayPal';
 				$purchase_data->pay_pg = 'paypal';
 				break;
+
+			case 'toss':
+				$purchase_data->pay_method_korean = '토스결제';
+				$purchase_data->pay_pg = 'toss';
+				break;
 		}
 
 
