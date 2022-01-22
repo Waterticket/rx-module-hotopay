@@ -7,7 +7,7 @@
         <!--@if($pay_data->status == "DONE" || $pay_data->status == "APPROVED" || $pay_data->p_status == 'success')-->구매가 완료되었습니다.<!--@else-->구매를 완료해주세요.<!--@endif-->
     </p>
 
-    <!--@if($pay_data->method == "카드" || $pay_data->method == "문화상품권" || $pay_data->method == "휴대폰" )-->
+    <!--@if($pay_data->method == "카드" || $pay_data->method == "계좌이체" || $pay_data->method == "문화상품권" || $pay_data->method == "휴대폰" )-->
     <div id="s_content">
         <p id="s_title">결제 ID</p>
         <p id="s_value">{$pay_data->orderId}</p>

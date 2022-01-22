@@ -126,6 +126,9 @@ class HotopayModel extends Hotopay
             case "n_account":
                 return "무통장 입금";
 
+            case "ts_account":
+                return "계좌이체";
+
             case "v_account":
                 return "가상계좌";
 
@@ -146,6 +149,9 @@ class HotopayModel extends Hotopay
 
             case "gpay":
                 return "구글 페이";
+
+            case "toss":
+                return "토스앱";
 
             default:
                 return $pay_method;
