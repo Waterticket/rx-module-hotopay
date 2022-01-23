@@ -36,7 +36,10 @@
 		<action name="procHotopayTossPaymentsCallback" type="controller" route="api/v1/toss/paymentCallback" check_csrf="false" />
 
 		<!-- 일반 액션 -->
-		<action name="dispHotopayOrderList" type="view" route="orderList" />
+		<action name="dispHotopayOrderList" type="view">
+			<route route="orderList" />
+			<route route="orderList/$target_member_srl:int" />
+		</action>
 	</actions>
 	<menus>
 		<menu name="hotopay" type="all">

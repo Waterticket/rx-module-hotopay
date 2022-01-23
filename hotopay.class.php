@@ -19,7 +19,7 @@ class Hotopay extends ModuleObject
 	 * checkUpdate(), moduleUpdate() 등에서 체크 및 생성 루틴을 중복으로 작성하지 않아도 된다.
 	 */
 	protected static $_insert_triggers = array(
-		// array('document.insertDocument', 'after', 'controller', 'triggerAfterInsertDocument'),
+		array('member.getMemberMenu', 'after', 'controller', 'triggerAddMemberMenu'),
 		// array('document.updateDocument', 'after', 'controller', 'triggerAfterUpdateDocument'),
 		// array('document.deleteDocument', 'after', 'controller', 'triggerAfterDeleteDocument'),
 	);

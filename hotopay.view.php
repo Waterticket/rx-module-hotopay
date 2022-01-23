@@ -170,9 +170,18 @@ class HotopayView extends Hotopay
 	public function dispHotopayOrderList()
 	{
 		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
 		Context::set('hotopay_config', $config);
 
 		$logged_info = Context::get('logged_info');
+		if($vars->target_member_srl && $logged_info->is_admin == 'Y')
+		{
+			$member_srl = $vars->target_member_srl;
+			$logged_info = MemberModel::getMemberInfoByMemberSrl($member_srl);
+			
+			if(!$logged_info->member_srl) return $this->createObject(-1, "존재하지 않는 회원입니다.");
+		}
+
 		Context::set('logged_info', $logged_info);
 
 		if(empty($logged_info->member_srl))

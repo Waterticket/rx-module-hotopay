@@ -724,4 +724,17 @@ class HotopayController extends Hotopay
 
 		return $output;
 	}
+
+	/**
+	 * 멤버 메뉴에 목록을 추가합니다
+	 * 
+	 * @param object $obj member.getMemberMenu 트리거 데이터가 들어있습니다.
+	 * @return void
+	 */
+	public function triggerAddMemberMenu($obj)
+	{
+		$oMemberController = getController('member');
+		$url = getUrl('', 'mid', 'hotopay', 'act', 'dispHotopayOrderList', 'target_member_srl', $obj->member_srl);
+		$oMemberController->addMemberPopupMenu($url, '회원 구매 기록');
+	}
 }
