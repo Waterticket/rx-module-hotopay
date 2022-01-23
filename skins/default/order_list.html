@@ -104,7 +104,7 @@ $daily = array('일','월','화','수','목','금','토');
                         <span class="ht-order-thumbnail"><img src="{$product->product_pic_src}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-first-item">{$product_data->t}<br>({$option_array[$option[$product_data->bp[0]]][0]})</span>
+                        <span class="ht-order-first-item">{$product_data->t}<br>({$option_array[$option[$product_data->bp[0]]][0]}){$product_data->d}</span>
                     </td>
                     <td>
                         <span class="ht-order-total">₩{number_format($purchase->product_purchase_price)}</span>

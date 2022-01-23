@@ -189,7 +189,14 @@ class HotopayView extends Hotopay
 			return $this->createObject(-1, "Query Error (code: 1001)");
 		}
 
-		Context::set('purchase_list', array_reverse($output->data));
+		$purchase_list = array_reverse($output->data);
+
+
+		$obj = new stdClass();
+		$obj->purchase_list = &$purchase_list;
+		ModuleHandler::triggerCall('hotopay.displayOrderList', 'before', $obj);
+
+		Context::set('purchase_list', $purchase_list);
 
 		$this->setTemplateFile('order_list');
 	}
