@@ -72,7 +72,7 @@ function openPay()
 <script>
 function openPay()
 {
-  var url = window.location.origin + '/hotopay/payStatus/n_account/success/HT{$vars->order_id}';
+  var url = '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","n_account","pay_status","success","order_id","HT".$vars->order_id)}';
   location.href = url;
 }
 </script>
@@ -81,7 +81,7 @@ function openPay()
 <script>
 function abortPay()
 {
-  window.location = window.location.origin + '/hotopay/payStatus/pg/fail/HT{$vars->order_id}' + encodeURI('?code=PAY_PROCESS_CANCELED&message=유저가 결제를 취소하였습니다.');
+  window.location = '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","pg","pay_status","fail","order_id","HT".$vars->order_id,"code","PAY_PROCESS_CANCELED","message","유저가 결제를 취소하였습니다.")}';
 }
 
 $(document).ready(function() {
