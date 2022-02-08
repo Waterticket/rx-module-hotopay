@@ -1,5 +1,9 @@
 <include target="__header.html" />
 
+{@
+	$is_rhymix2 = (defined('RX_VERSION') && version_compare(RX_VERSION, '2.0.0', '>='));
+}
+
 <form class="x_form-horizontal" action="./" method="post" id="hotopay">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayAdminInsertConfig" />
@@ -34,7 +38,10 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="toss_enabled">Toss 활성화</label>
 			<div class="x_controls">
-				<label><input type="checkbox" name="toss_enabled" id="toss_enabled" checked="checked"|cond="$hotopay_config->toss_enabled == 'Y'">&nbsp;Toss 결제 방식을 활성화 합니다.</label>
+				<label><input type="checkbox" name="toss_enabled" id="toss_enabled" checked="checked"|cond="$hotopay_config->toss_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;Toss 결제 방식을 활성화 합니다.</label>
+				<div class="message error" cond="!$is_rhymix2">
+					<p>라이믹스 2.0 미만에서는 Toss 결제 수단을 사용할 수 없습니다.</p>
+				</div>
 			</div>
 		</div>
 
@@ -72,7 +79,10 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="paypal_enabled">Paypal 활성화</label>
 			<div class="x_controls">
-				<label><input type="checkbox" name="paypal_enabled" id="paypal_enabled" checked="checked"|cond="$hotopay_config->paypal_enabled == 'Y'">&nbsp;Paypal 결제 방식을 활성화 합니다.</label>
+				<label><input type="checkbox" name="paypal_enabled" id="paypal_enabled" checked="checked"|cond="$hotopay_config->paypal_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;Paypal 결제 방식을 활성화 합니다.</label>
+				<div class="message error" cond="!$is_rhymix2">
+					<p>라이믹스 2.0 미만에서는 Paypal 결제 수단을 사용할 수 없습니다.</p>
+				</div>
 			</div>
 		</div>
 
@@ -96,7 +106,10 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="kakaopay_enabled">카카오페이 활성화</label>
 			<div class="x_controls">
-				<label><input type="checkbox" name="kakaopay_enabled" id="kakaopay_enabled" checked="checked"|cond="$hotopay_config->kakaopay_enabled == 'Y'">&nbsp;카카오페이 결제 방식을 활성화 합니다.</label>
+				<label><input type="checkbox" name="kakaopay_enabled" id="kakaopay_enabled" checked="checked"|cond="$hotopay_config->kakaopay_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;카카오페이 결제 방식을 활성화 합니다.</label>
+				<div class="message error" cond="!$is_rhymix2">
+					<p>라이믹스 2.0 미만에서는 카카오페이 결제 수단을 사용할 수 없습니다.</p>
+				</div>
 			</div>
 		</div>
 
