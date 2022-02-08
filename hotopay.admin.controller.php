@@ -279,7 +279,7 @@ class HotopayAdminController extends Hotopay
 
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');
-		$this->setRedirectUrl(getUrl('','mid','admin','act','dispHotopayAdminProductList'));
+		$this->setRedirectUrl(getNotEncodedUrl('','mid','admin','act','dispHotopayAdminProductList'));
 	}
 
 	public function procHotopayAdminInsertNotification()

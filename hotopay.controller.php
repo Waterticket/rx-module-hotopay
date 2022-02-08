@@ -116,7 +116,7 @@ class HotopayController extends Hotopay
 
 		executeQuery("hotopay.insertPurchase", $args);
 
-		$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
+		$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
 	}
 
 	/**
@@ -181,7 +181,7 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 					//echo $http_code; //{"code":"ALREADY_PROCESSED_PAYMENT","message":"이미 처리된 결제 입니다."}
 				}
@@ -202,7 +202,7 @@ class HotopayController extends Hotopay
 				$response_json->p_status = "success";
 				$response_json->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
 			}
 			else if(strcmp($vars->pay_pg, "paypal") === 0) // PayPal 처리
@@ -241,7 +241,7 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 				}
 
@@ -250,7 +250,7 @@ class HotopayController extends Hotopay
 				$order_detail->method = "paypal";
 				$order_detail->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $order_detail;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
 			}
 			else if(strcmp($vars->pay_pg, "kakaopay") === 0) // 카카오페이 처리
@@ -286,7 +286,7 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 				}
 
@@ -300,7 +300,7 @@ class HotopayController extends Hotopay
 				$response_json->product_title = $purchase_data->t;
 				$response_json->orderId = $vars->order_id;
 				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
 			else if(strcmp($vars->pay_pg, "n_account") === 0) // 무통장 처리
@@ -320,7 +320,7 @@ class HotopayController extends Hotopay
 				$order_detail->product_title = $purchase_data->t;
 
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
 			else
@@ -362,7 +362,7 @@ class HotopayController extends Hotopay
 			
 			$_SESSION['hotopay_'.$vars->orderId] = (object) $res_array;
 
-			$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+			$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 		}
 	}
 
