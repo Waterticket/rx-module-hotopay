@@ -71,7 +71,7 @@ section#purchase_check {
                         <select name="opt[{$p_srl}]" onchange="optionChange(this.value,{$p_srl})">
                             <!--@foreach($f_opt as $opt_no => $_opt)-->
                             <!--@if(!empty($_opt[0]))-->
-                            <option value="{$opt_no}">{$_opt[0]}<!--@if(!empty($_opt[1]))--> {($_opt[1]>0)?'(+'.number_format($_opt[1]).'원)':''}<!--@endif--></option>
+                            <option value="{$opt_no}">{$_opt[0]}<!--@if(!empty($_opt[1]))--> {($_opt[1]!=0)?'('.(($_opt[1]>0)?'+':'').number_format($_opt[1]).'원)':''}<!--@endif--></option>
                             <!--@endif-->
                             <!--@endforeach-->
                         </select>
