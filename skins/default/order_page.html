@@ -86,23 +86,23 @@ section#purchase_check {
 
         <section id="pay_method">
             <!--@if($toss_enabled)-->
-                <!--@if(in_array(1, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_card" value="card" checked="checked"><label for="pm_card"> 카드</label>&nbsp;<!--@endif-->
-                <!--@if(in_array(6, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_acct" value="ts_account"><label for="pm_acct"> 계좌이체</label>&nbsp;<!--@endif-->
-                <!--@if(in_array(2, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vacc" value="v_account"><label for="pm_vacc"> 가상계좌</label>&nbsp;<!--@endif-->
-                <!--@if(in_array(3, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vouc" value="voucher"><label for="pm_vouc"> 상품권</label>&nbsp;<!--@endif-->
-                <!--@if(in_array(4, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_cphn" value="cellphone"><label for="pm_cphn"> 휴대폰</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(1, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_card" value="card" checked="checked" required="required"><label for="pm_card"> 카드</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(6, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_acct" value="ts_account" required="required"><label for="pm_acct"> 계좌이체</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(2, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vacc" value="v_account" required="required"><label for="pm_vacc"> 가상계좌</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(3, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vouc" value="voucher" required="required"><label for="pm_vouc"> 상품권</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(4, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_cphn" value="cellphone" required="required"><label for="pm_cphn"> 휴대폰</label>&nbsp;<!--@endif-->
             <!--@endif-->
             <!--@if($n_account_enabled)-->
-            <input type="radio" name="pay_method" id="pm_nacc" value="n_account"><label for="pm_nacc"> 무통장</label>&nbsp;
+            <input type="radio" name="pay_method" id="pm_nacc" value="n_account" required="required"><label for="pm_nacc"> 무통장 입금</label>&nbsp;
             <!--@endif-->
             <!--@if($toss_enabled)-->
-                <!--@if(in_array(5, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_toss" value="toss"><label for="pm_toss"> <img src="/modules/hotopay/skins/default/img/toss_payment_icon.png" style="width: 53px; display: inline;" alt="토스" title="토스" /></label>&nbsp;<!--@endif-->
+                <!--@if(in_array(5, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_toss" value="toss" required="required"><label for="pm_toss"> <img src="/modules/hotopay/skins/default/img/toss_payment_icon.png" style="width: 53px; display: inline;" alt="토스" title="토스" /></label>&nbsp;<!--@endif-->
             <!--@endif-->
             <!--@if($kakaopay_enabled)-->
-            <input type="radio" name="pay_method" id="pm_kapy" value="kakaopay"><label for="pm_kapy"> <img src="/modules/hotopay/skins/default/img/kakao_payment_icon_yellow_small.png" style="width: 53px; display: inline;" alt="카카오페이" title="카카오페이" /></label>
+            <input type="radio" name="pay_method" id="pm_kapy" value="kakaopay" required="required"><label for="pm_kapy"> <img src="/modules/hotopay/skins/default/img/kakao_payment_icon_yellow_small.png" style="width: 53px; display: inline;" alt="카카오페이" title="카카오페이" /></label>
             <!--@endif-->
             <!--@if($paypal_enabled)-->
-            <input type="radio" name="pay_method" id="pm_payp" value="paypal"><label for="pm_payp"> <img src="/modules/hotopay/skins/default/img/paypal_PP_logo_h_100x26.png" style="width: 53px; display: inline-block;" alt="PayPal" title="PayPal" /></label>
+            <input type="radio" name="pay_method" id="pm_payp" value="paypal" required="required"><label for="pm_payp"> <img src="/modules/hotopay/skins/default/img/paypal_PP_logo_h_100x26.png" style="width: 53px; display: inline-block;" alt="PayPal" title="PayPal" /></label>
             <!--@endif-->
         </section>
         <section id="result">
