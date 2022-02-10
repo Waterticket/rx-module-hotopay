@@ -120,6 +120,7 @@ class HotopayAdminController extends Hotopay
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(Context::get('success_return_url'));
+		return $args;
 	}
 
 	public function procHotopayAdminPurchaseStatusChange()
