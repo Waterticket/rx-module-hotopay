@@ -143,6 +143,11 @@ class HotopayController extends Hotopay
 				return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
 			}
 
+			if($purchase->data->pay_status === "DONE")
+			{
+				return $this->createObject(-1, "이미 결제가 완료되었습니다.");
+			}
+
 			$purchase_data = json_decode($purchase->data->products);
 
 			if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
