@@ -181,6 +181,14 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $response_json;
+					$trigger_obj->pay_pg = "toss";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 					//echo $http_code; //{"code":"ALREADY_PROCESSED_PAYMENT","message":"이미 처리된 결제 입니다."}
@@ -202,6 +210,15 @@ class HotopayController extends Hotopay
 				$response_json->p_status = "success";
 				$response_json->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $purchase_srl;
+				$trigger_obj->pay_status = $response_json->status;
+				$trigger_obj->pay_data = $response_json;
+				$trigger_obj->pay_pg = "toss";
+				$trigger_obj->amount = $vars->amount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
 			}
@@ -225,6 +242,14 @@ class HotopayController extends Hotopay
 					$args->pay_data = json_encode($capture_output);
 					executeQuery('hotopay.updatePurchaseData', $args);
 
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "DONE";
+					$trigger_obj->pay_data = $order_detail;
+					$trigger_obj->pay_pg = "paypal";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 					$this->_ActivePurchase($purchase_srl);
 				}
 				else
@@ -240,6 +265,14 @@ class HotopayController extends Hotopay
 					$args->purchase_srl = substr($vars->orderId, 2);
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
+
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $order_detail;
+					$trigger_obj->pay_pg = "paypal";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
 
 					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
@@ -286,6 +319,14 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $response_json;
+					$trigger_obj->pay_pg = "kakao";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 				}
@@ -294,6 +335,14 @@ class HotopayController extends Hotopay
 				{
 					$this->_ActivePurchase($purchase_srl);
 				}
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = substr($vars->order_id, 2);
+				$trigger_obj->pay_status = "DONE";
+				$trigger_obj->pay_data = $response_json;
+				$trigger_obj->pay_pg = "kakao";
+				$trigger_obj->amount = $vars->amount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
 
 				$response_json->method = 'kakaopay';
 				$response_json->p_status = "success";
@@ -320,6 +369,15 @@ class HotopayController extends Hotopay
 				$order_detail->product_title = $purchase_data->t;
 
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = substr($vars->order_id, 2);
+				$trigger_obj->pay_status = "WAITING_FOR_DEPOSIT";
+				$trigger_obj->pay_data = $order_detail;
+				$trigger_obj->pay_pg = "n_account";
+				$trigger_obj->amount = $order_detail->totalAmount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
