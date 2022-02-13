@@ -9,7 +9,7 @@
  */
 class HotopayModel extends Hotopay
 {
-	public function getProductOptions($product_srl)
+	public function getProductOptions($product_srl, $key_index = false)
     {
         $args = new stdClass();
         $args->product_srl = $product_srl;
@@ -24,9 +24,16 @@ class HotopayModel extends Hotopay
 
         $p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
         $f_opt = array();
+        $cnt = 0;
         foreach($p_opt as $_opt){
             $_opt = mb_substr($_opt, 1, -1);
-            array_push($f_opt, explode('/' , $_opt));
+            if($_opt)
+            {
+                $data = explode('/' , $_opt);
+                if($key_index) $data[0] = $cnt;
+                array_push($f_opt, $data);
+                $cnt++;
+            }
         }
 
         return $f_opt;
