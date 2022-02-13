@@ -607,7 +607,14 @@ class HotopayController extends Hotopay
 			}
 
 			$oMemberController = getController('member');
-			$oMemberController->clearMemberCache($member_srl);
+			if(version_compare(__XE_VERSION__, '2.0.0', '<'))
+			{
+				$oMemberController->_clearMemberCache($member_srl); // for old rhymix
+			}
+			else
+			{
+				$oMemberController->clearMemberCache($member_srl);
+			}
 
 			$this->_MessageMailer("REFUNDED", $purchase);
 
