@@ -726,7 +726,7 @@ class HotopayController extends Hotopay
 		$price = number_format($purchase->product_purchase_price);
 		$purchase_date = date("Y-m-d H:i:s", $purchase->regdate);
 		$pay_method_korean = $oHotopayModel->purchaseMethodToString($purchase->pay_method);
-		$purchase_title_substr = mb_substr($purchase_data->t, 0, 8);
+		$purchase_title_substr = mb_substr($purchase_data->t, 0, 18);
 
 		switch($status)
 		{
@@ -734,7 +734,7 @@ class HotopayController extends Hotopay
 				$message_body = "결제 완료 알림 메일입니다.<br><br>결제 코드: HT{$purchase->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$purchase_data->t}<br>결제 금액: {$price}<br>결제 수단: {$pay_method_korean}<br>결제 시각: {$purchase_date}<br>";
 				$this->_sendMail(4, "[HotoPay] 회원의 결제가 완료되었습니다.", $message_body);
 
-				$sms_body = "[Hotopay] 결제알림. ({$price}) {$purchase_title_substr}";
+				$sms_body = "[Hotopay] 결제알림 ({$pay_method_korean}/{$price}) {$purchase_title_substr}";
 				$this->_sendSMS(4, $sms_body);
 				break;
 		}
