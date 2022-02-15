@@ -9,7 +9,7 @@
  */
 class HotopayModel extends Hotopay
 {
-	public function getProductOptions($product_srl)
+	public function getProductOptions($product_srl, $key_index = false)
     {
         $args = new stdClass();
         $args->product_srl = $product_srl;
@@ -24,9 +24,16 @@ class HotopayModel extends Hotopay
 
         $p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
         $f_opt = array();
+        $cnt = 0;
         foreach($p_opt as $_opt){
             $_opt = mb_substr($_opt, 1, -1);
-            array_push($f_opt, explode('/' , $_opt));
+            if($_opt)
+            {
+                $data = explode('/' , $_opt);
+                if($key_index) $data[0] = $cnt;
+                array_push($f_opt, $data);
+                $cnt++;
+            }
         }
 
         return $f_opt;
@@ -190,7 +197,7 @@ class HotopayModel extends Hotopay
         }
 
         $string = str_replace("[쇼핑몰명]", $config->shop_name, $string);
-        $string = str_replace("[상품명]", mb_substr($purchase_data->t, 0, 10), $string);
+        $string = str_replace("[상품명]", mb_substr($purchase_data->t, 0, 50), $string);
         $string = str_replace("[주문확인링크]", '<a href="'.mb_substr(Context::getDefaultUrl(),0,-1).getUrl("","mid","hotopay","act","dispHotopayOrderList").'" target="_blank" title="주문 확인하기">[주문 확인하기]</a>', $string);
         $string = str_replace("[계좌번호]", $account, $string);
         $string = str_replace("[주문금액]", number_format($purchase->product_purchase_price), $string);

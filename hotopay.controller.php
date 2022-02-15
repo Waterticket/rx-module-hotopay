@@ -116,7 +116,7 @@ class HotopayController extends Hotopay
 
 		executeQuery("hotopay.insertPurchase", $args);
 
-		$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
+		$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
 	}
 
 	/**
@@ -141,6 +141,11 @@ class HotopayController extends Hotopay
 			if(!$purchase->toBool())
 			{
 				return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+			}
+
+			if($purchase->data->pay_status === "DONE")
+			{
+				return $this->createObject(-1, "이미 결제가 완료되었습니다.");
 			}
 
 			$purchase_data = json_decode($purchase->data->products);
@@ -181,7 +186,15 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $response_json;
+					$trigger_obj->pay_pg = "toss";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 					//echo $http_code; //{"code":"ALREADY_PROCESSED_PAYMENT","message":"이미 처리된 결제 입니다."}
 				}
@@ -202,7 +215,16 @@ class HotopayController extends Hotopay
 				$response_json->p_status = "success";
 				$response_json->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $purchase_srl;
+				$trigger_obj->pay_status = $response_json->status;
+				$trigger_obj->pay_data = $response_json;
+				$trigger_obj->pay_pg = "toss";
+				$trigger_obj->amount = $vars->amount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
 			}
 			else if(strcmp($vars->pay_pg, "paypal") === 0) // PayPal 처리
@@ -225,6 +247,14 @@ class HotopayController extends Hotopay
 					$args->pay_data = json_encode($capture_output);
 					executeQuery('hotopay.updatePurchaseData', $args);
 
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "DONE";
+					$trigger_obj->pay_data = $order_detail;
+					$trigger_obj->pay_pg = "paypal";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 					$this->_ActivePurchase($purchase_srl);
 				}
 				else
@@ -241,7 +271,15 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $order_detail;
+					$trigger_obj->pay_pg = "paypal";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 				}
 
@@ -250,7 +288,7 @@ class HotopayController extends Hotopay
 				$order_detail->method = "paypal";
 				$order_detail->product_title = $purchase_data->t;
 				$_SESSION['hotopay_'.$vars->orderId] = $order_detail;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
 			}
 			else if(strcmp($vars->pay_pg, "kakaopay") === 0) // 카카오페이 처리
@@ -286,7 +324,15 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $response_json;
+					$trigger_obj->pay_pg = "kakao";
+					$trigger_obj->amount = $vars->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 					return;
 				}
 
@@ -295,12 +341,20 @@ class HotopayController extends Hotopay
 					$this->_ActivePurchase($purchase_srl);
 				}
 
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = substr($vars->order_id, 2);
+				$trigger_obj->pay_status = "DONE";
+				$trigger_obj->pay_data = $response_json;
+				$trigger_obj->pay_pg = "kakao";
+				$trigger_obj->amount = $vars->amount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
 				$response_json->method = 'kakaopay';
 				$response_json->p_status = "success";
 				$response_json->product_title = $purchase_data->t;
 				$response_json->orderId = $vars->order_id;
 				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
 			else if(strcmp($vars->pay_pg, "n_account") === 0) // 무통장 처리
@@ -320,7 +374,16 @@ class HotopayController extends Hotopay
 				$order_detail->product_title = $purchase_data->t;
 
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
-				$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = substr($vars->order_id, 2);
+				$trigger_obj->pay_status = "WAITING_FOR_DEPOSIT";
+				$trigger_obj->pay_data = $order_detail;
+				$trigger_obj->pay_pg = "n_account";
+				$trigger_obj->amount = $order_detail->totalAmount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
 			else
@@ -362,7 +425,7 @@ class HotopayController extends Hotopay
 			
 			$_SESSION['hotopay_'.$vars->orderId] = (object) $res_array;
 
-			$this->setRedirectUrl(getUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
+			$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 		}
 	}
 
@@ -464,6 +527,13 @@ class HotopayController extends Hotopay
 				$oMemberController->addMemberToGroup($member_srl, $group_srl);
 			}
 		}
+
+		$trigger_obj = new stdClass();
+		$trigger_obj->member_srl = $member_srl;
+		$trigger_obj->purchase_srl = $purchase_srl;
+		$trigger_obj->group_srl = $group_srl;
+		$trigger_obj->product_srl = $product_srl;
+		ModuleHandler::triggerCall('hotopay.activePurchase', 'after', $trigger_obj);
 	}
 
 	/**
@@ -537,7 +607,14 @@ class HotopayController extends Hotopay
 			}
 
 			$oMemberController = getController('member');
-			$oMemberController->clearMemberCache($member_srl);
+			if(version_compare(__XE_VERSION__, '2.0.0', '<'))
+			{
+				$oMemberController->_clearMemberCache($member_srl); // for old rhymix
+			}
+			else
+			{
+				$oMemberController->clearMemberCache($member_srl);
+			}
 
 			$this->_MessageMailer("REFUNDED", $purchase);
 
