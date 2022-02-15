@@ -160,6 +160,20 @@
 				<input type="text" name="kakaopay_cid_secret_key" id="kakaopay_cid_secret_key" value="{$hotopay_config->kakaopay_cid_secret_key}"><br>
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="kakaopay_install_month">카드 할부 개월 수</label>
+			<div class="x_controls">
+				<select name="kakaopay_install_month" id="kakaopay_install_month">
+					<option value="-1" selected="selected"|cond="$hotopay_config->kakaopay_install_month == -1">설정 안함</option>
+					<option value="0" selected="selected"|cond="$hotopay_config->kakaopay_install_month == 0">일시불</option>
+					<!--@for($i=2;$i<=12;$i++)-->
+					<option value="{$i}" selected="selected"|cond="$hotopay_config->kakaopay_install_month == $i">{$i}개월</option>
+					<!--@end-->
+				</select>
+				<p class="help-block">할부 개월 수를 설정합니다.</p>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">

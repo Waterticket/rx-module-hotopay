@@ -114,6 +114,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->kakaopay_admin_key)) self::$_config_cache->kakaopay_admin_key = ''; // 카카오페이 어드민 키
 			if(!isset(self::$_config_cache->kakaopay_cid_key)) self::$_config_cache->kakaopay_cid_key = ''; // 카카오페이 가맹점 코드
 			if(!isset(self::$_config_cache->kakaopay_cid_secret_key)) self::$_config_cache->kakaopay_cid_secret_key = ''; // 카카오페이 가맹점 코드 인증키
+			if(!isset(self::$_config_cache->kakaopay_install_month)) self::$_config_cache->kakaopay_install_month = -1; // 카카오페이 카드 할부 개월 수
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL

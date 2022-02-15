@@ -20,7 +20,7 @@ class KakaoPay extends Hotopay {
             'Content-Type: application/x-www-form-urlencoded;charset=utf-8',
             'Authorization: KakaoAK '.$this->getAuthorizationToken()
         );
-        $post_field_string = http_build_query(array(
+        $post_data = array(
             "cid" => $config->kakaopay_cid_key,
             "cid_secret" => $config->kakaopay_cid_secret_key,
             "partner_order_id" => "HT".$order_srl,
@@ -32,7 +32,14 @@ class KakaoPay extends Hotopay {
             "approval_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/success/HT{$order_srl}",
             "cancel_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/cancel/HT{$order_srl}",
             "fail_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/fail/HT{$order_srl}",
-        ));
+        );
+        
+        if($config->kakaopay_install_month >= 0)
+        {
+            $post_data["install_month"] = $config->kakaopay_install_month;
+        }
+
+        $post_field_string = http_build_query($post_data);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

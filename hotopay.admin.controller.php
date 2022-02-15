@@ -37,6 +37,7 @@ class HotopayAdminController extends Hotopay
 		$config->kakaopay_admin_key = $vars->kakaopay_admin_key;
 		$config->kakaopay_cid_key = $vars->kakaopay_cid_key;
 		$config->kakaopay_cid_secret_key = $vars->kakaopay_cid_secret_key;
+		$config->kakaopay_install_month = $vars->kakaopay_install_month;
 
 		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
 		$config->n_account_string = $vars->n_account_string;
