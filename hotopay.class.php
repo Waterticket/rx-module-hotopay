@@ -107,6 +107,8 @@ class Hotopay extends ModuleObject
 
 			if(!isset(self::$_config_cache->toss_payments_client_key)) self::$_config_cache->toss_payments_client_key = ''; // 토스 클라이언트 키
 			if(!isset(self::$_config_cache->toss_payments_secret_key)) self::$_config_cache->toss_payments_secret_key = ''; // 토스 시크릿 키
+			if(!isset(self::$_config_cache->toss_payments_install_month)) self::$_config_cache->toss_payments_install_month = -1; // 토스 할부 개월 수 (고정)
+			if(!isset(self::$_config_cache->toss_payments_max_install_month)) self::$_config_cache->toss_payments_max_install_month = 0; // 토스 선택 가능한 최대 할부 개월 수
 			if(!isset(self::$_config_cache->paypal_client_key)) self::$_config_cache->paypal_client_key = ''; // 페이팔 클라이언트 키
 			if(!isset(self::$_config_cache->paypal_secret_key)) self::$_config_cache->paypal_secret_key = ''; // 페이팔 시크릿 키
 			if(!isset(self::$_config_cache->kakaopay_admin_key)) self::$_config_cache->kakaopay_admin_key = ''; // 카카오페이 어드민 키
