@@ -20,3 +20,11 @@
     border-left: 1px solid black;
     padding-left: 10px;
 }
+
+.paystatus.DONE, .paystatus.APPROVED {
+    color: green;
+}
+
+.paystatus.PENDING, .paystatus.WAITING_FOR_DEPOSIT {
+    color: blue;
+}

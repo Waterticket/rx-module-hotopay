@@ -57,7 +57,7 @@
             <td>{$product_data->t}</td>
             <td>₩{number_format($val->product_purchase_price)}</td>
             <td>{$oHotopayModel->purchaseMethodToString($val->pay_method)}</td>
-            <td>{$val->pay_status}</td>
+            <td><span class="paystatus {$val->pay_status}">{$oHotopayModel->payStatusCodeToString($val->pay_status)}</span></td>
 			<td>
 				<!--@if(strcmp($val->pay_status, "PENDING") === 0 || strcmp($val->pay_status, "WAITING_FOR_DEPOSIT") === 0)-->&nbsp;<a href="#" onclick="var _u='{$purchase_done_url}';var _a=function(){if(confirm('정상 결제 처리를 하시겠습니까?')){window.location=_u}};_a();">결제 확정하기</a><!--@endif-->
 				<!--@if(strcmp($val->pay_status, "DONE") === 0 || strcmp($val->pay_status, "APPROVED") === 0)-->&nbsp;<a href="#" onclick="opendialog('HT{$val->purchase_srl}',{$val->product_purchase_price},'{$val->pay_method}');" style="color: #ff4757;">환불하기</a><!--@endif-->

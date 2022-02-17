@@ -101,7 +101,7 @@ class HotopayModel extends Hotopay
                 break;
             
             case 'WAITING_FOR_DEPOSIT':
-                return "결제 대기중";
+                return "입금 대기중";
                 break;
 
             case 'DONE':
