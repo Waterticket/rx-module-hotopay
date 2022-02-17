@@ -105,6 +105,12 @@ section#purchase_check {
             <input type="radio" name="pay_method" id="pm_payp" value="paypal" required="required"><label for="pm_payp"> <img src="/modules/hotopay/skins/default/img/paypal_PP_logo_h_100x26.png" style="width: 53px; display: inline-block;" alt="PayPal" title="PayPal" /></label>
             <!--@endif-->
         </section>
+
+        <section id="depositor" style="display: none">
+            <p>입금자 이름 <span id="required">*</span></p>
+            <input type="text" id="depositor_name" name="depositor_name" maxlength="5" placeholder="입금자 명을 입력해주세요.">
+        </section>
+
         <section id="result">
             <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
         </section>
@@ -154,5 +160,18 @@ function _purchaseSubmit()
 
 $('#pm_payp').click(function(){
     alert('Paypal 결제는 한국 거주자는 이용할 수 없습니다.\n\n해외 거주자를 위한 기능입니다.');
+});
+
+$('input[name=pay_method]').click(function(){
+    if($(this).attr('id') == 'pm_nacc')
+    {
+        $('#depositor').show();
+        $('#depositor_name').attr('required', 'required');
+    }
+    else
+    {
+        $('#depositor').hide();
+        $('#depositor_name').removeAttr('required');
+    }
 });
 </script>

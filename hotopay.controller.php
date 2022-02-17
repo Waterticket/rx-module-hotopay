@@ -109,7 +109,7 @@ class HotopayController extends Hotopay
 
 			case "n_account":
 				$order_obj = new stdClass();
-				$order_obj->depositor_name = mb_substr(($logged_info->user_name ?: ('구매자'.rand(100, 999))), 0, 6);
+				$order_obj->depositor_name = $vars->depositor_name ?: mb_substr(($logged_info->user_name ?: ('구매자'.rand(100, 999))), 0, 6);
 				$args->pay_data = json_encode($order_obj);
 				break;
 		}
