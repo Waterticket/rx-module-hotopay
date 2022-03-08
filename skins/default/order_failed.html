@@ -27,3 +27,11 @@
         </div>
     </div>
 </section>
+
+<script>
+history.pushState(null, null, '{getRequestUriByServerEnviroment()}');
+
+window.onpopstate = function(event) {
+    history.go(1);
+};
+</script>
