@@ -389,6 +389,10 @@ class Hotopay extends ModuleObject
 			}
 		}else return true;
 
+		$oDB = DB::getInstance();
+		if(!$oDB->isColumnExists("hotopay_product","extra_vars")) return true;
+		if(!$oDB->isColumnExists("hotopay_purchase","extra_vars")) return true;
+
 		return $this->checkTriggers();
 	}
 	
@@ -402,6 +406,18 @@ class Hotopay extends ModuleObject
 	public function moduleUpdate()
 	{
 		$this->makeBoard();
+
+		$oDB = DB::getInstance();
+		if(!$oDB->isColumnExists("hotopay_product","extra_vars"))
+		{
+			$oDB->addColumn('hotopay_product',"extra_vars","text");
+		}
+
+		if(!$oDB->isColumnExists("hotopay_purchase","extra_vars"))
+		{
+			$oDB->addColumn('hotopay_purchase',"extra_vars","text");
+		}
+
 		return $this->registerTriggers();
 	}
 	

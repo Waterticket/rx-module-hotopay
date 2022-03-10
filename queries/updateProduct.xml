@@ -11,9 +11,10 @@
         <column name="product_original_price" var="product_original_price" />
         <column name="product_option" var="product_option" />
         <column name="product_buyer_group" var="product_buyer_group" />
+        <column name="extra_vars" var="extra_vars" />
         <column name="regdate" var="regdate" />
 	</columns>
 	<conditions>
-		<condition operation="equal" column="product_srl" var="product_srl" />
+		<condition operation="equal" column="product_srl" var="product_srl" notnull="notnull" />
 	</conditions>
 </query>

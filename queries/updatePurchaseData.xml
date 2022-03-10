@@ -6,6 +6,6 @@
         <column name="pay_data" var="pay_data" notnull="notnull" />
 	</columns>
 	<conditions>
-		<condition operation="equal" column="purchase_srl" var="purchase_srl" />
+		<condition operation="equal" column="purchase_srl" var="purchase_srl" notnull="notnull" />
 	</conditions>
 </query>
