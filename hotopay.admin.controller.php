@@ -116,6 +116,7 @@ class HotopayAdminController extends Hotopay
 		// $contents = nl2br($vars->product_option);
 		$args->product_option = $vars->product_option;
 		$args->product_buyer_group = $vars->product_buyer_group;
+		$args->extra_vars = serialize($vars->extra_vars ?? new stdClass());
 		$args->regdate = time();
 
 		executeQuery("hotopay.insertProduct", $args);
@@ -181,6 +182,7 @@ class HotopayAdminController extends Hotopay
 		$product_srl = $vars->product_srl;
 		$option = $vars->option_srl;
 		$date = strtotime($vars->purchase_date);
+		$extra_vars = $vars->extra_vars;
 
 		$args = new stdClass();
 		$args->purchase_srl = $order_id;
@@ -195,7 +197,7 @@ class HotopayAdminController extends Hotopay
 		$args->product_original_price = $product->product_sale_price;
 		$args->pay_status = 'DONE';
 		$args->pay_data = '';
-		$args->extra_vars = serialize(new stdClass());
+		$args->extra_vars = serialize($extra_vars ?? new stdClass());
 		$args->regdate = $date;
 
 		executeQuery('hotopay.insertPurchase', $args);
