@@ -75,6 +75,7 @@ class HotopayController extends Hotopay
 		$args->pay_status = "PENDING";
 		$args->regdate = time();
 		$args->pay_data = '';
+		$args->extra_vars = serialize(new stdClass());
 
 		switch($vars->pay_method)
 		{

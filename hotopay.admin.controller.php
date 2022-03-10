@@ -195,6 +195,7 @@ class HotopayAdminController extends Hotopay
 		$args->product_original_price = $product->product_sale_price;
 		$args->pay_status = 'DONE';
 		$args->pay_data = '';
+		$args->extra_vars = serialize(new stdClass());
 		$args->regdate = $date;
 
 		executeQuery('hotopay.insertPurchase', $args);
@@ -221,6 +222,7 @@ class HotopayAdminController extends Hotopay
 		$args->product_original_price = $vars->product_original_price;
 		$args->product_pic_src = $vars->product_pic_org_src;
 		$args->product_pic_srl = $vars->product_pic_org_srl;
+		$args->extra_vars = serialize($vars->extra_vars ?? new stdClass());
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
 		$upfile = $vars->product_pic;

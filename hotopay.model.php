@@ -50,6 +50,8 @@ class HotopayModel extends Hotopay
             return $this->createObject(-1, "Product does not exist.");
         }
 
+        $output->data->extra_vars = unserialize($output->data->extra_vars);
+
         return $output->data;
     }
 
@@ -62,6 +64,11 @@ class HotopayModel extends Hotopay
         if(!$output->toBool() || empty($output->data))
         {
             return $this->createObject(-1, "Product does not exist.");
+        }
+
+        foreach($output->data as &$val)
+        {
+            $val->extra_vars = unserialize($val->extra_vars);
         }
 
         return $output->data;
