@@ -15,7 +15,7 @@ class HotopayModel extends Hotopay
         $args->product_srl = $product_srl;
         $output = executeQuery('hotopay.getProductOptions', $args);
 
-        if(!$output->toBool() || empty($output->data))
+        if(!$output->toBool())
         {
             return $this->createObject(-1, "Product does not exist.");
         }
@@ -41,6 +41,7 @@ class HotopayModel extends Hotopay
             return $this->createObject(-1, "Product does not exist.");
         }
 
+        $output->data->product_option = $this->getProductOptions($product_srl);
         $output->data->extra_vars = unserialize($output->data->extra_vars);
 
         return $output->data;
@@ -59,6 +60,7 @@ class HotopayModel extends Hotopay
 
         foreach($output->data as &$val)
         {
+            $val->product_option = $this->getProductOptions($val->product_srl);
             $val->extra_vars = unserialize($val->extra_vars);
         }
 
