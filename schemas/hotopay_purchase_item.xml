@@ -1,6 +1,8 @@
 <table name="hotopay_purchase_item">
-	<column name="purchase_srl" type="number" size="10" notnull="notnull" primary_key="primary_key" />
-	<column name="item_srl" type="number" size="100" notnull="notnull" index="idx_item_srl" />
+	<column name="item_srl" type="number" size="100" notnull="notnull" primary_key="primary_key" />
+	<column name="purchase_srl" type="number" size="10" notnull="notnull" index="idx_purchase_srl" />
+	<column name="product_srl" type="number" size="100" notnull="notnull" index="idx_product_srl" />
+	<column name="option_srl" type="number" size="100" notnull="notnull" index="idx_item_srl" />
 	<column name="member_srl" type="number" size="100" notnull="notnull" index="idx_member_srl" />
 	<column name="purchase_price" type="number" size="10" notnull="notnull" default="0" />
 	<column name="original_price" type="number" size="10" notnull="notnull" default="0" />

@@ -114,12 +114,33 @@ class HotopayAdminController extends Hotopay
 
 		// \n을 <br>로 변환하는 함수
 		// $contents = nl2br($vars->product_option);
-		$args->product_option = $vars->product_option;
+		$args->product_option = ''; // 사용 안함
 		$args->product_buyer_group = $vars->product_buyer_group;
 		$args->extra_vars = serialize($vars->extra_vars ?? new stdClass());
 		$args->regdate = time();
 
 		executeQuery("hotopay.insertProduct", $args);
+
+		foreach ($vars->sale_option as $item)
+		{
+			$item = (object) $item;
+			$obj = new stdClass();
+			$obj->option_srl = ($item->option_srl != 0) ? $item->option_srl : getNextSequence();
+			$obj->product_srl = $product_srl;
+			$obj->title = $item->title;
+			$obj->description = $item->description ?? "";
+			$obj->price = $item->price;
+			$obj->status = 'visible';
+			$obj->extra_vars = serialize(new stdClass());
+			$obj->regdate = time();
+
+			$item_output = executeQuery("hotopay.insertProductOption", $obj);
+			if(!$item_output->toBool())
+			{
+				return $item_output;
+			}
+		}
+
 		
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');

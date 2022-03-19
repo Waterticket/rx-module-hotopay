@@ -1,0 +1,11 @@
+<table name="hotopay_product_option">
+	<column name="option_srl" type="number" size="10" notnull="notnull" primary_key="primary_key" />
+	<column name="product_srl" type="number" size="100" notnull="notnull" index="idx_product_srl" />
+	<column name="title" type="varchar" size="500" notnull="notnull" />
+	<column name="description" type="text" />
+	<column name="price" type="number" size="10" notnull="notnull" default="0" />
+	<column name="stock" type="number" size="10" notnull="notnull" default="-1" />
+	<column name="status" type="varchar" size="50" />
+	<column name="extra_vars" type="text" />
+	<column name="regdate" type="number" size="10" notnull="notnull" index="idx_regdate" />
+</table>
