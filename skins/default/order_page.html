@@ -44,20 +44,8 @@ section#purchase_check {
         <hr>
         <br>
         <ul>
-            {@ $opt_lst = array(); $org_sale = array(); }
-            <!--@foreach($product_list as $product)-->
-            {@
-                $p_srl = $product->product_srl;
-                $p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
-                $f_opt = array();
-                foreach($p_opt as $_opt):
-                    $_opt = mb_substr($_opt, 1, -1);
-                    array_push($f_opt, explode('/' , $_opt));
-                endforeach;
-                $opt_lst[$p_srl] = $f_opt;
-                $org_sale[$p_srl] = $product->product_sale_price;
-            }
-            <input type="hidden" name="buy_product[]" value="{$p_srl}" />
+            <!--@foreach($product_list as $no => $product)-->
+            <input type="hidden" name="purchase_info[{$no}][product_srl]" value="{$product->product_srl}" />
             <li>
                 <div class="thumb">
                     <img src="{$product->product_pic_src}" />
@@ -68,11 +56,15 @@ section#purchase_check {
                         <span>상품 설명</span>{$product->product_des}<br>
                         <span>판매 가격</span>{number_format($product->product_sale_price)} ₩<br><br>
                         <span>옵션</span>
-                        <select name="opt[{$p_srl}]" onchange="optionChange(this.value,{$p_srl})">
-                            <!--@foreach($f_opt as $opt_no => $_opt)-->
-                            <!--@if(!empty($_opt[0]))-->
-                            <option value="{$opt_no}">{$_opt[0]}<!--@if(!empty($_opt[1]))--> {($_opt[1]!=0)?'('.(($_opt[1]>0)?'+':'').number_format($_opt[1]).'원)':''}<!--@endif--></option>
-                            <!--@endif-->
+                        <select name="purchase_info[{$no}][option_srl]" hotopay-product-srl="{$product->product_srl}" hotopay-type="option" onchange="optionChange()">
+                            <!--@foreach($product->product_option as $option)-->
+                            {@
+                                $sub_price = $product->product_sale_price - $option->price;
+                                if($sub_price > 0) $sub_price = "(+".number_format($sub_price)."원)";
+                                else if($sub_price < 0) $sub_price = "(".number_format($sub_price)."원)";
+                                else $sub_price = "";
+                            }
+                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price}">{$option->title} {$sub_price}</option>
                             <!--@endforeach-->
                         </select>
                         <br>
@@ -116,7 +108,7 @@ section#purchase_check {
         </section>
 
 		<section id="purchase_check">
-			<label><input type="checkbox" id="purchase_checkbox" name="purchase_checkbox">&nbsp;위 결제 사항과 <a href="{$hotopay_config->purchase_term_url}" style="text-decoration: underline; color: #ff4757;" target="_blank">전자금융거래 이용약관</a>을 확인하고 결제를 진행합니다.</label>
+			<label><input type="checkbox" id="purchase_checkbox" name="purchase_checkbox" required>&nbsp;위 결제 사항과 <a href="{$hotopay_config->purchase_term_url}" style="text-decoration: underline; color: #ff4757;" target="_blank">전자금융거래 이용약관</a>을 확인하고 결제를 진행합니다.</label>
 		</section>
         
         <div id="btn_layer">
@@ -128,22 +120,20 @@ section#purchase_check {
 </form>
 
 <script>
-var opt_var = {json_encode($opt_lst)};
-var org_sale = {json_encode($org_sale)};
-
 $(document).ready(function() {
-    var t_price = 0;
-    for(key in org_sale)
-    {
-        t_price += org_sale[key];
-    }
-    $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
+    optionChange();
 });
 
-function optionChange(value,srl)
+function optionChange()
 {
-    var int_price = parseInt(opt_var[srl][value][1]);
-    $('#purchase_price').html((org_sale[srl]+int_price).toLocaleString('ko-KR'));
+    var t_price = 0;
+    
+    $('#r_content select[hotopay-type=option]').each(function (index, item) {
+        var price = $('option:selected', item).attr('hotopay-option-price');
+        t_price += parseInt(price);
+    });
+
+    $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
 }
 
 function _purchaseSubmit()

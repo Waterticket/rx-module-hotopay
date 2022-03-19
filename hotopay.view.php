@@ -45,16 +45,10 @@ class HotopayView extends Hotopay
 		Context::set('kakaopay_enabled', $config->kakaopay_enabled == 'Y' && !empty($config->kakaopay_admin_key) && !empty($config->kakaopay_cid_key));
 		Context::set('n_account_enabled', $config->n_account_enabled == 'Y' && !empty($config->n_account_string));
 
-		$args = new stdClass();
-		$args->product_srl = array($vars->product_id);
-		$product_list = executeQueryArray("hotopay.getProducts", $args);
+		$oHotopayModel = getModel('hotopay');
+		$product_list = $oHotopayModel->getProducts($vars->product_id);
 
-		if((!$product_list->toBool()) || (count($product_list->data) < 1))
-		{
-			return $this->createObject(-1, "물품 데이터가 없습니다.");
-		}
-
-		Context::set('product_list', $product_list->data);
+		Context::set('product_list', $product_list);
 
 		$this->setTemplateFile('order_page');
 	}
