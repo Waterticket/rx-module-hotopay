@@ -6,14 +6,19 @@
     endif;
 
     if(!isset($product->product_option)):
-        $product->product_option = '[기본옵션/0]';
+        $item = new stdClass();
+        $item->item_srl = 0;
+        $item->title = '기본 옵션';
+        $item->description = '기본 옵션입니다.';
+        $item->price = 0;
+        $product->product_option = array($item);
     endif;
 }
 
 <form class="x_form-horizontal" action="./" method="post" id="hotopay" enctype="multipart/form-data">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayAdminModifyProduct" />
-	<input type="hidden" name="success_return_url" value="{getUrl('','mid','admin','act','dispHotopayAdminProductList')}" />
+	<input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
 	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
 	<input type="hidden" name="product_srl" value="{$product->product_srl}" />
 	<input type="hidden" name="product_pic_org_src" value="{$product->product_pic_src}" />
@@ -69,11 +74,63 @@
         </div>
     </div>
 	
+	
 	<div class="x_control-group">
-        <label class="x_control-label" for="product_option">상품 판매 옵션</label>
+        <label class="x_control-label">상품 판매 옵션</label>
         <div class="x_controls">
-            <textarea name="product_option" id="product_option">{$product->product_option}</textarea><br>
-            [이름/가격] 으로 입력해주세요. 엔터로 구분합니다. 가격은 (+1000, -1000, s1000) 형식입니다.
+            <table class="x_table x_table-striped x_table-hover" id="product_option" style="max-width: 800px;">
+                <thead>
+                <tr>
+                    <th scope="col">옵션 이름</th>
+                    <th scope="col">옵션 설명</th>
+                    <th scope="col">판매 가격</th>
+                    <th scope="col">관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                {@
+                    $i = 0;
+                }
+                <!--@foreach($product->product_option as $item)-->
+                <tr>
+                    <input type="hidden" name="sale_option[{$i}][option_srl]" value="{$item->option_srl}" />
+                    <td><input type="text" name="sale_option[{$i}][title]" placeholder="옵션 이름" value="{$item->title}" required></td>
+                    <td><textarea name="sale_option[{$i}][description]" placeholder="옵션 설명" required>{$item->description}</textarea></td>
+                    <td><input type="number" name="sale_option[{$i}][price]" placeholder="판매 가격" value="{$item->price}" required></td>
+                    <td><a href="javascript:void(0)" onclick="remove_option(this)">제거</a></td>
+                </tr>
+                {@ $i++; }
+                <!--@endforeach-->
+                </tbody>
+            </table>
+            <a href="javascript:void(0)" onclick="add_option()">+ 옵션 추가하기</a><br>
+            <script>
+                var option_count = {$i};
+                function add_option() {
+                    option_count++;
+                    
+                    var html = '<tr>';
+                    html += '<input type="hidden" name="sale_option['+option_count+'][option_srl]" value="0" />';
+                    html += '<td><input type="text" name="sale_option['+option_count+'][title]" placeholder="옵션 이름" required></td>';
+                    html += '<td><textarea name="sale_option['+option_count+'][description]" placeholder="옵션 설명" required></textarea></td>';
+                    html += '<td><input type="number" name="sale_option['+option_count+'][price]" placeholder="판매 가격" required></td>';
+                    html += '<td><a href="javascript:void(0)" onclick="remove_option(this)">제거</a></td>';
+                    html += '</tr>';
+
+                    $('#product_option tbody').append(html);
+                }
+    
+                // remove option if not last one
+                function remove_option(e) {
+                    if ($('#product_option tbody tr').length > 1) {
+                        if(!confirm('해당 옵션을 삭제하시겠습니까?')) return;
+
+                        $(e).parent().parent().remove();
+                    } else {
+                        alert('최소 한개의 옵션은 있어야 합니다.');
+                    }
+                }
+            </script>
         </div>
     </div>
 

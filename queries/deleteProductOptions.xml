@@ -1,0 +1,9 @@
+<query id="deleteProductOptions" action="delete">
+	<tables>
+		<table name="hotopay_product_option" />
+	</tables>
+
+	<conditions>
+		<condition operation="in" column="option_srl" var="option_srl" filter="number" notnull="notnull" />
+	</conditions>
+</query>

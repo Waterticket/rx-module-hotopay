@@ -215,6 +215,7 @@ class HotopayAdminView extends Hotopay
 
 		$oHotopayModel = getModel('hotopay');
 		$product = $oHotopayModel->getProduct($product_srl);
+		$product->product_option = $oHotopayModel->getProductOptions($product_srl);
 		Context::set('product', $product);
 
 		// 스킨 파일 지정

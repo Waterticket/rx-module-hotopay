@@ -283,11 +283,54 @@ class HotopayAdminController extends Hotopay
 
 		// \n을 <br>로 변환하는 함수
 		// $contents = nl2br($vars->product_option);
-		$args->product_option = $vars->product_option;
+		$args->product_option = ''; // 사용 안함
 		$args->product_buyer_group = $vars->product_buyer_group ?: 0;
 		$args->regdate = time();
 
 		executeQuery("hotopay.updateProduct", $args);
+
+		$oHotopayModel = getModel('hotopay');
+		$options = $oHotopayModel->getProductOptions($vars->product_srl);
+
+		foreach ($vars->sale_option as $item)
+		{
+			$item = (object) $item;
+			$obj = new stdClass();
+			$obj->option_srl = ($item->option_srl != 0) ? $item->option_srl : getNextSequence();
+			$obj->product_srl = $vars->product_srl;
+			$obj->title = $item->title;
+			$obj->description = $item->description ?? "";
+			$obj->price = $item->price;
+			$obj->status = 'visible';
+			$obj->extra_vars = $options[$obj->option_srl]->extra_vars ?? serialize(new stdClass());
+			$obj->regdate = time();
+
+			$item_output = executeQuery("hotopay.updateProductOption", $obj);
+			if(!$item_output->toBool())
+			{
+				return $item_output;
+			}
+
+			unset($options[$obj->option_srl]);
+		}
+
+		// 삭제된 옵션들
+		$delete_options = [];
+		foreach ($options as $option)
+		{
+			$delete_options[] = $option->option_srl;
+		}
+
+		if(!empty($delete_options))
+		{
+			$obj = new stdClass();
+			$obj->option_srl = $delete_options;
+			$output = executeQuery("hotopay.deleteProductOptions", $obj);
+			if(!$output->toBool())
+			{
+				return $output;
+			}
+		}
 		
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');

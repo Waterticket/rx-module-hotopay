@@ -9,34 +9,25 @@
  */
 class HotopayModel extends Hotopay
 {
-	public function getProductOptions($product_srl, $key_index = false)
+	public function getProductOptions($product_srl)
     {
         $args = new stdClass();
         $args->product_srl = $product_srl;
-        $output = executeQuery('hotopay.getProducts', $args);
+        $output = executeQuery('hotopay.getProductOptions', $args);
 
         if(!$output->toBool() || empty($output->data))
         {
             return $this->createObject(-1, "Product does not exist.");
         }
 
-        $product = $output->data;
-
-        $p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
-        $f_opt = array();
-        $cnt = 0;
-        foreach($p_opt as $_opt){
-            $_opt = mb_substr($_opt, 1, -1);
-            if($_opt)
-            {
-                $data = explode('/' , $_opt);
-                if($key_index) $data[0] = $cnt;
-                array_push($f_opt, $data);
-                $cnt++;
-            }
+        $product_options = array();
+        
+        foreach($output->data as $key => $val)
+        {
+            $product_options[$val->option_srl] = $val;
         }
 
-        return $f_opt;
+        return $product_options;
     }
 
     public function getProduct($product_srl)
