@@ -1,0 +1,11 @@
+<query id="updateProductOptionStatus" action="update">
+	<tables>
+		<table name="hotopay_product_option" />
+	</tables>
+	<columns>
+        <column name="status" var="status" notnull="notnull" />
+	</columns>
+	<conditions>
+		<condition operation="in" column="option_srl" var="option_srl" notnull="notnull" />
+	</conditions>
+</query>

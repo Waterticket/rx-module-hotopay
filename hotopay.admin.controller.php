@@ -327,7 +327,8 @@ class HotopayAdminController extends Hotopay
 		{
 			$obj = new stdClass();
 			$obj->option_srl = $delete_options;
-			$output = executeQuery("hotopay.deleteProductOptions", $obj);
+			$obj->status = 'deleted';
+			$output = executeQuery("hotopay.updateProductOptionStatus", $obj);
 			if(!$output->toBool())
 			{
 				return $output;

@@ -62,7 +62,8 @@ class HotopayModel extends Hotopay
     {
         $args = new stdClass();
         $args->product_srl = $product_srl;
-        $output = executeQuery('hotopay.getProductOptions', $args);
+        $args->status = ['visible'];
+        $output = executeQueryArray('hotopay.getProductOptions', $args);
 
         if(!$output->toBool())
         {
