@@ -81,6 +81,8 @@ class Hotopay extends ModuleObject
 	 * 캐시 핸들러 캐시를 위한 변수.
 	 */
 	protected static $_cache_handler_cache = null;
+
+	protected const HOTOPAY_NEEDED_DB_VERSION = 1;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -142,6 +144,8 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->purchase_refund_notification_message_sms)) self::$_config_cache->purchase_refund_notification_message_sms = '[[쇼핑몰명]] 주문번호 [주문번호] "[상품명]" 상품이 환불되었습니다.'; // 환불 SMS 내용
 
 			if(!isset(self::$_config_cache->purchase_refund_notification_method)) self::$_config_cache->purchase_refund_notification_method = array(1,); // 환불 알림 수단
+			
+			if(!isset(self::$_config_cache->hotopay_db_version)) self::$_config_cache->hotopay_db_version = 0; // DB 버전
 		}
 		return self::$_config_cache;
 	}
@@ -393,6 +397,12 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product","extra_vars")) return true;
 		if(!$oDB->isColumnExists("hotopay_purchase","extra_vars")) return true;
 
+		$config = $this->getConfig();
+		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
+		{
+			return true;
+		}
+
 		return $this->checkTriggers();
 	}
 	
@@ -416,6 +426,12 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_purchase","extra_vars"))
 		{
 			$oDB->addColumn('hotopay_purchase',"extra_vars","text");
+		}
+
+		$config = $this->getConfig();
+		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
+		{
+			$this->updateDBVersion();
 		}
 
 		return $this->registerTriggers();
@@ -457,6 +473,102 @@ class Hotopay extends ModuleObject
 			$args->skin = 'default';
 			$output = $oModuleController->insertModule($args);
 			return ($output->toBool()) ?: $output;
+		}
+	}
+
+	function updateDBVersion()
+	{
+		$oHotopayModel = getModel('hotopay');
+
+		$config = $this->getConfig();
+		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
+		{
+			for($i = $config->hotopay_db_version + 1; $i <= self::HOTOPAY_NEEDED_DB_VERSION; $i++)
+			{
+				switch($i)
+				{
+					case 1:
+						$options = isset($config->temp_options) ? $config->temp_options : [];
+						$products = $oHotopayModel->getProductsAll();
+						foreach($products as $product)
+						{
+							if(!empty($product->product_option))
+							{
+								$product_options = [];
+								$p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
+								foreach($p_opt as $_opt)
+								{
+									$_opt = mb_substr($_opt, 1, -1);
+									if($_opt)
+									{
+										$data = explode('/' , $_opt);
+										$args = new stdClass();
+										$args->option_srl = getNextSequence();
+										$args->product_srl = $product->product_srl;
+										$args->title = $data[0];
+										$args->description = '';
+										$args->price = $product->product_sale_price + (int)$data[1];
+										$args->extra_vars = serialize(new stdClass());
+										$args->regdate = time();
+										executeQuery('hotopay.insertProductOption', $args);
+
+										$product_options[] = $args->option_srl;
+									}
+								}
+								$options[$product->product_srl] = $product_options;
+
+								$args = new stdClass();
+								$args->product_srl = $product->product_srl;
+								$args->product_option = '';
+								executeQuery('hotopay.updateProduct', $args);
+							}
+						}
+
+						$config->temp_options = $options;
+						$this->setConfig($config);
+
+						$output = executeQueryArray('hotopay.getPurchasesAll');
+						foreach ($output->data as $purchase)
+						{
+							$products_data = json_decode($purchase->products);
+							if (!isset($products_data->bp) && !isset($products_data->opt)) continue;
+							$products_data->opt = (array) $products_data->opt;
+
+							foreach ($products_data->bp as $product_srl)
+							{
+								$args = new stdClass();
+								$args->option_srl = $options[$product_srl][$products_data->opt[$product_srl]];
+								$output = executeQuery('hotopay.getOptions', $args);
+								$price = $output->data->price;
+
+								$args->item_srl = getNextSequence();
+								$args->purchase_srl = $purchase->purchase_srl;
+								$args->product_srl = $product_srl;
+								$args->purchase_price = $price;
+								$args->original_price = $price;
+								$args->regdate = time();
+								$args->extra_vars = serialize(new stdClass());
+								executeQuery('hotopay.insertPurchaseItem', $args);
+							}
+
+							unset($products_data->bp);
+							unset($products_data->opt);
+							$products_data = json_encode($products_data);
+
+							$args = new stdClass();
+							$args->purchase_srl = $purchase->purchase_srl;
+							$args->products = $products_data;
+							executeQuery('hotopay.updatePurchaseProducts', $args);
+						}
+
+						unset($config->temp_options);
+						$this->setConfig($config);
+						break;
+				}
+
+				$config->hotopay_db_version = $i;
+				$this->setConfig($config);
+			}
 		}
 	}
 }

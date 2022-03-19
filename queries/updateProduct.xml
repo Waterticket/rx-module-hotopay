@@ -3,7 +3,7 @@
 		<table name="hotopay_product" />
 	</tables>
 	<columns>
-        <column name="product_name" var="product_name" notnull="notnull" />
+        <column name="product_name" var="product_name" />
         <column name="product_des" var="product_des" />
         <column name="product_pic_src" var="product_pic_src" />
         <column name="product_pic_srl" var="product_pic_srl" />
