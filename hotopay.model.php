@@ -96,26 +96,52 @@ class HotopayModel extends Hotopay
     {
         $args = new stdClass();
         $args->purchase_srl = $purchase_srl;
-        $output = executeQueryArray('hotopay.getPurchase', $args);
+        $output = executeQueryArray('hotopay.getPurchaseItem', $args);
         if(!$output->toBool())
         {
             return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
         }
 
-        $purchase = $output->data;
-        $products = json_decode($purchase->products);
-        $purchase_items = array();
+        return $output->data;
+    }
 
-        foreach($products->bp as $product_srl)
+    public function getProductsByPurchaseSrl($purchase_srl)
+    {
+        $items = $this->getPurchaseItems($purchase_srl);
+        $products = array();
+        foreach($items as $item)
         {
-            $args = new stdClass();
-            $args->product_srl = $product_srl;
-            $args->product_option = $products->opt[$product_srl];
-            // option price
-            $purchase_items[] = $args;
+            $products[] = $item->product_srl;
         }
 
-        return $purchase_items;
+        return $this->getProducts($products);
+    }
+
+    public function getOptionsByPurchaseSrl($purchase_srl)
+    {
+        $items = $this->getPurchaseItems($purchase_srl);
+        $option_srls = [];
+        foreach ($items as $item)
+        {
+            $option_srls[] = $item->option_srl;
+        }
+
+        $args = new stdClass();
+        $args->option_srl = $option_srls;
+        $output = executeQueryArray('hotopay.getOptions', $args);
+        if(!$output->toBool())
+        {
+            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+        }
+
+        $option_data = [];
+        foreach ($output->data as $val)
+        {
+            $val->extra_vars = unserialize($val->extra_vars);
+            $option_data[$val->product_srl] = $val;
+        }
+
+        return $option_data;
     }
 
     public function payStatusCodeToString($code)

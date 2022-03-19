@@ -34,33 +34,42 @@ class HotopayController extends Hotopay
 		$args->purchase_srl = $order_id;
 		$args->member_srl = $logged_info->member_srl;
 
-		$cond = new stdClass();
-		$cond->product_srl = $vars->buy_product;
-		$product_list = executeQueryArray("hotopay.getProducts", $cond);
+		$product_list = [];
+		$option_list = [];
+		foreach ($vars->purchase_info as $product)
+		{
+			$product_list[] = $product['product_srl'];
+			$option_list[$product['product_srl']] = $product['option_srl'];
+		}
+
+		$product_list = $oHotopayModel->getProducts($product_list);
 
 		$title = "";
 		$tc = -1;
 		$total_price = 0;
 		$original_price = 0;
 
-		foreach($product_list->data as $product)
+		foreach($product_list as $product)
 		{
 			if($tc < 0)
 			{
 				$title = $product->product_name;
 				$tc++;
 			}
-			$opt_num = $vars->opt[$product->product_srl]; // 숫자 [0번째, 1번째, ..]
-			$p_opt = preg_split("/\r\n|\n|\r/", $product->product_option);
-			$f_opt = array();
-			foreach($p_opt as $_opt)
-			{
-				$_opt = mb_substr($_opt, 1, -1);
-				array_push($f_opt, explode('/' , $_opt));
-			}
 
-			$total_price += $product->product_sale_price + intval($f_opt[$opt_num][1]);
-			$original_price += $product->product_original_price;
+			$total_price += $product->product_option[$option_list[$product->product_srl]]->price;
+			$original_price += $product->product_option[$option_list[$product->product_srl]]->price;
+
+			$obj = new StdClass();
+			$obj->item_srl = getNextSequence();
+			$obj->purchase_srl = $order_id;
+			$obj->product_srl = $product->product_srl;
+			$obj->option_srl = $option_list[$product->product_srl];
+			$obj->purchase_price = $product->product_option[$option_list[$product->product_srl]]->price;
+			$obj->original_price = $product->product_option[$option_list[$product->product_srl]]->price;
+			$obj->extra_vars = serialize(new stdClass());
+			$obj->regdate = time();
+			executeQuery('hotopay.insertPurchaseItem', $obj);
 		}
 
 		if($tc > 0)
@@ -68,7 +77,7 @@ class HotopayController extends Hotopay
 			$title .= " 외 ".$tc."개";
 		}
 
-		$args->products = json_encode(array("t"=>$title, "bp"=>$vars->buy_product, "opt"=>$vars->opt));
+		$args->products = json_encode(array("t"=>$title)); // 구시대의 유물.. 미안합니다 ㅜㅜ
 		$args->pay_method = $vars->pay_method;
 		$args->product_purchase_price = $total_price;
 		$args->product_original_price = $original_price;
@@ -491,36 +500,24 @@ class HotopayController extends Hotopay
 	 */
 	public function _ActivePurchase($purchase_srl, $member_srl = -1)
 	{
-		$args = new stdClass();
-		$args->purchase_srl = $purchase_srl;
-		$purchase = executeQuery('hotopay.getPurchase', $args);
-
-		$args->pay_status = "DONE";
-		executeQuery('hotopay.updatePurchaseStatus', $args);
-
-		if(!$purchase->toBool())
-		{
-			return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
-		}
-
-		$purchase_data = json_decode($purchase->data->products);
-
 		$logged_info = Context::get('logged_info');
 		if($member_srl == -1) $member_srl = $logged_info->member_srl;
 
-		$this->_MessageMailer("DONE", $purchase->data);
-		$this->_AdminMailer("DONE", $purchase->data);
+		$oHotopayModel = getModel('hotopay');
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
 
 		$args = new stdClass();
-		$args->product_srl = $purchase_data->bp;
-		$products = executeQueryArray('hotopay.getProducts', $args);
-		if(!$products->toBool())
-		{
-			return $this->createObject(-1, "물품이 존재하지 않습니다.");
-		}
+		$args->purchase_srl = $purchase_srl;
+		$args->pay_status = "DONE";
+		executeQuery('hotopay.updatePurchaseStatus', $args);
+		
+		$this->_MessageMailer("DONE", $purchase);
+		$this->_AdminMailer("DONE", $purchase);
+
+		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
 
 		$oMemberController = getController('member');
-		foreach($products->data as $product)
+		foreach($products as $product)
 		{
 			$group_srl = $product->product_buyer_group;
 			if($group_srl != 0)
@@ -592,8 +589,7 @@ class HotopayController extends Hotopay
 			executeQuery('hotopay.updatePurchaseStatus', $args);
 			executeQuery('hotopay.updatePurchaseData', $args);
 
-			$purchase_data = json_decode($purchase->products);
-			$products = $oHotopayModel->getProducts($purchase_data->bp);
+			$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
 
 			foreach($products as $product)
 			{

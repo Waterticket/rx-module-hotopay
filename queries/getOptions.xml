@@ -1,4 +1,4 @@
-<query id="getProductOptions" action="select">
+<query id="getOptions" action="select">
 	<tables>
 		<table name="hotopay_product_option" />
 	</tables>
@@ -6,6 +6,6 @@
 		<column name="*" />
 	</columns>
 	<conditions>
-		<condition operation="equal" column="product_srl" var="product_srl" />
+		<condition operation="in" column="option_srl" var="option_srl" />
 	</conditions>
 </query>

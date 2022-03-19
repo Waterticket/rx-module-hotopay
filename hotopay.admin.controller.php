@@ -195,6 +195,8 @@ class HotopayAdminController extends Hotopay
 		$oHotopayController = getController('hotopay');
 		$oHotopayModel = getModel('hotopay');
 
+		return new BaseObject(-1, '준비중입니다.');
+
 		$product = $oHotopayModel->getProduct($vars->product_srl);
 		$order_id = getNextSequence();
 		$title = $product->product_name;

@@ -88,14 +88,12 @@ $daily = array('일','월','화','수','목','금','토');
             </thead>
             <tbody>
                 <!--@foreach($purchase_list as $purchase)-->
+                {@
+                    $products = $oHotopayModel->getProductsByPurchaseSrl($purchase->purchase_srl);
+                    $options = $oHotopayModel->getOptionsByPurchaseSrl($purchase->purchase_srl);
+                }
+                <!--@foreach($products as $product)-->
                 <tr class="ht-order">
-                    {@
-                        $product_data = json_decode($purchase->products);
-                        $product = $oHotopayModel->getProduct($product_data->bp[0]);
-                        $pay_data = json_decode($purchase->pay_data);
-                        $option = (array)$product_data->opt;
-                        $option_array = $oHotopayModel->getProductOptions($product_data->bp[0]);
-                    }
                     <td>
                         <span class="ht-order-id">HT{$purchase->purchase_srl}</span>
                         <span class="ht-tag ht-order-status" data-status="{$purchase->pay_status}">{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}</span>
@@ -104,15 +102,16 @@ $daily = array('일','월','화','수','목','금','토');
                         <span class="ht-order-thumbnail"><img src="{$product->product_pic_src}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-first-item">{$product_data->t}<br>({$option_array[$option[$product_data->bp[0]]][0]}){$product_data->d}</span>
+                        <span class="ht-order-first-item">{$product->product_name}<br>({$options[$product->product_srl]->title}){$product_data->d}</span>
                     </td>
                     <td>
                         <span class="ht-order-total">₩{number_format($purchase->product_purchase_price)}</span>
                     </td>
                     <td>
-                        <span class="ht-order-created-at">{date("Y년 m월 d일 ",$purchase->regdate).$daily[date('w',$purchase->regdate)].'요일'}</span>
+                        <span class="ht-order-created-at">{date("Y년 m월 d일 ",$purchase->regdate).$daily[date('w',$purchase->regdate)].'요일'}<br>{date("H시 i분",$purchase->regdate)}</span>
                     </td>
                 </tr>
+                <!--@endforeach-->
                 <!--@endforeach-->
 
                 <!--@if(count($purchase_list) < 1)-->

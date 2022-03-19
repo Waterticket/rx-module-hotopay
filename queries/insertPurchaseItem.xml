@@ -1,0 +1,15 @@
+<query id="insertPurchaseItem" action="insert">
+	<tables>
+		<table name="hotopay_purchase_item" />
+	</tables>
+	<columns>
+    <column name="item_srl" var="item_srl" notnull="notnull" />
+    <column name="purchase_srl" var="purchase_srl" notnull="notnull" />
+    <column name="product_srl" var="product_srl" notnull="notnull" />
+	<column name="option_srl" var="option_srl" notnull="notnull" />
+	<column name="purchase_price" var="purchase_price" notnull="notnull" />
+	<column name="original_price" var="original_price" notnull="notnull" />
+	<column name="extra_vars" var="extra_vars" />
+	<column name="regdate" var="regdate" notnull="notnull" />
+	</columns>
+</query>
