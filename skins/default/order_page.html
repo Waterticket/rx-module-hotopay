@@ -59,7 +59,7 @@ section#purchase_check {
                         <select name="purchase_info[{$no}][option_srl]" hotopay-product-srl="{$product->product_srl}" hotopay-type="option" onchange="optionChange()">
                             <!--@foreach($product->product_option as $option)-->
                             {@
-                                $sub_price = $product->product_sale_price - $option->price;
+                                $sub_price = $option->price - $product->product_sale_price;
                                 if($sub_price > 0) $sub_price = "(+".number_format($sub_price)."원)";
                                 else if($sub_price < 0) $sub_price = "(".number_format($sub_price)."원)";
                                 else $sub_price = "";
