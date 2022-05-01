@@ -5,6 +5,10 @@
 	<columns>
 		<column name="*" />
 	</columns>
+	<conditions>
+		<condition operation="equal" column="purchase_srl" var="purchase_srl" />
+		<condition operation="in" column="member_srl" var="member_srl" />
+	</conditions>
 	<navigation>
 		<index var="sort_index" default="purchase_srl" order="order_type" />
 		<list_count var="list_count" default="20" />

@@ -147,6 +147,9 @@ class HotopayAdminView extends Hotopay
 
 		$sort_index = $vars->sort_index ?: 'purchase_srl';
 		$sort_order = in_array($vars->sort_order, ['asc','desc']) ? $vars->sort_order : 'desc';
+
+		$search_target = $vars->search_target;
+		$search_keyword = $vars->search_keyword;
 		
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
@@ -157,6 +160,31 @@ class HotopayAdminView extends Hotopay
 		$args->page_count = 10; ///< 페이지 네비게이션에 나타날 페이지의 수
 		$args->sort_index = $sort_index;
 		$args->order_type = $sort_order;
+
+		// search condition
+		if(!empty($search_target) && !empty($search_keyword))
+		{
+			switch($search_target)
+			{
+				case 'purchase_srl':
+				case 'member_srl':
+					$args->{$search_target} = preg_replace('/[^0-9]/', '', $search_keyword);
+					break;
+
+				case 'user_id':
+				case 'nick_name':
+				case 'user_name':
+				case 'phone_number':
+				case 'email_address':
+					$search_arg = new stdClass();
+					$search_arg->{$search_target} = $search_keyword;
+					$search_result = executeQueryArray('hotopay.getMemberSrlBySearch', $search_arg);
+					$member_srls = array_map(function($v) { return $v->member_srl; }, $search_result->data);
+					$args->member_srl = $member_srls;
+					break;
+			}
+		}
+
 		$output = executeQueryArray('hotopay.getPurchasesPage', $args);
 
 		if(!$output->toBool())

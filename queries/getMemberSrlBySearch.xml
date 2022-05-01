@@ -1,0 +1,15 @@
+<query id="getMemberSrlBySearch" action="select">
+	<tables>
+		<table name="member" />
+	</tables>
+	<columns>
+		<column name="member_srl" />
+	</columns>
+	<conditions>
+        <condition operation="like" column="user_id" var="user_id" pipe="and" />
+        <condition operation="like" column="nick_name" var="nick_name" pipe="and" />
+        <condition operation="like" column="user_name" var="user_name" pipe="and" />
+        <condition operation="like" column="phone_number" var="phone_number" pipe="and" />
+        <condition operation="like" column="email_address" var="email_address" pipe="and" />
+	</conditions>
+</query>

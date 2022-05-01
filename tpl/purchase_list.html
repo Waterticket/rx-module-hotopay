@@ -110,6 +110,24 @@
 		</ul>
 	</form>
 
+	<form action="" class="search">
+		<input type="hidden" name="error_return_url" value="" />
+		<input type="hidden" name="module" value="{$module}" />
+		<input type="hidden" name="act" value="{$act}" />
+
+		<select name="search_target">
+			<option value="nick_name" selected|cond="$search_target == 'nick_name'">구매자 닉네임</option>
+			<option value="user_name" selected|cond="$search_target == 'user_name'">구매자 실명</option>
+			<option value="user_id" selected|cond="$search_target == 'user_id'">구매자 아이디</option>
+			<option value="phone_number" selected|cond="$search_target == 'phone_number'">구매자 전화번호</option>
+			<option value="email_address" selected|cond="$search_target == 'email_address'">구매자 이메일</option>
+			<option value="purchase_srl" selected|cond="$search_target == 'purchase_srl'">주문번호</option>
+			<option value="member_srl" selected|cond="$search_target == 'member_srl'">회원번호</option>
+		</select>
+		<input type="text" name="search_keyword" value="{$search_keyword}" />
+		<input type="submit" class="x_btn x_btn-inverse" style="margin-top: -10px" value="검색">
+	</form>
+
 	<span class="x_pull-right x_btn-group">
 		<a class="x_btn x_btn-inverse" href="{getUrl('','mid','admin','act','dispHotopayAdminInsertPurchase')}">결제 데이터 등록</a>
 	</span>
