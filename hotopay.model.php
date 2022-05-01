@@ -48,7 +48,7 @@ class HotopayModel extends Hotopay
 
     public function getProductsAll()
     {
-        $output = executeQuery('hotopay.getProductsAll');
+        $output = executeQueryArray('hotopay.getProductsAll');
 
         if(!$output->toBool() || empty($output->data))
         {
