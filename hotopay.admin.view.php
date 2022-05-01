@@ -143,6 +143,10 @@ class HotopayAdminView extends Hotopay
 	{
 		// 현재 설정 상태 불러오기
 		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+
+		$sort_index = $vars->sort_index ?: 'purchase_srl';
+		$sort_order = in_array($vars->sort_order, ['asc','desc']) ? $vars->sort_order : 'desc';
 		
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
@@ -151,7 +155,8 @@ class HotopayAdminView extends Hotopay
 		$args->page = Context::get('page') ?: 1; ///< 페이지
 		$args->list_count = 20; ///< 한페이지에 보여줄 기록 수
 		$args->page_count = 10; ///< 페이지 네비게이션에 나타날 페이지의 수
-		$args->order_type = 'desc';
+		$args->sort_index = $sort_index;
+		$args->order_type = $sort_order;
 		$output = executeQueryArray('hotopay.getPurchasesPage', $args);
 
 		if(!$output->toBool())

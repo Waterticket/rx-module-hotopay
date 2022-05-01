@@ -30,23 +30,25 @@
 
 	<table class="x_table x_table-striped x_table-hover" style="margin-top:20px;">
 		<thead>
+			{@
+				$sort_index = Context::get('sort_index');
+				$sort_order = Context::get('sort_order');
+			}
 		<tr>
-			<th scope="col">주문 번호</th>
+            <th scope="col"><a href="{getUrl('sort_index','purchase_srl','sort_order',($sort_order == 'asc') ? 'desc' : 'asc')}">주문 번호<!--@if($sort_index == 'purchase_srl')-->&nbsp;<!--@if($sort_order == 'asc')-->▲<!--@else-->▼<!--@endif--><!--@endif--></a></th>
             <th scope="col">구매자</th>
             <th scope="col">구매 상품</th>
-            <th scope="col">가격</th>
-            <th scope="col">결제 수단</th>
-            <th scope="col">결제 상태</th>
+            <th scope="col"><a href="{getUrl('sort_index','product_purchase_price','sort_order',($sort_order == 'asc') ? 'desc' : 'asc')}">가격<!--@if($sort_index == 'product_purchase_price')-->&nbsp;<!--@if($sort_order == 'asc')-->▲<!--@else-->▼<!--@endif--><!--@endif--></a></th>
+            <th scope="col"><a href="{getUrl('sort_index','pay_method','sort_order',($sort_order == 'asc') ? 'desc' : 'asc')}">결제 수단<!--@if($sort_index == 'pay_method')-->&nbsp;<!--@if($sort_order == 'asc')-->▲<!--@else-->▼<!--@endif--><!--@endif--></a></th>
+            <th scope="col"><a href="{getUrl('sort_index','pay_status','sort_order',($sort_order == 'asc') ? 'desc' : 'asc')}">결제 상태<!--@if($sort_index == 'pay_status')-->&nbsp;<!--@if($sort_order == 'asc')-->▲<!--@else-->▼<!--@endif--><!--@endif--></a></th>
             <th scope="col">상태 변경</th>
-            <th scope="col">결제일</th>
+            <th scope="col"><a href="{getUrl('sort_index','regdate','sort_order',($sort_order == 'asc') ? 'desc' : 'asc')}">결제일<!--@if($sort_index == 'regdate')-->&nbsp;<!--@if($sort_order == 'asc')-->▲<!--@else-->▼<!--@endif--><!--@endif--></a></th>
             <th scope="col">속성</th>
 		</tr>
 		</thead>
 		<tbody>
 		<!--@foreach($purchase_list as $no => $val)-->
         {@
-            debugPrint($val);
-
             $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
             $product_data = json_decode($val->products);
 			$purchase_done_url = getUrl("","module","hotopay","act","procHotopayAdminPurchaseStatusChange","purchase_srl",$val->purchase_srl,"status","DONE");
