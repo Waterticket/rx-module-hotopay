@@ -1,67 +1,5 @@
 <include target="_header.html" />
 <load target="css/list.css" />
-<style>
-.ht-table {
-    width: 100%;
-    border-spacing: 0;
-    font-size: 15px;
-}
-
-.ht-table tbody tr td, .ht-table thead tr th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-}
-
-.ht-order-status[data-status="DONE"] {
-    border-color: #00a754;
-    color: #00a754;
-}
-
-.ht-order-status[data-status="CANCELED"], .ht-order-status[data-status="FAILED"], .ht-order-status[data-status="REFUNDED"] {
-    border-color:#eb331c;
-    color:#eb331c;
-}
-
-.ht-tag {
-    display: inline-block;
-    margin-right: 6px;
-    margin-bottom: 6px;
-    padding: 2px 6px;
-    border: #636363 1px solid;
-    border-radius: 4px;
-    font-size: 13px;
-    color: #636363;
-}
-
-.ht-table thead tr td, .ht-table thead tr th {
-    padding-bottom: 8px;
-    border-bottom: #868e96 1px solid;
-    text-align: left;
-    font-size: 15px;
-    font-weight: 400;
-    color: #555;
-}
-
-.ht-order .ht-order-id {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 13px;
-}
-
-.ht-order-thumbnail img {
-    width: 80px;
-    height: 80px;
-}
-
-section#result p {
-    margin: 10px;
-}
-
-section#result p.orange {
-    background-color:#FF6F3B;
-    color:white;
-}
-</style>
 
 {@
 $oHotopayModel = getModel('hotopay');
@@ -74,7 +12,6 @@ $daily = array('일','월','화','수','목','금','토');
         <h1>구매 목록</h1>
         <section id="result">
             <p class="orange">※ 가상계좌에 경우 입금 후 자동 입금 확인까지 최대 10분정도 소요될 수 있습니다.</p>
-            <!-- <p>2021년 5월 7일 이후 구매한 것만 리스트에 나옵니다<br><a href="//shop.hoto.dev/buy_request" style="color: #ff4757;">이전 구매 기록 확인하기</a></p> -->
         </section>
         <br>
         <table class="ht-table ht-orders">

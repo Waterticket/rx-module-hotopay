@@ -155,3 +155,92 @@ section#depositor p {
 section#depositor span#required {
   color: #ff4757;
 }
+
+.ht-table {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 15px;
+}
+
+.ht-table tbody tr td, .ht-table thead tr th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.ht-order-status[data-status="DONE"] {
+  border-color: #00a754;
+  color: #00a754;
+}
+
+.ht-order-status[data-status="CANCELED"], .ht-order-status[data-status="FAILED"], .ht-order-status[data-status="REFUNDED"] {
+  border-color:#eb331c;
+  color:#eb331c;
+}
+
+.ht-tag {
+  display: inline-block;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  padding: 2px 6px;
+  border: #636363 1px solid;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #636363;
+}
+
+.ht-table thead tr td, .ht-table thead tr th {
+  padding-bottom: 8px;
+  border-bottom: #868e96 1px solid;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 400;
+  color: #555;
+}
+
+.ht-order .ht-order-id {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.ht-order-thumbnail img {
+  width: 80px;
+  height: 80px;
+}
+
+section#result p {
+  margin: 10px;
+}
+
+section#result p.orange {
+  background-color:#FF6F3B;
+  color:white;
+}
+
+@media (max-width: 600px) {
+  div#r_content div.thumb {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+  }
+  div#r_content ul li img {
+      width: 100%;
+      height: 100%;
+      max-width: 200px;
+  }
+
+  div#r_content div.gdsInfo {
+      display:block;
+      float:none;
+      width: 100%;
+  }
+
+  div#r_content div.gdsInfo span {
+  margin-top: 10px;
+  display: block;
+}
+}
+
+section#purchase_check {
+margin: 15px 5px 5px;
+}
