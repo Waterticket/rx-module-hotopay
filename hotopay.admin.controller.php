@@ -311,7 +311,15 @@ class HotopayAdminController extends Hotopay
 			$obj->extra_vars = $options[$obj->option_srl]->extra_vars ?? serialize(new stdClass());
 			$obj->regdate = time();
 
-			$item_output = executeQuery("hotopay.updateProductOption", $obj);
+			if($item->option_srl == 0)
+			{
+				$item_output = executeQuery("hotopay.insertProductOption", $obj);
+			}
+			else
+			{
+				$item_output = executeQuery("hotopay.updateProductOption", $obj);
+			}
+			
 			if(!$item_output->toBool())
 			{
 				return $item_output;
