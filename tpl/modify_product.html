@@ -97,6 +97,8 @@
                     <td><input type="text" name="sale_option[{$i}][title]" placeholder="옵션 이름" value="{$item->title}" required></td>
                     <td><textarea name="sale_option[{$i}][description]" placeholder="옵션 설명" required>{$item->description}</textarea></td>
                     <td><input type="number" name="sale_option[{$i}][price]" placeholder="판매 가격" value="{$item->price}" required></td>
+                    <td><input type="number" name="sale_option[{$i}][stock]" placeholder="재고 수량" value="{($item->stock > 0) ? $item->stock : 0}" required readonly|cond="$item->infinity_stock == 'Y'"><br>
+                        <label><input type="checkbox" name="sale_option[{$i}][infinity_stock]" value="Y" onclick="trigger_stock(this)" checked|cond="$item->infinity_stock == 'Y'">&nbsp;무제한</label></td>
                     <td><a href="javascript:void(0)" onclick="remove_option(this)">제거</a></td>
                 </tr>
                 {@ $i++; }
@@ -114,6 +116,8 @@
                     html += '<td><input type="text" name="sale_option['+option_count+'][title]" placeholder="옵션 이름" required></td>';
                     html += '<td><textarea name="sale_option['+option_count+'][description]" placeholder="옵션 설명" required></textarea></td>';
                     html += '<td><input type="number" name="sale_option['+option_count+'][price]" placeholder="판매 가격" required></td>';
+                    html += '<td><input type="number" name="sale_option['+option_count+'][stock]" placeholder="재고 수량" required><br>';
+                    html += '<label><input type="checkbox" name="sale_option['+option_count+'][infinity_stock]" value="Y" onclick="trigger_stock(this)">&nbsp;무제한</label></td>';
                     html += '<td><a href="javascript:void(0)" onclick="remove_option(this)">제거</a></td>';
                     html += '</tr>';
 
@@ -128,6 +132,15 @@
                         $(e).parent().parent().remove();
                     } else {
                         alert('최소 한개의 옵션은 있어야 합니다.');
+                    }
+                }
+
+                // read only stock when infinity stock is checked
+                function trigger_stock(e) {
+                    if ($(e).is(':checked')) {
+                        $(e).parent().parent().parent().find('input[name*=stock]').attr('readonly', true);
+                    } else {
+                        $(e).parent().parent().parent().find('input[name*=stock]').attr('readonly', false);
                     }
                 }
             </script>

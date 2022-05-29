@@ -130,6 +130,8 @@ class HotopayAdminController extends Hotopay
 			$obj->title = $item->title;
 			$obj->description = $item->description ?? "";
 			$obj->price = $item->price;
+			$obj->stock = $item->stock ?? 0;
+			$obj->infinity_stock = $item->infinity_stock ?? "N";
 			$obj->status = 'visible';
 			$obj->extra_vars = serialize(new stdClass());
 			$obj->regdate = time();
@@ -303,6 +305,8 @@ class HotopayAdminController extends Hotopay
 			$obj->title = $item->title;
 			$obj->description = $item->description ?? "";
 			$obj->price = $item->price;
+			$obj->stock = $item->stock ?? 0;
+			$obj->infinity_stock = $item->infinity_stock ?? "N";
 			$obj->status = 'visible';
 			$obj->extra_vars = $options[$obj->option_srl]->extra_vars ?? serialize(new stdClass());
 			$obj->regdate = time();
