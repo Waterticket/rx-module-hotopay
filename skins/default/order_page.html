@@ -40,7 +40,7 @@
                                     else $stock_text = " (".$option->stock."개)";
                                 endif;
                             }
-                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price}">{$option->title} {$sub_price}{$stock_text}</option>
+                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price}" disabled|cond="$option->infinity_stock != 'Y' && $option->stock < 1">{$option->title} {$sub_price}{$stock_text}</option>
                             <!--@endforeach-->
                         </select>
                         <br>
