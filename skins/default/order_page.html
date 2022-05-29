@@ -33,8 +33,14 @@
                                 if($sub_price > 0) $sub_price = "(+".number_format($sub_price)."원)";
                                 else if($sub_price < 0) $sub_price = "(".number_format($sub_price)."원)";
                                 else $sub_price = "";
+
+                                $stock_text = "";
+                                if($option->infinity_stock != 'Y'):
+                                    if($option->stock < 1) $stock_text = " (품절)";
+                                    else $stock_text = " ({$option->stock}개)";
+                                endif;
                             }
-                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price}">{$option->title} {$sub_price}</option>
+                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price}">{$option->title} {$sub_price}{$stock_text}</option>
                             <!--@endforeach-->
                         </select>
                         <br>
