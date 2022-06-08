@@ -40,6 +40,8 @@ class HotopayController extends Hotopay
 		{
 			$product_list[] = $product['product_srl'];
 			$option_list[$product['product_srl']] = $product['option_srl'];
+
+			if(!isset($product['option_srl'])) return $this->createObject(-1, "유효한 옵션을 선택해주세요");
 		}
 
 		$product_list = $oHotopayModel->getProducts($product_list);
