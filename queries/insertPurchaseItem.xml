@@ -7,6 +7,7 @@
     <column name="purchase_srl" var="purchase_srl" notnull="notnull" />
     <column name="product_srl" var="product_srl" notnull="notnull" />
 	<column name="option_srl" var="option_srl" notnull="notnull" />
+	<column name="option_name" var="option_name" notnull="notnull" />
 	<column name="purchase_price" var="purchase_price" notnull="notnull" />
 	<column name="original_price" var="original_price" notnull="notnull" />
 	<column name="extra_vars" var="extra_vars" />

@@ -67,6 +67,7 @@ class HotopayController extends Hotopay
 			$obj->purchase_srl = $order_id;
 			$obj->product_srl = $product->product_srl;
 			$obj->option_srl = $option_list[$product->product_srl];
+			$obj->option_name = $product->product_option[$option_list[$product->product_srl]]->title;
 			$obj->purchase_price = $product->product_option[$option_list[$product->product_srl]]->price;
 			$obj->original_price = $product->product_option[$option_list[$product->product_srl]]->price;
 			$obj->extra_vars = serialize(new stdClass());

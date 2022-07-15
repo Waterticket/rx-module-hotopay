@@ -3,6 +3,7 @@
 	<column name="purchase_srl" type="number" size="10" notnull="notnull" index="idx_purchase_srl" />
 	<column name="product_srl" type="number" size="10" notnull="notnull" index="idx_product_srl" />
 	<column name="option_srl" type="number" size="10" notnull="notnull" index="idx_item_srl" />
+	<column name="option_name" type="varchar" size="500" notnull="notnull" />
 	<column name="purchase_price" type="number" size="10" notnull="notnull" default="0" />
 	<column name="original_price" type="number" size="10" notnull="notnull" default="0" />
 	<column name="extra_vars" type="text" />
