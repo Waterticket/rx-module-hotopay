@@ -533,7 +533,6 @@ class HotopayController extends Hotopay
 		$trigger_obj->member_srl = $member_srl;
 		$trigger_obj->purchase_srl = $purchase_srl;
 		$trigger_obj->group_srl = $group_srl;
-		$trigger_obj->product_srl = $product_srl;
 		ModuleHandler::triggerCall('hotopay.activePurchase', 'after', $trigger_obj);
 	}
 
