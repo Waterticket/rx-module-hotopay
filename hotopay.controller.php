@@ -146,7 +146,7 @@ class HotopayController extends Hotopay
 
 		if(strcmp($vars->pay_status, "success") === 0) // 결제 성공
 		{
-			$purchase_srl = substr($vars->order_id, 2);
+			$purchase_srl = (int)substr($vars->order_id, 2);
 
 			$args = new stdClass();
 			$args->purchase_srl = $purchase_srl;
@@ -195,7 +195,7 @@ class HotopayController extends Hotopay
 					);
 
 					$args = new stdClass();
-					$args->purchase_srl = substr($vars->orderId, 2);
+					$args->purchase_srl = (int)substr($vars->orderId, 2);
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
@@ -256,7 +256,7 @@ class HotopayController extends Hotopay
 					$capture_output = $paypalController->captureOrder($pay_data->id);
 					
 					$args = new stdClass();
-					$args->purchase_srl = substr($vars->order_id, 2);
+					$args->purchase_srl = (int)substr($vars->order_id, 2);
 					$args->pay_data = json_encode($capture_output);
 					executeQuery('hotopay.updatePurchaseData', $args);
 
@@ -280,7 +280,7 @@ class HotopayController extends Hotopay
 					);
 
 					$args = new stdClass();
-					$args->purchase_srl = substr($vars->orderId, 2);
+					$args->purchase_srl = (int)substr($vars->orderId, 2);
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
@@ -333,7 +333,7 @@ class HotopayController extends Hotopay
 					);
 
 					$args = new stdClass();
-					$args->purchase_srl = substr($vars->order_id, 2);
+					$args->purchase_srl = (int)substr($vars->order_id, 2);
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
@@ -355,7 +355,7 @@ class HotopayController extends Hotopay
 				}
 
 				$trigger_obj = new stdClass();
-				$trigger_obj->purchase_srl = substr($vars->order_id, 2);
+				$trigger_obj->purchase_srl = (int)substr($vars->order_id, 2);
 				$trigger_obj->pay_status = "DONE";
 				$trigger_obj->pay_data = $response_json;
 				$trigger_obj->pay_pg = "kakao";
@@ -389,7 +389,7 @@ class HotopayController extends Hotopay
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
 
 				$trigger_obj = new stdClass();
-				$trigger_obj->purchase_srl = substr($vars->order_id, 2);
+				$trigger_obj->purchase_srl = (int)substr($vars->order_id, 2);
 				$trigger_obj->pay_status = "WAITING_FOR_DEPOSIT";
 				$trigger_obj->pay_data = $order_detail;
 				$trigger_obj->pay_pg = "n_account";
@@ -411,7 +411,7 @@ class HotopayController extends Hotopay
 			$order_id = Context::get('order_id');
 
 			$args = new stdClass();
-			$args->purchase_srl = substr($order_id, 2);
+			$args->purchase_srl = (int)substr($order_id, 2);
 			$args->pay_status = "FAILED";
 
 			$res_array = array(
@@ -460,7 +460,7 @@ class HotopayController extends Hotopay
 			http_response_code(400);
 			die(json_encode(array("status"=>"fail", "message"=>"parameter empty")));
 		}
-		$purchase_srl = substr($vars->orderId, 2);
+		$purchase_srl = (int)substr($vars->orderId, 2);
 
 		$args = new stdClass();
 		$args->purchase_srl = $purchase_srl;
