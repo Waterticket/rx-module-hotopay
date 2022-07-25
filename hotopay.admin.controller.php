@@ -62,10 +62,12 @@ class HotopayAdminController extends Hotopay
 		
 		// 제출받은 데이터 불러오기
 		$vars = Context::getRequestVars();
+		$logged_info = Context::get('logged_info');
 
 		$product_srl = getNextSequence();
 
 		$args = new stdClass();
+		$args->member_srl = $logged_info->member_srl;
 		$args->product_srl = $product_srl;
 		$args->product_name = $vars->product_name;
 		$args->product_des = $vars->product_des;
