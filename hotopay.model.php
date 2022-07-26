@@ -74,6 +74,7 @@ class HotopayModel extends Hotopay
         
         foreach($output->data as $key => $val)
         {
+            $val->extra_vars = unserialize($val->extra_vars);
             $product_options[$val->option_srl] = $val;
         }
 
