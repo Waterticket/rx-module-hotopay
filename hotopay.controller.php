@@ -59,18 +59,20 @@ class HotopayController extends Hotopay
 				$tc++;
 			}
 
-			$total_price += $product->product_option[$option_list[$product->product_srl]]->price;
-			$original_price += $product->product_option[$option_list[$product->product_srl]]->price;
+			$option_srl = $option_list[$product->product_srl];
+			$option = $product->product_option[$option_srl];
+			$total_price += $option->price;
+			$original_price += $option->price;
 
 			$obj = new StdClass();
 			$obj->item_srl = getNextSequence();
 			$obj->purchase_srl = $order_id;
 			$obj->product_srl = $product->product_srl;
 			$obj->option_srl = $option_list[$product->product_srl];
-			$obj->option_name = $product->product_option[$option_list[$product->product_srl]]->title;
-			$obj->purchase_price = $product->product_option[$option_list[$product->product_srl]]->price;
-			$obj->original_price = $product->product_option[$option_list[$product->product_srl]]->price;
-			$obj->extra_vars = serialize(new stdClass());
+			$obj->option_name = $option->title;
+			$obj->purchase_price = $option->price;
+			$obj->original_price = $option->price;
+			$obj->extra_vars = serialize($option->extra_vars ?: new stdClass());
 			$obj->regdate = time();
 			executeQuery('hotopay.insertPurchaseItem', $obj);
 		}
