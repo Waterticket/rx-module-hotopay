@@ -135,7 +135,7 @@ class HotopayAdminController extends Hotopay
 			$obj->stock = $item->stock ?? 0;
 			$obj->infinity_stock = $item->infinity_stock ?? "N";
 			$obj->status = 'visible';
-			$obj->extra_vars = serialize(new stdClass());
+			$obj->extra_vars = $item->extra_vars ? serialize((object) $item->extra_vars) : serialize(new stdClass());
 			$obj->regdate = time();
 
 			$item_output = executeQuery("hotopay.insertProductOption", $obj);
@@ -310,7 +310,7 @@ class HotopayAdminController extends Hotopay
 			$obj->stock = $item->stock ?? 0;
 			$obj->infinity_stock = $item->infinity_stock ?? "N";
 			$obj->status = 'visible';
-			$obj->extra_vars = $options[$obj->option_srl]->extra_vars ?? serialize(new stdClass());
+			$obj->extra_vars = $item->extra_vars ? serialize((object) $item->extra_vars) : serialize(new stdClass());
 			$obj->regdate = time();
 
 			if($item->option_srl == 0)
