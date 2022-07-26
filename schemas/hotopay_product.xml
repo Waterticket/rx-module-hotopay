@@ -2,6 +2,7 @@
 	<column name="product_srl" type="number" size="10" notnull="notnull" primary_key="primary_key" />
 	<column name="product_name" type="varchar" size="100" notnull="notnull" />
 	<column name="product_des" type="varchar" size="500" default="" />
+	<column name="product_status" type="varchar" size="20" default="selling" />
     <column name="product_pic_src" type="varchar" size="500" default="" />
 	<column name="product_pic_srl" type="number" size="10" default="0" />
 	<column name="product_sale_price" type="number" size="10" default="0" />
