@@ -146,6 +146,21 @@ class HotopayModel extends Hotopay
         return $option_data;
     }
 
+    public function getOption(int $option_srl): object
+    {
+        $args = new stdClass();
+        $args->option_srl = $option_srl;
+        $output = executeQuery('hotopay.getOptions', $args);
+        if(!$output->toBool())
+        {
+            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+        }
+
+        $output->data->extra_vars = unserialize($output->data->extra_vars);
+
+        return $output->data;
+    }
+
     public function payStatusCodeToString($code)
     {
         switch($code)
@@ -281,5 +296,25 @@ class HotopayModel extends Hotopay
                     break;
             }
         }
+    }
+
+    public function minusOptionStock(int $option_srl, int $quantity = 1)
+    {
+        $option = $this->getOption($option_srl);
+
+        $args = new stdClass();
+        $args->option_srl = $option_srl;
+        $args->stock = $option->stock - abs($quantity);
+        $output = executeQuery('hotopay.updateOptionStock', $args);
+    }
+
+    public function plusOptionStock(int $option_srl, int $quantity = 1)
+    {
+        $option = $this->getOption($option_srl);
+
+        $args = new stdClass();
+        $args->option_srl = $option_srl;
+        $args->stock = $option->stock + abs($quantity);
+        $output = executeQuery('hotopay.updateOptionStock', $args);
     }
 }
