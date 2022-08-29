@@ -296,7 +296,11 @@ class HotopayAdminController extends Hotopay
 		$args->product_buyer_group = $vars->product_buyer_group ?: 0;
 		$args->regdate = time();
 
-		executeQuery("hotopay.updateProduct", $args);
+		$output = executeQuery("hotopay.updateProduct", $args);
+		if(!$output->toBool()) return $output;
+
+		$cache_key = 'hotopay:product:' . $vars->product_srl;
+        Rhymix\Framework\Cache::delete($cache_key);
 
 		$oHotopayModel = getModel('hotopay');
 		$options = $oHotopayModel->getProductOptions($vars->product_srl);
@@ -351,6 +355,9 @@ class HotopayAdminController extends Hotopay
 				return $output;
 			}
 		}
+
+		$cache_key = 'hotopay:product:' . $vars->product_srl;
+        Rhymix\Framework\Cache::delete($cache_key);
 		
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');
@@ -368,6 +375,9 @@ class HotopayAdminController extends Hotopay
 		$args = new stdClass();
 		$args->product_srl = $vars->product_srl;
 		executeQuery('hotopay.deleteProduct', $args);
+
+		$cache_key = 'hotopay:product:' . $vars->product_srl;
+        Rhymix\Framework\Cache::delete($cache_key);
 
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');

@@ -11,6 +11,10 @@ class HotopayModel extends Hotopay
 {
     public function getProduct($product_srl)
     {
+		$cache_key = 'hotopay:product:' . $product_srl;
+		$product = Rhymix\Framework\Cache::get($cache_key);
+        if($product) return $product;
+
         $args = new stdClass();
         $args->product_srl = $product_srl;
         $output = executeQuery('hotopay.getProducts', $args);
@@ -23,13 +27,14 @@ class HotopayModel extends Hotopay
         $output->data->product_option = $this->getProductOptions($product_srl);
         $output->data->extra_vars = unserialize($output->data->extra_vars);
 
+        Rhymix\Framework\Cache::set($cache_key, $output->data);
         return $output->data;
     }
 
-    public function getProducts($product_srl)
+    public function getProducts($product_srls)
     {
         $args = new stdClass();
-        $args->product_srl = $product_srl;
+        $args->product_srl = $product_srls;
         $output = executeQueryArray('hotopay.getProducts', $args);
 
         if(!$output->toBool() || empty($output->data))
@@ -39,8 +44,17 @@ class HotopayModel extends Hotopay
 
         foreach($output->data as &$val)
         {
+            $cache_key = 'hotopay:product:' . $product_srl;
+            $cache = Rhymix\Framework\Cache::get($cache_key);
+            if($cache)
+            {
+                $val = $cache;
+                continue;
+            }
+
             $val->product_option = $this->getProductOptions($val->product_srl);
             $val->extra_vars = unserialize($val->extra_vars);
+            Rhymix\Framework\Cache::set($cache_key, $val);
         }
 
         return $output->data;
@@ -330,5 +344,26 @@ class HotopayModel extends Hotopay
         }
 
         return $this->getProduct($output->data->product_srl ?: 0);
+    }
+
+    public function getProductsByDocumentSrls($document_srls)
+    {
+        $args = new stdClass();
+        $args->document_srl = $document_srls;
+
+        $output = executeQueryArray('hotopay.getProductSrlByDocumentSrl', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError($output->getMessage());
+        }
+
+        $products = $this->getProducts($output->data);
+        $returns = array();
+        foreach($products as $product)
+        {
+            $returns[$product->document_srl] = $product;
+        }
+
+        return $returns;
     }
 }
