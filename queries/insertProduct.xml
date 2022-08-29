@@ -13,6 +13,7 @@
         <column name="product_option" var="product_option" />
         <column name="product_buyer_group" var="product_buyer_group" />
         <column name="member_srl" var="member_srl" notnull="notnull" />
+        <column name="document_srl" var="document_srl" />
         <column name="extra_vars" var="extra_vars" />
         <column name="regdate" var="regdate" />
 	</columns>
