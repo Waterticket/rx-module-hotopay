@@ -21,7 +21,7 @@ class HotopayAdminController extends Hotopay
 		$vars = Context::getRequestVars();
 
 		$config->shop_name = $vars->shop_name;
-		$config->mid_list = $vars->mid_list;
+		$config->board_module_srl = $vars->board_module_srl;
 		
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_list = $vars->toss_payments_list ?? array();
@@ -76,7 +76,7 @@ class HotopayAdminController extends Hotopay
 		$args->product_original_price = $vars->product_original_price;
 		$args->product_pic_src = '';
 		$args->product_pic_srl = 0;
-		$args->document_srl = 0;
+		$args->document_srl = $vars->document_srl ?: 0;
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
 		$upfile = $vars->product_pic;

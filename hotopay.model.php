@@ -317,4 +317,18 @@ class HotopayModel extends Hotopay
         $args->stock = $option->stock + abs($quantity);
         $output = executeQuery('hotopay.updateOptionStock', $args);
     }
+
+    public function getProductByDocumentSrl(int $document_srl): object
+    {
+        $args = new stdClass();
+        $args->document_srl = $document_srl;
+
+        $output = executeQuery('hotopay.getProductSrlByDocumentSrl', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError($output->getMessage());
+        }
+
+        return $this->getProduct($output->data->product_srl ?: 0);
+    }
 }

@@ -1,0 +1,11 @@
+<query id="getProductSrlByDocumentSrl" action="select">
+	<tables>
+		<table name="hotopay_product" />
+	</tables>
+	<columns>
+		<column name="product_srl" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="document_srl" var="document_srl" />
+	</conditions>
+</query>

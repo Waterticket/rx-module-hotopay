@@ -47,7 +47,7 @@
 				<fieldset id="mid_list">
 					<!--@foreach($mid_list as $mid => $item)-->
 						<label cond="in_array(strtolower($item->module),$allowModule)">
-							<input type="checkbox" value="{$item->module_srl}" name="mid_list[]" checked="checked"|cond="is_array($hotopay_config->mid_list) && in_array($item->module_srl, $hotopay_config->mid_list)" />
+							<input type="checkbox" value="{$item->module_srl}" name="board_module_srl[]" checked="checked"|cond="is_array($hotopay_config->board_module_srl) && in_array($item->module_srl, $hotopay_config->board_module_srl)" />
 							<strong>{$item->browser_title}</strong> ({$item->mid} / {strtoupper($item->module)})
 						</label>
 					<!--@endforeach-->

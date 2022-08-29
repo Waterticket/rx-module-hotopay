@@ -836,7 +836,10 @@ class HotopayController extends Hotopay
 	{
 		$config = $this->getConfig();
 		$mid = $obj->mid;
-		if(in_array($mid, $config->mid_list))
+
+		$oModuleModel = getModel('module');
+		$module_info = $oModuleModel->getModuleInfoByMid($mid);
+		if(in_array($module_info->module_srl, $config->board_module_srl))
 		{
 			if(!isset($obj->sale_option)) return;
 
@@ -865,6 +868,7 @@ class HotopayController extends Hotopay
 
 			$oHotopayAdminController = getAdminController('hotopay');
 			$output = $oHotopayAdminController->procHotopayAdminInsertProduct();
+
 		}
 	}
 
@@ -878,7 +882,10 @@ class HotopayController extends Hotopay
 	{
 		$config = $this->getConfig();
 		$mid = $obj->mid;
-		if(in_array($mid, $config->mid_list))
+
+		$oModuleModel = getModel('module');
+		$module_info = $oModuleModel->getModuleInfoByMid($mid);
+		if(in_array($module_info->module_srl, $config->board_module_srl))
 		{
 			if(!isset($obj->sale_option)) return;
 
