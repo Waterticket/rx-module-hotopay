@@ -21,6 +21,7 @@ class HotopayAdminController extends Hotopay
 		$vars = Context::getRequestVars();
 
 		$config->shop_name = $vars->shop_name;
+		$config->mid_list = $vars->mid_list;
 		
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_list = $vars->toss_payments_list ?? array();

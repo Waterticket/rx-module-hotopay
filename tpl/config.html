@@ -34,6 +34,30 @@
 	</section>
 	
 	<section class="section">
+		<h1>게시판 설정</h1>
+		
+		{@ 
+			$oModuleModel = getModel('module');
+			$mid_list = $oModuleModel->getMidList(null, array('module_srl', 'mid', 'browser_title', 'module'));
+			$allowModule = array('board');
+		}
+		<div class="x_control-group">
+			<label for="mid_list" class="x_control-label">사용 게시판 선택</label>
+			<div class="x_controls">
+				<fieldset id="mid_list">
+					<!--@foreach($mid_list as $mid => $item)-->
+						<label cond="in_array(strtolower($item->module),$allowModule)">
+							<input type="checkbox" value="{$item->module_srl}" name="mid_list[]" checked="checked"|cond="is_array($hotopay_config->mid_list) && in_array($item->module_srl, $hotopay_config->mid_list)" />
+							<strong>{$item->browser_title}</strong> ({$item->mid} / {strtoupper($item->module)})
+						</label>
+					<!--@endforeach-->
+				</fieldset>
+				선택된 게시판에 글을 작성하면 결제 데이터가 자동으로 생성됩니다. 다만, Hotopay 호환 게시판 스킨을 사용하셔야합니다.
+			</div>
+		</div>
+	</section>
+	
+	<section class="section">
 		<h1>Toss Payments 설정</h1>
 		<div class="x_control-group">
 			<label class="x_control-label" for="toss_enabled">Toss 활성화</label>

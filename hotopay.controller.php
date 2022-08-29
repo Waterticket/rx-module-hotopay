@@ -825,4 +825,96 @@ class HotopayController extends Hotopay
 		$url = getUrl('', 'mid', 'hotopay', 'act', 'dispHotopayOrderList', 'target_member_srl', $obj->member_srl);
 		$oMemberController->addMemberPopupMenu($url, '회원 구매 기록');
 	}
+
+	/**
+	 * 쇼핑몰 게시판에 글을 쓸 경우 상품을 등록합니다.
+	 * 
+	 * @param object $obj document.insertDocument 트리거 데이터가 들어있습니다.
+	 * @return void
+	 */
+	public function triggerAfterInsertDocument($obj)
+	{
+		$config = $this->getConfig();
+		$mid = $obj->mid;
+		if(in_array($mid, $config->mid_list))
+		{
+			if(!isset($obj->sale_option)) return;
+
+			$lowest_price = -1;
+			foreach($obj->sale_option as &$options)
+			{
+				$options = (object) $options;
+				$options->price = preg_replace("/[^\d]/", "", $options->price) ?: 0;
+				if($lowest_price == -1 || $options->price < $lowest_price)
+				{
+					$lowest_price = $options->price;
+				}
+			}
+
+			$sale_price = $lowest_price;
+			$extra_vars = (object) $obj->extra_vars ?: new \stdClass();
+			$product_option = '';
+
+			Context::set('product_name', $obj->title, true);
+			Context::set('product_des', $obj->sub_title, true);
+			Context::set('product_sale_price', $sale_price, true);
+			Context::set('product_original_price', $sale_price, true);
+			Context::set('product_option', $product_option, true);
+			Context::set('product_buyer_group', 0, true);
+			Context::set('extra_vars', $extra_vars, true);
+
+			$oHotopayAdminController = getAdminController('hotopay');
+			$output = $oHotopayAdminController->procHotopayAdminInsertProduct();
+		}
+	}
+
+	/**
+	 * 쇼핑몰 게시판에 글을 쓸 경우 상품을 등록합니다.
+	 * 
+	 * @param object $obj document.insertDocument 트리거 데이터가 들어있습니다.
+	 * @return void
+	 */
+	public function triggerAfterUpdateDocument($obj)
+	{
+		$config = $this->getConfig();
+		$mid = $obj->mid;
+		if(in_array($mid, $config->mid_list))
+		{
+			if(!isset($obj->sale_option)) return;
+
+			$lowest_price = -1;
+			foreach($obj->sale_option as &$options)
+			{
+				$options = (object) $options;
+				$options->price = preg_replace("/[^\d]/", "", $options->price); 
+				if($lowest_price == -1 || $options->price < $lowest_price)
+				{
+					$lowest_price = $options->price;
+				}
+			}
+			$logged_info = Context::get('logged_info');
+
+			$sale_price = $lowest_price;
+
+			$extra_vars = $obj->extra_vars ?? new stdClass();
+			if(!($extra_vars instanceof stdClass))
+			{
+				$extra_vars = (object) $extra_vars ?? new stdClass();
+			}
+			$extra_vars->option_description = [];
+
+			$product_option = '';
+
+			Context::set('product_srl', $obj->hotopay_product_srl, true);
+			Context::set('product_name', $obj->title, true);
+			Context::set('product_des', $obj->sub_title, true);
+			Context::set('product_sale_price', $sale_price, true);
+			Context::set('product_original_price', $sale_price, true);
+			Context::set('product_option', $product_option, true);
+			Context::set('product_buyer_group', 0, true);
+			Context::set('extra_vars', $extra_vars, true);
+			$oHotopayAdminController = getAdminController('hotopay');
+			$output = $oHotopayAdminController->procHotopayAdminModifyProduct();
+		}
+	}
 }

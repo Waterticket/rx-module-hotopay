@@ -20,7 +20,8 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_insert_triggers = array(
 		array('member.getMemberMenu', 'after', 'controller', 'triggerAddMemberMenu'),
-		// array('document.updateDocument', 'after', 'controller', 'triggerAfterUpdateDocument'),
+		array('document.insertDocument', 'after', 'controller', 'triggerAfterInsertDocument'),
+		array('document.updateDocument', 'after', 'controller', 'triggerAfterUpdateDocument'),
 		// array('document.deleteDocument', 'after', 'controller', 'triggerAfterDeleteDocument'),
 	);
 	
@@ -99,6 +100,7 @@ class Hotopay extends ModuleObject
 			$oModuleModel = getModel('module');
 			self::$_config_cache = $oModuleModel->getModuleConfig('hotopay') ?: new stdClass;
 			if(!isset(self::$_config_cache->shop_name)) self::$_config_cache->shop_name = 'HotoPay'; // 쇼핑몰 이름
+			if(!isset(self::$_config_cache->mid_list)) self::$_config_cache->mid_list = array(); // 선택한 게시판 mid
 			
 			if(!isset(self::$_config_cache->toss_enabled)) self::$_config_cache->toss_enabled = 'N'; // 토스 활성화
 			if(!isset(self::$_config_cache->paypal_enabled)) self::$_config_cache->paypal_enabled = 'N'; // 페이팔 활성화
