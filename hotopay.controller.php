@@ -865,10 +865,10 @@ class HotopayController extends Hotopay
 			Context::set('product_option', $product_option, true);
 			Context::set('product_buyer_group', 0, true);
 			Context::set('extra_vars', $extra_vars, true);
+			Context::set('document_srl', $obj->document_srl, true);
 
 			$oHotopayAdminController = getAdminController('hotopay');
 			$output = $oHotopayAdminController->procHotopayAdminInsertProduct();
-
 		}
 	}
 

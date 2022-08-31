@@ -44,7 +44,7 @@ class HotopayModel extends Hotopay
 
         foreach($output->data as &$val)
         {
-            $cache_key = 'hotopay:product:' . $product_srl;
+            $cache_key = 'hotopay:product:' . $val->product_srl;
             $cache = Rhymix\Framework\Cache::get($cache_key);
             if($cache)
             {
@@ -357,7 +357,13 @@ class HotopayModel extends Hotopay
             throw new \Rhymix\Framework\Exceptions\DBError($output->getMessage());
         }
 
-        $products = $this->getProducts($output->data);
+        $product_srls = array();
+        foreach($output->data as $product)
+        {
+            $product_srls[] = $product->product_srl;
+        }
+
+        $products = $this->getProducts($product_srls);
         $returns = array();
         foreach($products as $product)
         {
