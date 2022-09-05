@@ -14,6 +14,7 @@ class KakaoPay extends Hotopay {
         $config = $this->getConfig();
         $http_host = getenv('HTTP_HOST');
         $purchase_data = json_decode($order->products);
+        $order_id = 'HT'.str_pad($order_srl, 4, "0", STR_PAD_LEFT);
 
         $url = self::$KAKAOPAY_URL."/v1/payment/ready";
         $headers = array(
@@ -23,15 +24,15 @@ class KakaoPay extends Hotopay {
         $post_data = array(
             "cid" => $config->kakaopay_cid_key,
             "cid_secret" => $config->kakaopay_cid_secret_key,
-            "partner_order_id" => "HT".$order_srl,
+            "partner_order_id" => $order_id,
             "partner_user_id" => $member_user_id,
             "item_name" => $purchase_data->t,
             "quantity" => 1,
             "total_amount" => $order->product_purchase_price,
             "tax_free_amount" => 0,
-            "approval_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/success/HT{$order_srl}",
-            "cancel_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/cancel/HT{$order_srl}",
-            "fail_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/fail/HT{$order_srl}",
+            "approval_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/success/{$order_id}",
+            "cancel_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/cancel/{$order_id}",
+            "fail_url" => "https://{$http_host}/hotopay/payStatus/kakaopay/fail/{$order_id}",
         );
         
         if($config->kakaopay_install_month >= 0)
@@ -69,7 +70,7 @@ class KakaoPay extends Hotopay {
         $config = $this->getConfig();
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($purchase_srl);
-        $order_id = 'HT'.$purchase_srl;
+        $order_id = 'HT'.str_pad($purchase_srl, 4, "0", STR_PAD_LEFT);
         $amount = $purchase->product_purchase_price;
 
         $pay_data = json_decode($purchase->pay_data);

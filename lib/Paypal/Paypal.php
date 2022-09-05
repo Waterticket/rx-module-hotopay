@@ -82,13 +82,14 @@ class Paypal extends Hotopay {
 
     public function createOrder($order, $order_srl)
     {
+        $order_id = 'HT'.str_pad($order_srl, 4, "0", STR_PAD_LEFT);
         $accessToken = $this->getAccessToken();
         $http_host = getenv('HTTP_HOST');
         $post_field = array(
             "intent" => "CAPTURE",
             "application_context" => array(
-                "return_url" => "https://{$http_host}/hotopay/payStatus/paypal/success/HT{$order_srl}",
-                "cancel_url" => "https://{$http_host}/hotopay/payStatus/paypal/fail/HT{$order_srl}",
+                "return_url" => "https://{$http_host}/hotopay/payStatus/paypal/success/{$order_id}",
+                "cancel_url" => "https://{$http_host}/hotopay/payStatus/paypal/fail/{$order_id}",
                 "brand_name" => "HotoPay",
                 "locale" => "ko-KR",
                 "landing_page" => "LOGIN",
@@ -220,6 +221,7 @@ class Paypal extends Hotopay {
     {
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($order_srl);
+        $order_id = 'HT'.str_pad($order_srl, 4, "0", STR_PAD_LEFT);
         $pay_data = json_decode($purchase->pay_data);
         $refund_link = '';
         
@@ -236,7 +238,7 @@ class Paypal extends Hotopay {
             return $this->createObject(-1, 'Paypal 환불 링크를 가져올 수 없습니다.');
 
         $post_field = array(
-            "invoice_number" => 'HT'.$purchase->purchase_srl
+            "invoice_number" => $order_id,
         );
 
         if($cancel_reason != '')

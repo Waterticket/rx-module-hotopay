@@ -13,9 +13,8 @@ class Toss extends Hotopay {
     {
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($purchase_srl);
-        $order_id = 'HT'.$purchase_srl;
         $amount = $purchase->product_purchase_price;
-
+        $order_id = 'HT'.str_pad($purchase_srl, 4, "0", STR_PAD_LEFT);
 
         $url = self::$TOSS_URL."/v1/payments/{$payment_key}";
         $headers = array(
