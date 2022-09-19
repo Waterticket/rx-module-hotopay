@@ -32,7 +32,7 @@ $daily = array('일','월','화','수','목','금','토');
                 <!--@foreach($products as $product)-->
                 <tr class="ht-order">
                     <td>
-                        <span class="ht-order-id">HT{$purchase->purchase_srl}</span>
+                        <span class="ht-order-id">HT{str_pad($purchase->purchase_srl, 4, "0", STR_PAD_LEFT)}</span>
                         <span class="ht-tag ht-order-status" data-status="{$purchase->pay_status}">{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}</span>
                     </td>
                     <td>
