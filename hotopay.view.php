@@ -155,6 +155,28 @@ class HotopayView extends Hotopay
 			Context::set('n_account_html', $n_account_html);
 		}
 
+		if($_SESSION['__hotopay_purchase_success_after_url__'])
+		{
+			Context::set('purchase_success_after_url', $_SESSION['__hotopay_purchase_success_after_url__']);
+			unset($_SESSION['__hotopay_purchase_success_after_url__']);
+		}
+		else
+		{
+			$purchase_success_after_url = getUrl("","mid","hotopay","act","dispHotopayOrderList");
+			Context::set('purchase_success_after_url', $purchase_success_after_url);
+		}
+
+		if($_SESSION['__hotopay_purchase_failed_after_url__'])
+		{
+			Context::set('purchase_failed_after_url', $_SESSION['__hotopay_purchase_failed_after_url__']);
+			unset($_SESSION['__hotopay_purchase_failed_after_url__']);
+		}
+		else
+		{
+			$purchase_failed_after_url = getUrl("","mid","hotopay","act","dispHotopayOrderList");
+			Context::set('purchase_failed_after_url', $purchase_failed_after_url);
+		}
+
 		if($pay_data->p_status == "success")
 			$this->setTemplateFile('order_success');
 		else

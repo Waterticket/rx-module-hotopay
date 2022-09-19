@@ -150,7 +150,7 @@
     <div id="btn_layer">
         <input type="button" id="ok_btn" cond="$pay_data->method == '카드'" onclick="window.open('{$pay_data->card->receiptUrl}')" value="영수증 보기" />
         <input type="button" id="ok_btn" cond="$pay_data->method == '가상계좌' && isset($pay_data->cashReceipt->receiptUrl)" onclick="window.open('{$pay_data->cashReceipt->receiptUrl}')" value="영수증 보기" />
-        <input type="button" id="ok_btn" onclick="window.location = ('{getUrl("","mid","hotopay","act","dispHotopayOrderList")}')" value="확인">
+        <input type="button" id="ok_btn" onclick="window.location = ('{$purchase_success_after_url}')" value="확인">
     </div>
 </div>
 </section>
