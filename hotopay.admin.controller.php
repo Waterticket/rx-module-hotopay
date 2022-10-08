@@ -39,6 +39,14 @@ class HotopayAdminController extends Hotopay
 		$config->kakaopay_cid_key = $vars->kakaopay_cid_key;
 		$config->kakaopay_cid_secret_key = $vars->kakaopay_cid_secret_key;
 		$config->kakaopay_install_month = $vars->kakaopay_install_month;
+		
+		$config->inicis_enabled = empty($vars->inicis_enabled) ? 'N' : 'Y';
+		$config->inicis_list = $vars->inicis_list;
+		$config->inicis_mid = $vars->inicis_mid;
+		$config->inicis_sign_key = $vars->inicis_sign_key;
+		$config->inicis_iniapi_key = $vars->inicis_iniapi_key;
+		$config->inicis_iniapi_iv = $vars->inicis_iniapi_iv;
+		$config->inicis_mobile_hashkey = $vars->inicis_mobile_hashkey;
 
 		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
 		$config->n_account_string = $vars->n_account_string;
