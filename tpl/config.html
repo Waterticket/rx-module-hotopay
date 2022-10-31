@@ -242,6 +242,13 @@
 		</div>
 
 		<div class="x_control-group">
+			<label class="x_control-label" for="inicis_mid">상점아이디 (mid)</label>
+			<div class="x_controls">
+				<input type="text" name="inicis_mid" id="inicis_mid" value="{$hotopay_config->inicis_mid}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label">이니시스 결제 수단</label>
 			<div class="x_controls">
 				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_card" value="card" checked="checked"|cond="in_array('card', $hotopay_config->inicis_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;

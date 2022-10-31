@@ -125,6 +125,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->iamport_rest_api_key)) self::$_config_cache->iamport_rest_api_key = ''; // 아임포트 REST API KEY
 			if(!isset(self::$_config_cache->iamport_rest_api_secret)) self::$_config_cache->iamport_rest_api_secret = ''; // 아임포트 REST API SECRET
 			if(!isset(self::$_config_cache->inicis_list)) self::$_config_cache->inicis_list = array('card', 'trans', 'vbank'); // 이니시스 결제 방식 목록
+			if(!isset(self::$_config_cache->inicis_mid)) self::$_config_cache->inicis_mid = ''; // 이니시스 mid
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL

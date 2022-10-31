@@ -46,6 +46,7 @@ class HotopayAdminController extends Hotopay
 		$config->iamport_rest_api_secret = $vars->iamport_rest_api_secret;
 
 		$config->inicis_enabled = empty($vars->inicis_enabled) ? 'N' : 'Y';
+		$config->inicis_mid = $vars->inicis_mid;
 		$config->inicis_list = $vars->inicis_list;
 
 		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
