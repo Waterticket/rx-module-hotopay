@@ -410,6 +410,7 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product","member_srl")) return true;
 		if(!$oDB->isIndexExists("hotopay_product","idx_member_srl")) return true;
 		if(!$oDB->isColumnExists("hotopay_product","product_status")) return true;
+		if(!$oDB->isColumnExists("hotopay_purchase","iamport_uid")) return true;
 
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
