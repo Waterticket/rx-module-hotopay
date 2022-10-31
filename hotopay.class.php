@@ -477,6 +477,11 @@ class Hotopay extends ModuleObject
 			$oDB->addIndex('hotopay_product',"idx_document_srl","document_srl");
 		}
 
+		if(!$oDB->isColumnExists("hotopay_purchase","iamport_uid"))
+		{
+			$oDB->addColumn('hotopay_purchase',"iamport_uid","varchar",20,"",false,"pay_data");
+		}
+
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
 		{
