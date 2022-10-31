@@ -507,6 +507,62 @@ class HotopayController extends Hotopay
 	}
 
 	/**
+	 * 아임포트에서 넘어오는 결제 Callback을 처리합니다
+	 * 
+	 * @return void
+	 */
+	public function procHotopayIamportCallback()
+	{
+		Context::setRequestMethod('JSON');
+		Context::setResponseMethod('JSON');
+
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+
+		$imp_uid = $vars->imp_uid;
+		$merchant_uid = $vars->merchant_uid;
+		$status = $vars->status;
+
+		if (empty($imp_uid) || empty($merchant_uid) || empty($status)) {
+			http_response_code(400);
+			die(json_encode(array("status"=>"fail", "message"=>"parameter empty")));
+		}
+		$purchase_srl = (int)substr($merchant_uid, 2);
+
+		$oHotopayModel = getModel('hotopay');
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		if (!$purchase->toBool() || empty($purchase))
+		{
+			http_response_code(400);
+			die(json_encode(array("status"=>"fail", "message"=>"unable to find purchase data")));
+		}
+
+		// imp_uid 등록
+		if (empty($purchase->iamport_uid))
+		{
+			$args = new stdClass();
+			$args->purchase_srl = $purchase_srl;
+			$args->iamport_uid = $imp_uid;
+			executeQuery('hotopay.updatePurchaseIamportUid', $args);
+		}
+
+		if ($status == 'paid')
+		{
+			$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
+		}
+		else if ($status == 'failed')
+		{
+			$args = new stdClass();
+			$args->purchase_srl = $purchase_srl;
+			$args->pay_status = "FAILED";
+			executeQuery('hotopay.updatePurchaseStatus', $args);
+		}
+
+		http_response_code(200);
+		die(json_encode(array("status"=>"success", "message"=>"success")));
+	}
+
+	/**
 	 * 결제가 완료되었다면 결제 완료 알림을 보내며, 상품 구매를 최종 승인합니다
 	 * 
 	 * @param int $purchase_srl 결제 번호를 받습니다.
