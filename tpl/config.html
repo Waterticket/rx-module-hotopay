@@ -244,12 +244,16 @@
 		<div class="x_control-group">
 			<label class="x_control-label">이니시스 결제 수단</label>
 			<div class="x_controls">
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_Card" value="Card" checked="checked"|cond="in_array('Card', $hotopay_config->inicis_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_DirectBank" value="DirectBank" checked="checked"|cond="in_array('DirectBank', $hotopay_config->inicis_list)"> 실시간계좌이체</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_VBank" value="VBank" checked="checked"|cond="in_array('VBank', $hotopay_config->inicis_list)"> 가상계좌(무통장입금)</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_HPP" value="HPP" checked="checked"|cond="in_array('HPP', $hotopay_config->inicis_list)"> 휴대폰</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_card" value="card" checked="checked"|cond="in_array('card', $hotopay_config->inicis_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_trans" value="trans" checked="checked"|cond="in_array('trans', $hotopay_config->inicis_list)"> 실시간계좌이체</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_vbank" value="vbank" checked="checked"|cond="in_array('vbank', $hotopay_config->inicis_list)"> 가상계좌(무통장입금)</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_phone" value="phone" checked="checked"|cond="in_array('phone', $hotopay_config->inicis_list)"> 휴대폰소액결제</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_cultureland" value="cultureland" checked="checked"|cond="in_array('cultureland', $hotopay_config->inicis_list)"> 문화상품권(컬쳐랜드)</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_smartculture" value="smartculture" checked="checked"|cond="in_array('smartculture', $hotopay_config->inicis_list)"> 스마트문상</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_happymoney" value="happymoney" checked="checked"|cond="in_array('happymoney', $hotopay_config->inicis_list)"> 해피머니</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <br>
 				<br>
-				이니시스에서 사용할 결제 수단입니다.
+				이니시스에서 사용할 결제 수단입니다. 결제수단은 차후 추가될 예정입니다.
 			</div>
 		</div>
 	</section>
