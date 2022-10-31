@@ -557,6 +557,10 @@ class HotopayController extends Hotopay
 			$args->pay_status = "FAILED";
 			executeQuery('hotopay.updatePurchaseStatus', $args);
 		}
+		else if ($status == 'cancelled')
+		{
+			$this->_RefundProcess($purchase_srl);
+		}
 
 		http_response_code(200);
 		die(json_encode(array("status"=>"success", "message"=>"success")));
@@ -605,7 +609,7 @@ class HotopayController extends Hotopay
 	}
 
 	/**
-	 * 결제를 환불합니다.
+	 * PG사와 통신하여 결제를 환불합니다.
 	 * 
 	 * @param int $purchase_srl 결제 번호입니다.
 	 * @param string $cancel_reason 환불 사유입니다. 클라이언트에게 보여집니다.
@@ -652,45 +656,61 @@ class HotopayController extends Hotopay
 
 		if($output->error == 0)
 		{
-			$args = new stdClass();
-			$args->purchase_srl = $purchase_srl;
-			$args->pay_status = 'REFUNDED';
-			$args->pay_data = json_encode($output->data);
-			executeQuery('hotopay.updatePurchaseStatus', $args);
-			executeQuery('hotopay.updatePurchaseData', $args);
-
-			$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
-
-			foreach($products as $product)
-			{
-				$group_srl = $product->product_buyer_group;
-				if($group_srl != 0)
-				{
-					$args = new stdClass();
-					$args->member_srl = $member_srl;
-					$args->group_srl = $group_srl;
-					$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
-				}
-			}
-
-			$oMemberController = getController('member');
-			if(version_compare(__XE_VERSION__, '2.0.0', '<'))
-			{
-				$oMemberController->_clearMemberCache($member_srl); // for old rhymix
-			}
-			else
-			{
-				$oMemberController->clearMemberCache($member_srl);
-			}
-
-			$this->_MessageMailer("REFUNDED", $purchase);
-
-			return $this->createObject();
+			return $this->_RefundProcess($purchase_srl, $output->data);
 		}
 		else
 		{
 			return $output;
 		}
+	}
+
+	/**
+	 * Hotopay에서 결제 취소 처리를 합니다.
+	 * 
+	 * @param int $purchase_srl 결제 번호입니다.
+	 * @param array $output_data PG사에서 받은 환불 정보입니다. pay_data에 json으로 저장됩니다.
+	 * @return object
+	 */
+	public function _RefundProcess($purchase_srl, $output_data = [])
+	{
+		$oHotopayModel = getModel('hotopay');
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$member_srl = $purchase->member_srl;
+
+		$args = new stdClass();
+		$args->purchase_srl = $purchase_srl;
+		$args->pay_status = 'REFUNDED';
+		$args->pay_data = json_encode($output_data);
+		executeQuery('hotopay.updatePurchaseStatus', $args);
+		executeQuery('hotopay.updatePurchaseData', $args);
+
+		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
+
+		foreach($products as $product)
+		{
+			$group_srl = $product->product_buyer_group;
+			if($group_srl != 0)
+			{
+				$args = new stdClass();
+				$args->member_srl = $member_srl;
+				$args->group_srl = $group_srl;
+				$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
+			}
+		}
+
+		$oMemberController = getController('member');
+		if(version_compare(__XE_VERSION__, '2.0.0', '<'))
+		{
+			$oMemberController->_clearMemberCache($member_srl); // for old rhymix
+		}
+		else
+		{
+			$oMemberController->clearMemberCache($member_srl);
+		}
+
+		$this->_MessageMailer("REFUNDED", $purchase);
+
+		return $this->createObject();
 	}
 
 	/**
