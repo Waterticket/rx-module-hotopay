@@ -201,7 +201,39 @@
 	</section>
 
 	<section class="section">
-		<h1>Inicis(이니시스) 설정</h1>
+		<h1>아임포트 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="iamport_enabled">아임포트 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="iamport_enabled" id="iamport_enabled" checked="checked"|cond="$hotopay_config->iamport_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;아임포트를 활성화 합니다.</label>
+				<div class="message error" cond="!$is_rhymix2">
+					<p>라이믹스 2.0 미만에서는 카카오페이 결제 수단을 사용할 수 없습니다.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="iamport_mid">가맹점 식별코드</label>
+			<div class="x_controls">
+				<input type="text" name="iamport_mid" id="iamport_mid" value="{$hotopay_config->iamport_mid}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="iamport_rest_api_key">REST API Key</label>
+			<div class="x_controls">
+				<input type="text" name="iamport_rest_api_key" id="iamport_rest_api_key" value="{$hotopay_config->iamport_rest_api_key}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="iamport_rest_api_secret">REST API Secret</label>
+			<div class="x_controls">
+				<input type="text" name="iamport_rest_api_secret" id="iamport_rest_api_secret" value="{$hotopay_config->iamport_rest_api_secret}"><br>
+			</div>
+		</div>
+
+		<h2>Inicis(이니시스) 설정 (with 아임포트)</h2>
 		<div class="x_control-group">
 			<label class="x_control-label" for="inicis_enabled">이니시스 활성화</label>
 			<div class="x_controls">
@@ -216,55 +248,8 @@
 				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_DirectBank" value="DirectBank" checked="checked"|cond="in_array('DirectBank', $hotopay_config->inicis_list)"> 실시간계좌이체</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_VBank" value="VBank" checked="checked"|cond="in_array('VBank', $hotopay_config->inicis_list)"> 가상계좌(무통장입금)</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_HPP" value="HPP" checked="checked"|cond="in_array('HPP', $hotopay_config->inicis_list)"> 휴대폰</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_PhoneBill" value="PhoneBill" checked="checked"|cond="in_array('PhoneBill', $hotopay_config->inicis_list)"> 휴대폰소액결제</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_Culture" value="Culture" checked="checked"|cond="in_array('Culture', $hotopay_config->inicis_list)"> 문화상품권(컬쳐랜드)</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_DGCL" value="DGCL" checked="checked"|cond="in_array('DGCL', $hotopay_config->inicis_list)"> 스마트문상</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<br>
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_Bcsh" value="Bcsh" checked="checked"|cond="in_array('Bcsh', $hotopay_config->inicis_list)"> 도서문화상품권</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_HPMN" value="HPMN" checked="checked"|cond="in_array('HPMN', $hotopay_config->inicis_list)"> 해피머니</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_TeenCash" value="TeenCash" checked="checked"|cond="in_array('TeenCash', $hotopay_config->inicis_list)"> 틴캐시</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_Paypin" value="Paypin" checked="checked"|cond="in_array('Paypin', $hotopay_config->inicis_list)"> 페이핀</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_OCBPoint" value="OCBPoint" checked="checked"|cond="in_array('OCBPoint', $hotopay_config->inicis_list)"> OKCashbag 포인트</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_POINT" value="POINT" checked="checked"|cond="in_array('POINT', $hotopay_config->inicis_list)"> 포인트(이니시스)</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_GiftCard" value="GiftCard" checked="checked"|cond="in_array('GiftCard', $hotopay_config->inicis_list)"> 상품권(이니시스)</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                <br>
-				<br>
-				이니시스에서 사용할 결제 수단입니다. 전부 선택하지 않을 시, 모든 결제수단을 표시합니다. (이니시스 정책)
-			</div>
-		</div>
-
-		<div class="x_control-group">
-			<label class="x_control-label" for="inicis_mid">상점 아이디 (MID)</label>
-			<div class="x_controls">
-				<input type="text" name="inicis_mid" id="inicis_mid" value="{$hotopay_config->inicis_mid}"><br>
-			</div>
-		</div>
-
-		<div class="x_control-group">
-			<label class="x_control-label" for="inicis_sign_key">signkey</label>
-			<div class="x_controls">
-				<input type="text" name="inicis_sign_key" id="inicis_sign_key" value="{$hotopay_config->inicis_sign_key}"><br>
-			</div>
-		</div>
-
-		<div class="x_control-group">
-			<label class="x_control-label" for="inicis_iniapi_key">INIAPI key</label>
-			<div class="x_controls">
-				<input type="text" name="inicis_iniapi_key" id="inicis_iniapi_key" value="{$hotopay_config->inicis_iniapi_key}"><br>
-			</div>
-		</div>
-
-		<div class="x_control-group">
-			<label class="x_control-label" for="inicis_iniapi_iv">INIAPI iv</label>
-			<div class="x_controls">
-				<input type="text" name="inicis_iniapi_iv" id="inicis_iniapi_iv" value="{$hotopay_config->inicis_iniapi_iv}"><br>
-			</div>
-		</div>
-
-		<div class="x_control-group">
-			<label class="x_control-label" for="inicis_mobile_hashkey">모바일 hashkey</label>
-			<div class="x_controls">
-				<input type="text" name="inicis_mobile_hashkey" id="inicis_mobile_hashkey" value="{$hotopay_config->inicis_mobile_hashkey}"><br>
+				이니시스에서 사용할 결제 수단입니다.
 			</div>
 		</div>
 	</section>

@@ -106,10 +106,10 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->paypal_enabled)) self::$_config_cache->paypal_enabled = 'N'; // 페이팔 활성화
 			if(!isset(self::$_config_cache->kakaopay_enabled)) self::$_config_cache->kakaopay_enabled = 'N'; // 카카오페이 활성화
 			if(!isset(self::$_config_cache->n_account_enabled)) self::$_config_cache->n_account_enabled = 'N'; // 무통장입금 활성화
+			if(!isset(self::$_config_cache->iamport_enabled)) self::$_config_cache->iamport_enabled = 'N'; // 아임포트 활성화
 			if(!isset(self::$_config_cache->inicis_enabled)) self::$_config_cache->inicis_enabled = 'N'; // 이니시스 결제 활성화
 			
 			if(!isset(self::$_config_cache->toss_payments_list)) self::$_config_cache->toss_payments_list = array(1,2); // 토스 결제 방식 목록
-
 			if(!isset(self::$_config_cache->toss_payments_client_key)) self::$_config_cache->toss_payments_client_key = ''; // 토스 클라이언트 키
 			if(!isset(self::$_config_cache->toss_payments_secret_key)) self::$_config_cache->toss_payments_secret_key = ''; // 토스 시크릿 키
 			if(!isset(self::$_config_cache->toss_payments_install_month)) self::$_config_cache->toss_payments_install_month = -1; // 토스 할부 개월 수 (고정)
@@ -121,12 +121,10 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->kakaopay_cid_secret_key)) self::$_config_cache->kakaopay_cid_secret_key = ''; // 카카오페이 가맹점 코드 인증키
 			if(!isset(self::$_config_cache->kakaopay_install_month)) self::$_config_cache->kakaopay_install_month = -1; // 카카오페이 카드 할부 개월 수
 			
+			if(!isset(self::$_config_cache->iamport_mid)) self::$_config_cache->iamport_mid = ''; // 아임포트 가맹점 식별코드
+			if(!isset(self::$_config_cache->iamport_rest_api_key)) self::$_config_cache->iamport_rest_api_key = ''; // 아임포트 REST API KEY
+			if(!isset(self::$_config_cache->iamport_rest_api_secret)) self::$_config_cache->iamport_rest_api_secret = ''; // 아임포트 REST API SECRET
 			if(!isset(self::$_config_cache->inicis_list)) self::$_config_cache->inicis_list = array('Card', 'DirectBank', 'VBank'); // 이니시스 결제 방식 목록
-			if(!isset(self::$_config_cache->inicis_mid)) self::$_config_cache->inicis_mid = ''; // 이니시스 MID
-			if(!isset(self::$_config_cache->inicis_sign_key)) self::$_config_cache->inicis_sign_key = ''; // 이니시스 signKey
-			if(!isset(self::$_config_cache->inicis_iniapi_key)) self::$_config_cache->inicis_iniapi_key = ''; // 이니시스 INIAPI key
-			if(!isset(self::$_config_cache->inicis_iniapi_iv)) self::$_config_cache->inicis_iniapi_iv = ''; // 이니시스 INIAPI iv
-			if(!isset(self::$_config_cache->inicis_mobile_hashkey)) self::$_config_cache->inicis_mobile_hashkey = ''; // 이니시스 모바일 hashkey
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL

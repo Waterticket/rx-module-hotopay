@@ -1,6 +1,4 @@
 <?php
-require_once('libs/INIStdPayUtil.php');
-require_once('libs/HttpClient.php');
 
 class Inicis extends Hotopay {
     public function acceptOrder($purchase_srl, $payment_key)
