@@ -1,4 +1,6 @@
 <?php
+require_once('libs/INIStdPayUtil.php');
+require_once('libs/HttpClient.php');
 
 class Inicis extends Hotopay {
     public function acceptOrder($purchase_srl, $payment_key)
@@ -22,9 +24,45 @@ class Inicis extends Hotopay {
     public function createOrder($order, $order_srl)
     {
         $order_id = 'HT'.str_pad($order_srl, 4, "0", STR_PAD_LEFT);
-        
+        $SignatureUtil = new INIStdPayUtil();
+        $config = $this->getConfig();
 
-        return $pay_object;
+        $mid = $config->inicis_mid;
+        $sign_key = $config->inicis_sign_key;
+        $mKey = $SignatureUtil->makeHash($sign_key, "sha256");
+        $timestamp = $SignatureUtil->getTimestamp();
+        $price = $order->product_purchase_price;
+
+        $gopaymethod = '';
+        foreach ($config->inicis_list as $value) {
+            $gopaymethod .= $value.':';
+        }
+        $gopaymethod = substr($gopaymethod, 0, -1);
+
+        $params = array(
+            "oid" => $order_id,
+            "price" => $price,
+            "timestamp" => $timestamp
+        );
+
+        $sign = $SignatureUtil->makeSignature($params);
+
+        $return_url = getFullUrl('', 'mid', 'hotopay', 'act', 'procHotopayPayStatus', 'pay_pg', 'inicis', 'pay_status', 'success', 'order_id', $order_id);
+        $close_url = getFullUrl('', 'mid', 'hotopay', 'act', 'procHotopayPayStatus', 'pay_pg', 'inicis', 'pay_status', 'failed', 'order_id', $order_id);
+
+        return (object) array(
+            'version' => '1.0',
+            'mid' => $mid,
+            'oid' => $order_id,
+            'price' => $price,
+            'timestamp' => $timestamp,
+            'currency' => 'WON',
+            'signature' => $sign,
+            'mKey' => $mKey,
+            'gopaymethod' => $gopaymethod,
+            'returnUrl' => $return_url,
+            'closeUrl' => $close_url,
+        );
     }
 
     public function cancelOrder($purchase_srl, $cancel_reason, $cancel_amount = -1, $bank_info = array())
