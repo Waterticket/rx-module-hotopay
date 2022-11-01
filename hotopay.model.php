@@ -279,6 +279,11 @@ class HotopayModel extends Hotopay
             $account = $n_account_arr[0];
         }
 
+        if ($purchase->pay_method == 'inicis')
+        {
+            $account = "{$pay_data->vbank_name} {$pay_data->vbank_num} {$pay_data->vbank_holder}";
+        }
+
         $string = str_replace("[쇼핑몰명]", $config->shop_name, $string);
         $string = str_replace("[상품명]", mb_substr($purchase_data->t, 0, 50), $string);
         $string = str_replace("[주문확인링크]", '<a href="'.mb_substr(Context::getDefaultUrl(),0,-1).getUrl("","mid","hotopay","act","dispHotopayOrderList").'" target="_blank" title="주문 확인하기">[주문 확인하기]</a>', $string);
