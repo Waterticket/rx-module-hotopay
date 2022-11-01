@@ -3,7 +3,7 @@
 
 라이믹스용 결제모듈 HotoPay 입니다
 
-사용을 위해 [문서](https://github.com/Waterticket/hotopay-docs)를 확인해주세요
+사용을 위해 [문서](https://hotopaydocs.hotoproject.com)를 확인해주세요
   
 
 ## 후원 안내
