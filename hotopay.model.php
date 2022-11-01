@@ -279,9 +279,9 @@ class HotopayModel extends Hotopay
             $account = $n_account_arr[0];
         }
 
-        if ($purchase->pay_method == 'inicis')
+        if ($purchase->pay_method == 'inic_vbank')
         {
-            $account = "{$pay_data->vbank_name} {$pay_data->vbank_num} {$pay_data->vbank_holder}";
+            $account = $pay_data->vbank_name.' '.$pay_data->vbank_num.' '.$pay_data->vbank_holder;
         }
 
         $string = str_replace("[쇼핑몰명]", $config->shop_name, $string);

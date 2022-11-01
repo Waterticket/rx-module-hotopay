@@ -454,6 +454,7 @@ class HotopayController extends Hotopay
 				}
 				else if($args->pay_status = "WAITING_FOR_DEPOSIT")
 				{
+					$purchase = executeQuery('hotopay.getPurchase', $args);
 					$this->_MessageMailer("WAITING_FOR_DEPOSIT", $purchase->data);
 				}
 
@@ -467,9 +468,10 @@ class HotopayController extends Hotopay
 
 				$response_json = new stdClass();
 				$response_json->method = 'inicis';
-				$response_json->p_status = $args->pay_status;
+				$response_json->p_status = "success";
 				$response_json->product_title = $purchase_data->t;
 				$response_json->orderId = $vars->order_id;
+				$response_json->pay_status = $args->pay_status;
 				$response_json->pay_data = $imp_purchase;
 				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
@@ -641,7 +643,10 @@ class HotopayController extends Hotopay
 
 		if ($status == 'paid')
 		{
-			$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
+			if ($purchase->pay_status != "DONE")
+			{
+				$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
+			}
 		}
 		else if ($status == 'failed')
 		{
