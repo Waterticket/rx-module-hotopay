@@ -7,6 +7,7 @@
 	<column name="product_original_price" type="number" size="10" default="0" />
 	<column name="pay_status" type="varchar" size="50" />
 	<column name="pay_data" type="varchar" size="5000" default="" />
+	<column name="iamport_uid" type="varchar" size="20" default="" />
 	<column name="extra_vars" type="text" />
 	<column name="regdate" type="number" size="10" notnull="notnull" index="idx_regdate" />
 </table>

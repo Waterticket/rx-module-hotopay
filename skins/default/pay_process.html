@@ -69,7 +69,36 @@ function openPay()
   if(url != '') location.href = url;
 }
 </script>
+<!--@elseif($purchase->pay_pg == 'inicis')-->
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<!-- iamport.payment.js -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.1.js"></script>
 
+<script>
+var IMP = window.IMP; 
+IMP.init("{$hotopay_config->iamport_mid}"); 
+
+function openPay() {
+    IMP.request_pay({
+        pg : 'html5_inicis.{$hotopay_config->inicis_mid}',
+        pay_method : '{substr($purchase->pay_method, 5)}',
+        merchant_uid: 'HT{$vars->order_id}', 
+        name : '{$purchase->title}',
+        amount : {$purchase->product_purchase_price},
+        buyer_email : '{$logged_info->email_address}',
+        buyer_name : '{$logged_info->user_name}',
+        buyer_tel : '{!empty($logged_info->phone_number) ? $logged_info->phone_number : "010-0000-0000"}',
+        m_redirect_url : '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","inicis","pay_status","success","order_id","HT".$vars->order_id)}',
+    }, function (rsp) { // callback
+        if (rsp.success) {
+            location.href = window.location.origin + '/hotopay/payStatus/inicis/success/HT{$vars->order_id}?imp_uid=' + rsp.imp_uid + '&merchant_uid=' + rsp.merchant_uid;
+        } else {
+          location.href = window.location.origin + '/hotopay/payStatus/inicis/fail/HT{$vars->order_id}';
+        }
+    });
+}
+</script>
 <!--@elseif($purchase->pay_pg == 'n_account')-->
 <script>
 function openPay()

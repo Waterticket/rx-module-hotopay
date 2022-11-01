@@ -10,7 +10,7 @@ spl_autoload_register(function($className) {
         "Paypal" => "Paypal/Paypal.php",
         "Toss" => "Toss/Toss.php",
         "KakaoPay" => "KakaoPay/KakaoPay.php",
-        "Inicis" => "Inicis/Inicis.php",
+        "Iamport" => "Iamport/Iamport.php",
     );
 
     if(array_key_exists($className, $target))

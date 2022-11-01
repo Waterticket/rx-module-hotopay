@@ -382,6 +382,101 @@ class HotopayController extends Hotopay
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
+			else if(strcmp($vars->pay_pg, "inicis") === 0) // 이니시스 처리
+			{
+				if ($vars->merchant_uid != $vars->order_id)
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1006)");
+				}
+
+				if (empty($vars->imp_uid))
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1007)");
+				}
+
+				$imp_uid = $vars->imp_uid;
+				$args->iamport_uid = $imp_uid;
+				executeQuery('hotopay.updatePurchaseIamportUid', $args);
+
+				$iamport = new Iamport();
+				$imp_purchase = $iamport->getPaymentByImpUid($imp_uid);
+
+				$args->pay_data = json_encode($imp_purchase);
+				switch($imp_purchase->status)
+				{
+					case "paid":
+						if ($imp_purchase->amount == $purchase->data->product_purchase_price)
+						{
+							$args->pay_status = "DONE";
+						}
+						else
+						{
+							$args->pay_status = "FAILED";
+						}
+						break;
+					case "ready":
+						$args->pay_status = "WAITING_FOR_DEPOSIT";
+						break;
+					case "cancelled":
+						$args->pay_status = "CANCELED";
+						break;
+					default:
+						$args->pay_status = "FAILED";
+						break;
+				}
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				executeQuery('hotopay.updatePurchaseData', $args);
+
+				if($args->pay_status == "FAILED")
+				{
+					$_SESSION['hotopay_'.$vars->order_id] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->order_id,
+						"code" => "IMPORT_FAILED",
+						"message" => "결제를 실패하였습니다. (code: 1008)"
+					);
+
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $imp_purchase;
+					$trigger_obj->pay_pg = "inicis";
+					$trigger_obj->amount = $imp_purchase->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+					return;
+				}
+
+				if($args->pay_status == "DONE") // 결제 완료에 경우
+				{
+					$this->_ActivePurchase($purchase_srl);
+				}
+				else if($args->pay_status = "WAITING_FOR_DEPOSIT")
+				{
+					$purchase = executeQuery('hotopay.getPurchase', $args);
+					$this->_MessageMailer("WAITING_FOR_DEPOSIT", $purchase->data);
+				}
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $args->purchase_srl;
+				$trigger_obj->pay_status = $args->pay_status;
+				$trigger_obj->pay_data = $imp_purchase;
+				$trigger_obj->pay_pg = "inicis";
+				$trigger_obj->amount = $imp_purchase->amount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$response_json = new stdClass();
+				$response_json->method = 'inicis';
+				$response_json->p_status = "success";
+				$response_json->product_title = $purchase_data->t;
+				$response_json->orderId = $vars->order_id;
+				$response_json->pay_status = $args->pay_status;
+				$response_json->pay_data = $imp_purchase;
+				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				return;
+			}
 			else if(strcmp($vars->pay_pg, "n_account") === 0) // 무통장 처리
 			{
 				$args->pay_status = 'WAITING_FOR_DEPOSIT';
@@ -507,6 +602,69 @@ class HotopayController extends Hotopay
 	}
 
 	/**
+	 * 아임포트에서 넘어오는 결제 Callback을 처리합니다
+	 * 
+	 * @return void
+	 */
+	public function procHotopayIamportCallback()
+	{
+		Context::setRequestMethod('JSON');
+		Context::setResponseMethod('JSON');
+
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+
+		$imp_uid = $vars->imp_uid;
+		$merchant_uid = $vars->merchant_uid;
+		$status = $vars->status;
+
+		if (empty($imp_uid) || empty($merchant_uid) || empty($status)) {
+			http_response_code(400);
+			die(json_encode(array("status"=>"fail", "message"=>"parameter empty")));
+		}
+		$purchase_srl = (int)substr($merchant_uid, 2);
+
+		$oHotopayModel = getModel('hotopay');
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		if (!$purchase->toBool() || empty($purchase))
+		{
+			http_response_code(400);
+			die(json_encode(array("status"=>"fail", "message"=>"unable to find purchase data")));
+		}
+
+		// imp_uid 등록
+		if (empty($purchase->iamport_uid))
+		{
+			$args = new stdClass();
+			$args->purchase_srl = $purchase_srl;
+			$args->iamport_uid = $imp_uid;
+			executeQuery('hotopay.updatePurchaseIamportUid', $args);
+		}
+
+		if ($status == 'paid')
+		{
+			if ($purchase->pay_status != "DONE")
+			{
+				$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
+			}
+		}
+		else if ($status == 'failed')
+		{
+			$args = new stdClass();
+			$args->purchase_srl = $purchase_srl;
+			$args->pay_status = "FAILED";
+			executeQuery('hotopay.updatePurchaseStatus', $args);
+		}
+		else if ($status == 'cancelled')
+		{
+			$this->_RefundProcess($purchase_srl);
+		}
+
+		http_response_code(200);
+		die(json_encode(array("status"=>"success", "message"=>"success")));
+	}
+
+	/**
 	 * 결제가 완료되었다면 결제 완료 알림을 보내며, 상품 구매를 최종 승인합니다
 	 * 
 	 * @param int $purchase_srl 결제 번호를 받습니다.
@@ -549,7 +707,7 @@ class HotopayController extends Hotopay
 	}
 
 	/**
-	 * 결제를 환불합니다.
+	 * PG사와 통신하여 결제를 환불합니다.
 	 * 
 	 * @param int $purchase_srl 결제 번호입니다.
 	 * @param string $cancel_reason 환불 사유입니다. 클라이언트에게 보여집니다.
@@ -596,45 +754,61 @@ class HotopayController extends Hotopay
 
 		if($output->error == 0)
 		{
-			$args = new stdClass();
-			$args->purchase_srl = $purchase_srl;
-			$args->pay_status = 'REFUNDED';
-			$args->pay_data = json_encode($output->data);
-			executeQuery('hotopay.updatePurchaseStatus', $args);
-			executeQuery('hotopay.updatePurchaseData', $args);
-
-			$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
-
-			foreach($products as $product)
-			{
-				$group_srl = $product->product_buyer_group;
-				if($group_srl != 0)
-				{
-					$args = new stdClass();
-					$args->member_srl = $member_srl;
-					$args->group_srl = $group_srl;
-					$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
-				}
-			}
-
-			$oMemberController = getController('member');
-			if(version_compare(__XE_VERSION__, '2.0.0', '<'))
-			{
-				$oMemberController->_clearMemberCache($member_srl); // for old rhymix
-			}
-			else
-			{
-				$oMemberController->clearMemberCache($member_srl);
-			}
-
-			$this->_MessageMailer("REFUNDED", $purchase);
-
-			return $this->createObject();
+			return $this->_RefundProcess($purchase_srl, $output->data);
 		}
 		else
 		{
 			return $output;
 		}
+	}
+
+	/**
+	 * Hotopay에서 결제 취소 처리를 합니다.
+	 * 
+	 * @param int $purchase_srl 결제 번호입니다.
+	 * @param array $output_data PG사에서 받은 환불 정보입니다. pay_data에 json으로 저장됩니다.
+	 * @return object
+	 */
+	public function _RefundProcess($purchase_srl, $output_data = [])
+	{
+		$oHotopayModel = getModel('hotopay');
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$member_srl = $purchase->member_srl;
+
+		$args = new stdClass();
+		$args->purchase_srl = $purchase_srl;
+		$args->pay_status = 'REFUNDED';
+		$args->pay_data = json_encode($output_data);
+		executeQuery('hotopay.updatePurchaseStatus', $args);
+		executeQuery('hotopay.updatePurchaseData', $args);
+
+		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
+
+		foreach($products as $product)
+		{
+			$group_srl = $product->product_buyer_group;
+			if($group_srl != 0)
+			{
+				$args = new stdClass();
+				$args->member_srl = $member_srl;
+				$args->group_srl = $group_srl;
+				$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
+			}
+		}
+
+		$oMemberController = getController('member');
+		if(version_compare(__XE_VERSION__, '2.0.0', '<'))
+		{
+			$oMemberController->_clearMemberCache($member_srl); // for old rhymix
+		}
+		else
+		{
+			$oMemberController->clearMemberCache($member_srl);
+		}
+
+		$this->_MessageMailer("REFUNDED", $purchase);
+
+		return $this->createObject();
 	}
 
 	/**

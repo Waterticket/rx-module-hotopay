@@ -145,6 +145,41 @@
         <p id="s_title">결제 금액</p>
         <p id="s_value">{number_format($pay_data->amount->total)}</p>
     </div>
+    <!--@elseif($pay_data->method == "inicis")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">상품명</p>
+        <p id="s_value">{$pay_data->product_title}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">이니시스</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->pay_data->amount)}</p>
+    </div>
+    <!--@if($pay_data->pay_status == "WAITING_FOR_DEPOSIT")-->
+    <br>
+    <hr id="s_hr">
+    <br>
+
+    <div id="s_content">
+        <p id="s_title">입금 계좌</p>
+        <p id="s_value">{$pay_data->pay_data->vbank_name} {$pay_data->pay_data->vbank_num} {$pay_data->pay_data->vbank_holder}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">입금 기한</p>
+        <p id="s_value">{date("Y년 m월 d일 H시 i분 까지", $pay_data->pay_data->vbank_date)}</p>
+    </div>
+    <!--@endif-->
     <!--@endif-->
 
     <div id="btn_layer">
