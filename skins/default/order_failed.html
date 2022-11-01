@@ -14,12 +14,12 @@
         <br>
         <div id="s_content">
             <p id="s_title">실패 코드</p>
-            <p id="s_value">{$pay_data->code}</p>
+            <p id="s_value">{$pay_data->code ?? 'FAILED_PURCHASE'}</p>
         </div>
         <br>
         <div id="s_content">
             <p id="s_title">실패 이유</p>
-            <p id="s_value">{$pay_data->message}</p>
+            <p id="s_value">{$pay_data->message ?? '결제를 실패하였습니다.'}</p>
         </div>
     
         <div id="btn_layer">

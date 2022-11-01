@@ -56,8 +56,8 @@ class Iamport extends Hotopay {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $headers = array();
-        $headers[] = 'Accept: application/json';
-        $headers[] = 'Content-Type: application/json';
+        // $headers[] = 'Accept: application/json';
+        // $headers[] = 'Content-Type: application/json';
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
@@ -84,7 +84,7 @@ class Iamport extends Hotopay {
     }
     
     // 결제내역 단건조회 API
-    public function getOrderDetails($imp_uid)
+    public function getPaymentByImpUid($imp_uid)
     {
         $accessToken = $this->getAccessToken();
         $ch = curl_init();
@@ -99,8 +99,14 @@ class Iamport extends Hotopay {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
+            debugPrint('Error:' . curl_error($ch));
+        }
+
+        if($http_code != 200)
+        {
+            debugPrint('Error: Http_code: '.$http_code);
         }
         curl_close($ch);
 

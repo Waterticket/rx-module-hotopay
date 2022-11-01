@@ -382,6 +382,99 @@ class HotopayController extends Hotopay
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
+			else if(strcmp($vars->pay_pg, "inicis") === 0) // 이니시스 처리
+			{
+				if ($vars->merchant_uid != $vars->order_id)
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1006)");
+				}
+
+				if (empty($vars->imp_uid))
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1007)");
+				}
+
+				$imp_uid = $vars->imp_uid;
+				$args->iamport_uid = $imp_uid;
+				executeQuery('hotopay.updatePurchaseIamportUid', $args);
+
+				$iamport = new Iamport();
+				$imp_purchase = $iamport->getPaymentByImpUid($imp_uid);
+
+				$args->pay_data = json_encode($imp_purchase);
+				switch($imp_purchase->status)
+				{
+					case "paid":
+						if ($imp_purchase->amount == $purchase->data->product_purchase_price)
+						{
+							$args->pay_status = "DONE";
+						}
+						else
+						{
+							$args->pay_status = "FAILED";
+						}
+						break;
+					case "ready":
+						$args->pay_status = "WAITING_FOR_DEPOSIT";
+						break;
+					case "cancelled":
+						$args->pay_status = "CANCELED";
+						break;
+					default:
+						$args->pay_status = "FAILED";
+						break;
+				}
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				executeQuery('hotopay.updatePurchaseData', $args);
+
+				if($args->pay_status == "FAILED")
+				{
+					$_SESSION['hotopay_'.$vars->order_id] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->order_id,
+						"code" => "IMPORT_FAILED",
+						"message" => "결제를 실패하였습니다. (code: 1008)"
+					);
+
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $imp_purchase;
+					$trigger_obj->pay_pg = "inicis";
+					$trigger_obj->amount = $imp_purchase->amount;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+					return;
+				}
+
+				if($args->pay_status == "DONE") // 결제 완료에 경우
+				{
+					$this->_ActivePurchase($purchase_srl);
+				}
+				else if($args->pay_status = "WAITING_FOR_DEPOSIT")
+				{
+					$this->_MessageMailer("WAITING_FOR_DEPOSIT", $purchase->data);
+				}
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $args->purchase_srl;
+				$trigger_obj->pay_status = $args->pay_status;
+				$trigger_obj->pay_data = $imp_purchase;
+				$trigger_obj->pay_pg = "inicis";
+				$trigger_obj->amount = $imp_purchase->amount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$response_json = new stdClass();
+				$response_json->method = 'inicis';
+				$response_json->p_status = $args->pay_status;
+				$response_json->product_title = $purchase_data->t;
+				$response_json->orderId = $vars->order_id;
+				$response_json->pay_data = $imp_purchase;
+				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				return;
+			}
 			else if(strcmp($vars->pay_pg, "n_account") === 0) // 무통장 처리
 			{
 				$args->pay_status = 'WAITING_FOR_DEPOSIT';
