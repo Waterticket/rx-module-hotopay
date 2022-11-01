@@ -88,7 +88,7 @@ function openPay() {
         amount : {$purchase->product_purchase_price},
         buyer_email : '{$logged_info->email_address}',
         buyer_name : '{$logged_info->user_name}',
-        buyer_tel : '010-0000-0000',
+        buyer_tel : '{!empty($logged_info->phone_number) ? $logged_info->phone_number : "010-0000-0000"}',
         m_redirect_url : '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","inicis","pay_status","success","order_id","HT".$vars->order_id)}',
     }, function (rsp) { // callback
         if (rsp.success) {
