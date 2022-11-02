@@ -227,6 +227,10 @@ class HotopayController extends Hotopay
 				if(strcmp($response_json->status,"DONE") === 0) // 결제 완료에 경우
 				{
 					$this->_ActivePurchase($purchase_srl);
+					$receipt_args = new stdClass();
+					$receipt_args->purchase_srl = $purchase_srl;
+					$receipt_args->receipt_url = $response_json->receipt->url ?? "";
+					executeQuery('hotopay.updatePurchaseReceiptUrl', $receipt_args);
 				}
 
 				if($purchase->data->pay_method == 'v_account')
@@ -585,6 +589,11 @@ class HotopayController extends Hotopay
 			if(strcmp($vars->status, "DONE") === 0) // 결제 성공일 경우
 			{
 				$this->_ActivePurchase($purchase_srl, $purchase->data->member_srl);
+
+				$receipt_args = new stdClass();
+				$receipt_args->purchase_srl = $purchase_srl;
+				$receipt_args->receipt_url = $pay_data->receipt->url ?? "";
+				executeQuery('hotopay.updatePurchaseReceiptUrl', $receipt_args);
 			}
 			else if(strcmp($vars->status, "CANCELED") === 0)
 			{
@@ -647,6 +656,15 @@ class HotopayController extends Hotopay
 			{
 				$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
 			}
+
+			// 영수증 데이터 등록
+			$iamport = new Iamport();
+			$imp_purchase = $iamport->getPaymentByImpUid($imp_uid);
+
+			$receipt_args = new stdClass();
+			$receipt_args->purchase_srl = $purchase_srl;
+			$receipt_args->receipt_url = $imp_purchase->receipt_url ?? "";
+			executeQuery('hotopay.updatePurchaseReceiptUrl', $receipt_args);
 		}
 		else if ($status == 'failed')
 		{
