@@ -243,6 +243,27 @@ class HotopayModel extends Hotopay
             case "toss":
                 return "토스앱";
 
+            case "inic_card":
+                return "신용카드";
+            
+            case "inic_trans":
+                return "실시간계좌이체";
+
+            case "inic_vbank":
+                return "가상계좌";
+
+            case "inic_phone":
+                return "휴대폰소액결제";
+
+            case "inic_cultureland":
+                return "문화상품권";
+
+            case "inic_smartculture":
+                return "스마트문상";
+
+            case "inic_happymoney":
+                return "해피머니";
+
             default:
                 return $pay_method;
         }
