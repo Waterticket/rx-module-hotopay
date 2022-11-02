@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 1;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 2;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -411,6 +411,7 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isIndexExists("hotopay_product","idx_member_srl")) return true;
 		if(!$oDB->isColumnExists("hotopay_product","product_status")) return true;
 		if(!$oDB->isColumnExists("hotopay_purchase","iamport_uid")) return true;
+		if(!$oDB->isColumnExists("hotopay_purchase","receipt_url")) return true;
 
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
@@ -483,6 +484,11 @@ class Hotopay extends ModuleObject
 			$oDB->addColumn('hotopay_purchase',"iamport_uid","varchar",20,"",false,"pay_data");
 		}
 
+		if(!$oDB->isColumnExists("hotopay_purchase","receipt_url"))
+		{
+			$oDB->addColumn('hotopay_purchase',"receipt_url","varchar",1000,"",false,"iamport_uid");
+		}
+
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
 		{
@@ -542,7 +548,7 @@ class Hotopay extends ModuleObject
 			{
 				switch($i)
 				{
-					case 1:
+					case 1: // 옵션 저장방식 변경
 						$options = isset($config->temp_options) ? $config->temp_options : [];
 						$products = $oHotopayModel->getProductsAll();
 						foreach($products as $product)
@@ -618,6 +624,41 @@ class Hotopay extends ModuleObject
 
 						unset($config->temp_options);
 						$this->setConfig($config);
+						break;
+
+					case 2: // 영수증 저장 방식 변경
+						$output = executeQueryArray('hotopay.getPurchasesAll');
+						foreach ($output->data as $purchase)
+						{
+							$pay_method = $purchase->pay_method;
+							$pay_data = json_decode($purchase->pay_data);
+							if (empty($pay_data)) continue;
+							
+							$receipt_url = null;
+							switch ($pay_method)
+							{
+								case "card":
+									$receipt_url = $pay_data->receipt->url ?? $pay_data->card->receiptUrl;
+									break;
+								
+								case "v_account":
+									$receipt_url = $pay_data->receipt->url ?? $pay_data->cashReceipt->receiptUrl;
+									break;
+
+								case "toss":
+								case "ts_account":
+									$receipt_url = $pay_data->receipt->url;
+									break;
+							}
+
+							if (!empty($receipt_url))
+							{
+								$args = new stdClass();
+								$args->purchase_srl = $purchase->purchase_srl;
+								$args->receipt_url = $receipt_url;
+								executeQuery('hotopay.updatePurchaseReceiptUrl', $args);
+							}
+						}
 						break;
 				}
 
