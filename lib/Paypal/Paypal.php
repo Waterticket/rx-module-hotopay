@@ -10,10 +10,10 @@ class Paypal extends Hotopay {
     {
         if(self::$AccessToken_Expires == 0)
         {
-            if(isset($_SESSION['Paypal_AccessToken_Expires']))
+            if($this->getCache('Paypal_AccessToken'))
             {
-                self::$AccessToken = $_SESSION['Paypal_AccessToken'];
-                self::$AccessToken_Expires = $_SESSION['Paypal_AccessToken_Expires'];
+                self::$AccessToken = $this->getCache('Paypal_AccessToken');
+                self::$AccessToken_Expires = $this->getCache('Paypal_AccessToken_Expires');
             }
         }
 
@@ -27,11 +27,8 @@ class Paypal extends Hotopay {
 
     public function clearAccessToken()
     {
-        if(isset($_SESSION['Paypal_AccessToken_Expires']))
-        {
-            unset($_SESSION['Paypal_AccessToken']);
-            unset($_SESSION['Paypal_AccessToken_Expires']);
-        }
+        $this->deleteCache('Paypal_AccessToken');
+        $this->deleteCache('Paypal_AccessToken_Expires');
 
         self::$AccessToken = '';
         self::$AccessToken_Expires = '';
@@ -76,8 +73,8 @@ class Paypal extends Hotopay {
         self::$AccessToken = $result_data->access_token;
         self::$AccessToken_Expires = time() + $result_data->expires_in - 300; // 5분정도 만료를 앞당김
 
-        $_SESSION['Paypal_AccessToken'] = self::$AccessToken;
-        $_SESSION['Paypal_AccessToken_Expires'] = self::$AccessToken_Expires;
+        $this->setCache('Paypal_AccessToken', self::$AccessToken, self::$AccessToken_Expires - time());
+        $this->setCache('Paypal_AccessToken_Expires', self::$AccessToken_Expires, self::$AccessToken_Expires - time());
     }
 
     public function createOrder($order, $order_srl)

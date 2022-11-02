@@ -10,10 +10,10 @@ class Iamport extends Hotopay {
     {
         if(self::$AccessToken_Expires == 0)
         {
-            if(isset($_SESSION['Iamport_AccessToken_Expires']))
+            if($this->getCache('Iamport_AccessToken'))
             {
-                self::$AccessToken = $_SESSION['Iamport_AccessToken'];
-                self::$AccessToken_Expires = $_SESSION['Iamport_AccessToken_Expires'];
+                self::$AccessToken = $this->getCache('Iamport_AccessToken');
+                self::$AccessToken_Expires = $this->getCache('Iamport_AccessToken_Expires');
             }
         }
 
@@ -27,11 +27,8 @@ class Iamport extends Hotopay {
 
     public function clearAccessToken()
     {
-        if(isset($_SESSION['Iamport_AccessToken_Expires']))
-        {
-            unset($_SESSION['Iamport_AccessToken']);
-            unset($_SESSION['Iamport_AccessToken_Expires']);
-        }
+        $this->deleteCache('Iamport_AccessToken');
+        $this->deleteCache('Iamport_AccessToken_Expires');
 
         self::$AccessToken = '';
         self::$AccessToken_Expires = '';
@@ -79,8 +76,8 @@ class Iamport extends Hotopay {
         self::$AccessToken = $result_data->response->access_token;
         self::$AccessToken_Expires = $result_data->response->expired_at - 300; // 5분정도 만료를 앞당김
 
-        $_SESSION['Iamport_AccessToken'] = self::$AccessToken;
-        $_SESSION['Iamport_AccessToken_Expires'] = self::$AccessToken_Expires;
+        $this->setCache('Iamport_AccessToken', self::$AccessToken, self::$AccessToken_Expires - time());
+        $this->setCache('Iamport_AccessToken_Expires', self::$AccessToken_Expires, self::$AccessToken_Expires - time());
     }
     
     // 결제내역 단건조회 API
