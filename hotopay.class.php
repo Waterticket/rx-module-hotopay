@@ -631,6 +631,8 @@ class Hotopay extends ModuleObject
 						foreach ($output->data as $purchase)
 						{
 							$pay_method = $purchase->pay_method;
+							if (!empty($purchase->receipt_url)) continue;
+							
 							$pay_data = json_decode($purchase->pay_data);
 							if (empty($pay_data)) continue;
 							
