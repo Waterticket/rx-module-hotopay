@@ -45,7 +45,7 @@ $daily = array('일','월','화','수','목','금','토');
                         <span class="ht-order-total">₩{number_format($purchase->product_purchase_price)}</span>
                     </td>
                     <td>
-                        <span class="ht-order-created-at">{date("Y년 m월 d일 ",$purchase->regdate).$daily[date('w',$purchase->regdate)].'요일'}<br>{date("H시 i분",$purchase->regdate)}</span>
+                        <span class="ht-order-created-at">{date("Y년 m월 d일 ",$purchase->regdate).$daily[date('w',$purchase->regdate)].'요일'}<br>{date("H시 i분",$purchase->regdate)}<!--@if(!empty($purchase->receipt_url))-->&nbsp;<a href="{$purchase->receipt_url}" target="_blank">(영수증)</a><!--@endif--></span>
                     </td>
                 </tr>
                 <!--@endforeach-->
