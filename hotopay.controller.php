@@ -1013,9 +1013,13 @@ class HotopayController extends Hotopay
 	 */
 	public function triggerAddMemberMenu($obj)
 	{
-		$oMemberController = getController('member');
-		$url = getUrl('', 'mid', 'hotopay', 'act', 'dispHotopayOrderList', 'target_member_srl', $obj->member_srl);
-		$oMemberController->addMemberPopupMenu($url, '회원 구매 기록');
+		$logged_info = Context::get('logged_info');
+		if ($logged_info->is_admin === 'Y')
+		{
+			$oMemberController = getController('member');
+			$url = getUrl('', 'mid', 'hotopay', 'act', 'dispHotopayOrderList', 'target_member_srl', $obj->member_srl);
+			$oMemberController->addMemberPopupMenu($url, '회원 구매 기록');
+		}
 	}
 
 	/**
