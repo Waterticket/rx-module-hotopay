@@ -676,8 +676,8 @@ class Hotopay extends ModuleObject
 						foreach ($output->data as $purchase)
 						{
 							$purchase_srl = $purchase->purchase_srl;
-							$products = json_decode($purchase->products);
-							if (empty($products)) continue;
+							$product = json_decode($purchase->products);
+							if (empty($product)) continue;
 
 							$title = $product->t;
 							if (empty($title)) continue;

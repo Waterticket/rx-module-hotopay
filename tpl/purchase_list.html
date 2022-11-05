@@ -50,13 +50,12 @@
 		<!--@foreach($purchase_list as $no => $val)-->
         {@
             $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
-            $product_data = json_decode($val->products);
 			$purchase_done_url = getUrl("","module","hotopay","act","procHotopayAdminPurchaseStatusChange","purchase_srl",$val->purchase_srl,"status","DONE");
         }
 		<tr>
 			<td>HT{$val->purchase_srl}</td>
 			<td><a href="#popup_menu_area" class="member_{$val->member_srl}">{$member_data->nick_name}</a> ({$val->member_srl})</td>
-            <td>{$product_data->t}</td>
+            <td>{$val->title}</td>
             <td>₩{number_format($val->product_purchase_price)}</td>
             <td>{$oHotopayModel->purchaseMethodToString($val->pay_method)}</td>
             <td><span class="paystatus {$val->pay_status}">{$oHotopayModel->payStatusCodeToString($val->pay_status)}</span></td>
