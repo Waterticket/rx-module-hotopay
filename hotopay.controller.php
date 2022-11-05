@@ -156,11 +156,13 @@ class HotopayController extends Hotopay
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 		$logged_info = Context::get('logged_info');
+		$oHotopayModel = getModel('hotopay');
+
+		$purchase_srl = (int)substr($vars->order_id, 2);
+		if (!$purchase_srl) return $this->createObject(-1, "잘못된 주문번호입니다.");
 
 		if(strcmp($vars->pay_status, "success") === 0) // 결제 성공
 		{
-			$purchase_srl = (int)substr($vars->order_id, 2);
-
 			$args = new stdClass();
 			$args->purchase_srl = $purchase_srl;
 			$purchase = executeQuery('hotopay.getPurchase', $args);
@@ -206,9 +208,11 @@ class HotopayController extends Hotopay
 					);
 
 					$args = new stdClass();
-					$args->purchase_srl = (int)substr($vars->orderId, 2);
+					$args->purchase_srl = $purchase_srl;
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
+
+					$oHotopayModel->rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -271,12 +275,12 @@ class HotopayController extends Hotopay
 					$capture_output = $paypalController->captureOrder($pay_data->id);
 					
 					$args = new stdClass();
-					$args->purchase_srl = (int)substr($vars->order_id, 2);
+					$args->purchase_srl = $purchase_srl;
 					$args->pay_data = json_encode($capture_output);
 					executeQuery('hotopay.updatePurchaseData', $args);
 
 					$trigger_obj = new stdClass();
-					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->purchase_srl = $purchase_srl;
 					$trigger_obj->pay_status = "DONE";
 					$trigger_obj->pay_data = $order_detail;
 					$trigger_obj->pay_pg = "paypal";
@@ -295,12 +299,14 @@ class HotopayController extends Hotopay
 					);
 
 					$args = new stdClass();
-					$args->purchase_srl = (int)substr($vars->orderId, 2);
+					$args->purchase_srl = $purchase_srl;
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
+					$oHotopayModel->rollbackOptionStock($purchase_srl);
+
 					$trigger_obj = new stdClass();
-					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->purchase_srl = $purchase_srl;
 					$trigger_obj->pay_status = "FAILED";
 					$trigger_obj->pay_data = $order_detail;
 					$trigger_obj->pay_pg = "paypal";
@@ -348,12 +354,14 @@ class HotopayController extends Hotopay
 					);
 
 					$args = new stdClass();
-					$args->purchase_srl = (int)substr($vars->order_id, 2);
+					$args->purchase_srl = $purchase_srl;
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
+					$oHotopayModel->rollbackOptionStock($purchase_srl);
+
 					$trigger_obj = new stdClass();
-					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->purchase_srl = $purchase_srl;
 					$trigger_obj->pay_status = "FAILED";
 					$trigger_obj->pay_data = $response_json;
 					$trigger_obj->pay_pg = "kakao";
@@ -370,7 +378,7 @@ class HotopayController extends Hotopay
 				}
 
 				$trigger_obj = new stdClass();
-				$trigger_obj->purchase_srl = (int)substr($vars->order_id, 2);
+				$trigger_obj->purchase_srl = $purchase_srl;
 				$trigger_obj->pay_status = "DONE";
 				$trigger_obj->pay_data = $response_json;
 				$trigger_obj->pay_pg = "kakao";
@@ -430,7 +438,7 @@ class HotopayController extends Hotopay
 				executeQuery('hotopay.updatePurchaseStatus', $args);
 				executeQuery('hotopay.updatePurchaseData', $args);
 
-				if($args->pay_status == "FAILED")
+				if($args->pay_status == "FAILED" || $args->pay_status == "CANCELED")
 				{
 					$_SESSION['hotopay_'.$vars->order_id] = array(
 						"p_status" => "failed",
@@ -439,8 +447,10 @@ class HotopayController extends Hotopay
 						"message" => "결제를 실패하였습니다. (code: 1008)"
 					);
 
+					$oHotopayModel->rollbackOptionStock($purchase_srl);
+
 					$trigger_obj = new stdClass();
-					$trigger_obj->purchase_srl = $args->purchase_srl;
+					$trigger_obj->purchase_srl = $purchase_srl;
 					$trigger_obj->pay_status = "FAILED";
 					$trigger_obj->pay_data = $imp_purchase;
 					$trigger_obj->pay_pg = "inicis";
@@ -462,7 +472,7 @@ class HotopayController extends Hotopay
 				}
 
 				$trigger_obj = new stdClass();
-				$trigger_obj->purchase_srl = $args->purchase_srl;
+				$trigger_obj->purchase_srl = $purchase_srl;
 				$trigger_obj->pay_status = $args->pay_status;
 				$trigger_obj->pay_data = $imp_purchase;
 				$trigger_obj->pay_pg = "inicis";
@@ -499,7 +509,7 @@ class HotopayController extends Hotopay
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
 
 				$trigger_obj = new stdClass();
-				$trigger_obj->purchase_srl = (int)substr($vars->order_id, 2);
+				$trigger_obj->purchase_srl = $purchase_srl;
 				$trigger_obj->pay_status = "WAITING_FOR_DEPOSIT";
 				$trigger_obj->pay_data = $order_detail;
 				$trigger_obj->pay_pg = "n_account";
@@ -521,8 +531,10 @@ class HotopayController extends Hotopay
 			$order_id = Context::get('order_id');
 
 			$args = new stdClass();
-			$args->purchase_srl = (int)substr($order_id, 2);
+			$args->purchase_srl = $purchase_srl;
 			$args->pay_status = "FAILED";
+
+			$oHotopayModel->rollbackOptionStock($purchase_srl);
 
 			$res_array = array(
 				"p_status" => "failed",
@@ -812,6 +824,8 @@ class HotopayController extends Hotopay
 				$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
 			}
 		}
+
+		$oHotopayModel->rollbackOptionStock($purchase_srl);
 
 		$oMemberController = getController('member');
 		if(version_compare(__XE_VERSION__, '2.0.0', '<'))

@@ -357,6 +357,19 @@ class HotopayModel extends Hotopay
         $output = executeQuery('hotopay.updateOptionStock', $args);
     }
 
+    public function rollbackOptionStock(int $purchase_srl)
+    {
+        $items = $this->getPurchaseItems($purchase_srl);
+		foreach ($items as $item)
+		{
+			$option_srl = $item->option_srl;
+			if($option_srl != 0)
+			{
+				$this->plusOptionStock($option_srl, 1);
+			}
+		}
+    }
+
     public function getProductByDocumentSrl(int $document_srl): object
     {
         $args = new stdClass();
