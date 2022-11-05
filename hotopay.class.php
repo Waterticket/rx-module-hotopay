@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 2;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 3;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -412,6 +412,7 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product","product_status")) return true;
 		if(!$oDB->isColumnExists("hotopay_purchase","iamport_uid")) return true;
 		if(!$oDB->isColumnExists("hotopay_purchase","receipt_url")) return true;
+		if(!$oDB->isColumnExists("hotopay_purchase","title")) return true;
 
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
@@ -487,6 +488,11 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_purchase","receipt_url"))
 		{
 			$oDB->addColumn('hotopay_purchase',"receipt_url","varchar",1000,"",false,"iamport_uid");
+		}
+
+		if(!$oDB->isColumnExists("hotopay_purchase","title"))
+		{
+			$oDB->addColumn('hotopay_purchase',"title","varchar",100,"",false,"member_srl"); // 하위 호환성을 위해 null 허용
 		}
 
 		$config = $this->getConfig();
@@ -660,6 +666,23 @@ class Hotopay extends ModuleObject
 								$args->receipt_url = $receipt_url;
 								executeQuery('hotopay.updatePurchaseReceiptUrl', $args);
 							}
+						}
+						break;
+
+					case 3: // purchase 테이블에 title 저장 타입 변경
+						$oDB = DB::getInstance();
+						$stmt = $oDB->prepare('UPDATE hotopay_purchase SET `title` = ? WHERE `purchase_srl` = ?');
+						$output = executeQueryArray('hotopay.getPurchasesAll');
+						foreach ($output->data as $purchase)
+						{
+							$purchase_srl = $purchase->purchase_srl;
+							$products = json_decode($purchase->products);
+							if (empty($products)) continue;
+
+							$title = $product->t;
+							if (empty($title)) continue;
+
+							$stmt->execute([$title, $purchase_srl]);
 						}
 						break;
 				}

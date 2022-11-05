@@ -1,6 +1,7 @@
 <table name="hotopay_purchase">
 	<column name="purchase_srl" type="number" size="10" notnull="notnull" primary_key="primary_key" />
 	<column name="member_srl" type="number" size="100" notnull="notnull" index="idx_member_srl" />
+	<column name="title" type="varchar" size="100" notnull="notnull" />
 	<column name="products" type="varchar" size="500" default="" />
 	<column name="pay_method" type="varchar" size="20" notnull="notnull" />
 	<column name="product_purchase_price" type="number" size="10" default="0" />

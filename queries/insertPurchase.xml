@@ -5,6 +5,7 @@
 	<columns>
 	<column name="purchase_srl" var="purchase_srl" />
     <column name="member_srl" var="member_srl" notnull="notnull" />
+	<column name="title" var="title" notnull="notnull" />
 	<column name="products" var="products" />
 	<column name="pay_method" var="pay_method" notnull="notnull" />
 	<column name="product_purchase_price" var="product_purchase_price" />

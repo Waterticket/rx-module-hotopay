@@ -225,6 +225,7 @@ class HotopayAdminController extends Hotopay
 		$args = new stdClass();
 		$args->purchase_srl = $order_id;
 		$args->member_srl = $target_member_srl;
+		$args->title = $title;
 		$args->products = json_encode(array(
 			"t" => $title,
 			"bp" => array($product_srl),

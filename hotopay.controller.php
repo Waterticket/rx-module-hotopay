@@ -92,7 +92,8 @@ class HotopayController extends Hotopay
 			$title .= " 외 ".$tc."개";
 		}
 
-		$args->products = json_encode(array("t"=>$title)); // 구시대의 유물.. 미안합니다 ㅜㅜ
+		$args->title = $title;
+		$args->products = json_encode(array("t"=>$title)); // 구시대의 유물
 		$args->pay_method = $vars->pay_method;
 		$args->product_purchase_price = $total_price;
 		$args->product_original_price = $original_price;
@@ -173,8 +174,6 @@ class HotopayController extends Hotopay
 				return $this->createObject(-1, "이미 결제가 완료되었습니다.");
 			}
 
-			$purchase_data = json_decode($purchase->data->products);
-
 			if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
 			{
 				if(strcmp($vars->order_id, $vars->orderId) !== 0)
@@ -242,7 +241,7 @@ class HotopayController extends Hotopay
 				}
 
 				$response_json->p_status = "success";
-				$response_json->product_title = $purchase_data->t;
+				$response_json->product_title = $purchase->data->title;
 				$_SESSION['hotopay_'.$vars->orderId] = $response_json;
 
 				$trigger_obj = new stdClass();
@@ -315,7 +314,7 @@ class HotopayController extends Hotopay
 				$order_detail->orderId = $vars->order_id;
 				$order_detail->p_status = "success";
 				$order_detail->method = "paypal";
-				$order_detail->product_title = $purchase_data->t;
+				$order_detail->product_title = $purchase->data->title;
 				$_SESSION['hotopay_'.$vars->orderId] = $order_detail;
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
 				return;
@@ -380,7 +379,7 @@ class HotopayController extends Hotopay
 
 				$response_json->method = 'kakaopay';
 				$response_json->p_status = "success";
-				$response_json->product_title = $purchase_data->t;
+				$response_json->product_title = $purchase->data->title;
 				$response_json->orderId = $vars->order_id;
 				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
@@ -473,7 +472,7 @@ class HotopayController extends Hotopay
 				$response_json = new stdClass();
 				$response_json->method = 'inicis';
 				$response_json->p_status = "success";
-				$response_json->product_title = $purchase_data->t;
+				$response_json->product_title = $purchase->data->title;
 				$response_json->orderId = $vars->order_id;
 				$response_json->pay_status = $args->pay_status;
 				$response_json->pay_data = $imp_purchase;
@@ -495,7 +494,7 @@ class HotopayController extends Hotopay
 				$order_detail->method = "n_account";
 				$order_detail->totalAmount = $purchase->data->product_purchase_price;
 				$order_detail->depositor_name = $pay_data->depositor_name;
-				$order_detail->product_title = $purchase_data->t;
+				$order_detail->product_title = $purchase->data->title;
 
 				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
 
@@ -925,16 +924,15 @@ class HotopayController extends Hotopay
 		$oMemberModel = getModel('member');
 		$oHotopayModel = getModel('hotopay');
 		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
-		$purchase_data = json_decode($purchase->products);
 		$price = number_format($purchase->product_purchase_price);
 		$purchase_date = date("Y-m-d H:i:s", $purchase->regdate);
 		$pay_method_korean = $oHotopayModel->purchaseMethodToString($purchase->pay_method);
-		$purchase_title_substr = mb_substr($purchase_data->t, 0, 18);
+		$purchase_title_substr = mb_substr($purchase->title, 0, 18);
 
 		switch($status)
 		{
 			case "DONE":
-				$message_body = "결제 완료 알림 메일입니다.<br><br>결제 코드: HT{$purchase->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$purchase_data->t}<br>결제 금액: {$price}<br>결제 수단: {$pay_method_korean}<br>결제 시각: {$purchase_date}<br>";
+				$message_body = "결제 완료 알림 메일입니다.<br><br>결제 코드: HT{$purchase->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$purchase->title}<br>결제 금액: {$price}<br>결제 수단: {$pay_method_korean}<br>결제 시각: {$purchase_date}<br>";
 				$this->_sendMail(4, "[HotoPay] 회원의 결제가 완료되었습니다.", $message_body);
 
 				$sms_body = "[Hotopay] 결제알림 ({$pay_method_korean}/{$price}) {$purchase_title_substr}";
