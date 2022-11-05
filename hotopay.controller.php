@@ -69,7 +69,7 @@ class HotopayController extends Hotopay
 
 			$option_srl = $option_list[$product->product_srl];
 			$option = $product->product_option[$option_srl];
-			$total_price += $option->price;
+			$total_price += $option->price + round($option->price * ($product->tax_rate / 100));
 			$original_price += $option->price;
 
 			$obj = new StdClass();
@@ -78,7 +78,7 @@ class HotopayController extends Hotopay
 			$obj->product_srl = $product->product_srl;
 			$obj->option_srl = $option_list[$product->product_srl];
 			$obj->option_name = $option->title;
-			$obj->purchase_price = $option->price;
+			$obj->purchase_price = $option->price + round($option->price * ($product->tax_rate / 100));
 			$obj->original_price = $option->price;
 			$obj->extra_vars = serialize($option->extra_vars ?: new stdClass());
 			$obj->regdate = time();

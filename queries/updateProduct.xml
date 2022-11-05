@@ -13,6 +13,7 @@
         <column name="product_buyer_group" var="product_buyer_group" />
         <column name="extra_vars" var="extra_vars" />
         <column name="document_srl" var="document_srl" />
+        <column name="tax_rate" var="tax_rate" />
         <column name="regdate" var="regdate" />
 	</columns>
 	<conditions>

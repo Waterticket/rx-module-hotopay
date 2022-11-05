@@ -24,12 +24,13 @@
                     <p>
                         <span>상품명</span>{$product->product_name}<br>
                         <span>상품 설명</span>{$product->product_des}<br>
-                        <span>판매 가격</span>{number_format($product->product_sale_price)} ₩<br><br>
+                        <span>판매 가격</span>{number_format($product->product_sale_price + round($product->product_sale_price * ($product->tax_rate / 100)))} ₩<br><br>
                         <span>옵션</span>
                         <select name="purchase_info[{$no}][option_srl]" hotopay-product-srl="{$product->product_srl}" hotopay-type="option" onchange="optionChange()">
                             <!--@foreach($product->product_option as $option)-->
                             {@
                                 $sub_price = $option->price - $product->product_sale_price;
+                                $sub_price = $sub_price + round($sub_price * ($product->tax_rate / 100));
                                 if($sub_price > 0) $sub_price = "(+".number_format($sub_price)."원)";
                                 else if($sub_price < 0) $sub_price = "(".number_format($sub_price)."원)";
                                 else $sub_price = "";
@@ -40,7 +41,7 @@
                                     else $stock_text = " (".$option->stock."개)";
                                 endif;
                             }
-                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price}" disabled|cond="$option->infinity_stock != 'Y' && $option->stock < 1">{$option->title} {$sub_price}{$stock_text}</option>
+                            <option value="{$option->option_srl}" hotopay-option-price="{$option->price + round($option->price * ($product->tax_rate / 100))}" disabled|cond="$option->infinity_stock != 'Y' && $option->stock < 1">{$option->title} {$sub_price}{$stock_text}</option>
                             <!--@endforeach-->
                         </select>
                         <br>
