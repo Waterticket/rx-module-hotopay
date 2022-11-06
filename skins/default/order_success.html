@@ -180,6 +180,26 @@
         <p id="s_value">{date("Y년 m월 d일 H시 i분 까지", $pay_data->pay_data->vbank_date)}</p>
     </div>
     <!--@endif-->
+    <!--@elseif($pay_data->method == "point")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">상품명</p>
+        <p id="s_value">{$pay_data->product_title}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">포인트</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->amount)}</p>
+    </div>
     <!--@endif-->
 
     <div id="btn_layer">

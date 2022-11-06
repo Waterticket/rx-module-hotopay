@@ -107,6 +107,14 @@ function openPay()
   location.href = url;
 }
 </script>
+<!--@elseif($purchase->pay_pg == 'point')-->
+<script>
+  function openPay()
+  {
+    var url = '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","point","pay_status","success","order_id","HT".$vars->order_id)}';
+    location.href = url;
+  }
+  </script>
 <!--@endif-->
 
 <script>

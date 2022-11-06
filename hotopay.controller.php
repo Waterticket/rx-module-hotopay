@@ -92,6 +92,9 @@ class HotopayController extends Hotopay
 			$title .= " 외 ".$tc."개";
 		}
 
+		$extra_vars = new stdClass(); // $vars->extra_vars ?? new stdClass();
+		$extra_vars->use_point = 0;
+
 		if ($config->point_discount == 'Y')
 		{
 			$oPointModel = getModel('point');
@@ -116,6 +119,9 @@ class HotopayController extends Hotopay
 			$oPointController->setPoint($logged_info->member_srl, $input_point, 'minus');
 
 			$total_price -= $input_point;
+
+			if ($total_price <= 0) $vars->pay_method = 'point';
+			$extra_vars->use_point = $input_point;
 		}
 
 		$args->title = $title;
@@ -126,7 +132,7 @@ class HotopayController extends Hotopay
 		$args->pay_status = "PENDING";
 		$args->regdate = time();
 		$args->pay_data = '';
-		$args->extra_vars = serialize($vars->extra_vars ?? new stdClass());
+		$args->extra_vars = serialize($extra_vars);
 
 		switch($vars->pay_method)
 		{
@@ -469,7 +475,7 @@ class HotopayController extends Hotopay
 					$_SESSION['hotopay_'.$vars->order_id] = array(
 						"p_status" => "failed",
 						"orderId" => $vars->order_id,
-						"code" => "IMPORT_FAILED",
+						"code" => "IAMPORT_FAILED",
 						"message" => "결제를 실패하였습니다. (code: 1008)"
 					);
 
@@ -540,6 +546,55 @@ class HotopayController extends Hotopay
 				$trigger_obj->pay_data = $order_detail;
 				$trigger_obj->pay_pg = "n_account";
 				$trigger_obj->amount = $order_detail->totalAmount;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				return;
+			}
+			else if(strcmp($vars->pay_pg, "point") === 0) // 포인트 결제 (0원) 처리
+			{
+				if ($purchase->data->product_purchase_price !== 0)
+				{
+					$_SESSION['hotopay_'.$vars->order_id] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->order_id,
+						"code" => "POINT_PURCHASE_FAILED",
+						"message" => "결제를 실패하였습니다. (code: 1009)"
+					);
+
+					$oHotopayModel->rollbackOptionStock($purchase_srl);
+
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = new stdClass();
+					$trigger_obj->pay_pg = "point";
+					$trigger_obj->amount = $purchase->data->product_purchase_price;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+					return;
+				}
+
+				$args->pay_status = 'DONE';
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+
+				$this->_MessageMailer("DONE", $purchase->data);
+
+				$order_detail = new stdClass();
+				$order_detail->orderId = $vars->order_id;
+				$order_detail->p_status = "success";
+				$order_detail->method = "point";
+				$order_detail->product_title = $purchase->data->title;
+
+				$_SESSION['hotopay_'.$vars->order_id] = $order_detail;
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $purchase_srl;
+				$trigger_obj->pay_status = "DONE";
+				$trigger_obj->pay_data = new stdClass();
+				$trigger_obj->pay_pg = "point";
+				$trigger_obj->amount = $purchase->data->product_purchase_price;
 				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
 
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
