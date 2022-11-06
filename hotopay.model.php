@@ -410,4 +410,91 @@ class HotopayModel extends Hotopay
 
         return $returns;
     }
+
+    /**
+     * hotopay_cart 테이블에 아이템 하나를 추가한다.
+     * 
+     * @param object $obj
+     */
+    public static function insertCart(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.insertCart', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_cart 테이블에서 멤버의 카트 아이템을 가져온다.
+     * 
+     * @param array $member_srl
+     */
+    public static function getCarts(array $member_srl): array
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+
+        $output = executeQueryArray('hotopay.getCarts', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: array();
+    }
+
+    /**
+     * hotopay_cart 테이블에서 아이템을 삭제한다.
+     * 
+     * @param int $cart_item_srl
+     * @param int $member_srl
+     */
+    public static function deleteCartItem(int $cart_item_srl, int $member_srl): object
+    {
+        $args = new \stdClass();
+        $args->cart_item_srl = $cart_item_srl;
+        $args->member_srl = $member_srl;
+
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.deleteCartItem', $args);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_cart 테이블에서 아이템을 업데이트한다.
+     * 
+     * @param object $obj
+     */
+    public static function updateCartItem(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.updateCartItem', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
 }

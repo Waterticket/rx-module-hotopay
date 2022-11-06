@@ -1,0 +1,12 @@
+<query id="insertCart" action="insert">
+    <tables>
+        <table name="hotopay_cart" />
+    </tables>
+    <columns>
+        <column name="member_srl" var="member_srl" notnull="notnull" />
+        <column name="product_srl" var="product_srl" notnull="notnull" />
+        <column name="option_srl" var="option_srl" notnull="notnull" />
+        <column name="quantity" var="quantity" notnull="notnull" />
+        <column name="regdate" var="regdate" default="curdate()" />
+    </columns>
+</query>

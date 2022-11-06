@@ -1,0 +1,14 @@
+<query id="updateCartItem" action="update">
+    <tables>
+        <table name="hotopay_cart" />
+    </tables>
+    <columns>
+            <column name="option_srl" var="option_srl" />
+            <column name="quantity" var="quantity" />
+            <column name="regdate" var="regdate" />
+    </columns>
+    <conditions>
+            <condition operation="equal" column="cart_item_srl" var="cart_item_srl" filter="number" notnull="notnull" />
+            <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" pipe="and" />
+    </conditions>
+</query>

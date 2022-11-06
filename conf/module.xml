@@ -41,6 +41,11 @@
 			<route route="orderList" />
 			<route route="orderList/$target_member_srl:int" />
 		</action>
+
+		<!-- 카트 액션 -->
+		<action name="procHotopayAddCartItem" type="controller" route="cart/add" />
+		<action name="procHotopayDeleteCartItem" type="controller" route="cart/delete" />
+		<action name="procHotopayUpdateCartItem" type="controller" route="cart/update" />
 	</actions>
 	<menus>
 		<menu name="hotopay" type="all">

@@ -1213,4 +1213,82 @@ class HotopayController extends Hotopay
 			$output = $oHotopayAdminController->procHotopayAdminModifyProduct();
 		}
 	}
+
+	public function procHotopayAddCartItem()
+	{
+		$logged_info = Context::get('logged_info');
+		$member_srl = $logged_info->member_srl;
+		if(!$member_srl)
+		{
+			return new BaseObject(-1, '로그인이 필요합니다.');
+		}
+
+		$product_srl = Context::get('product_srl');
+		$option_srl = Context::get('option_srl');
+		$quantity = Context::get('quantity');
+
+		$oHotopayModel = getModel('hotopay');
+		$product_info = $oHotopayModel->getProduct($product_srl);
+		if(!$product_info)
+		{
+			return new BaseObject(-1, '상품 정보가 없습니다.');
+		}
+
+		$option_info = $oHotopayModel->getOption($option_srl);
+		if(!$option_info)
+		{
+			return new BaseObject(-1, '옵션 정보가 없습니다.');
+		}
+
+		$args = new stdClass();
+		$args->member_srl = $member_srl;
+		$args->product_srl = $product_srl;
+		$args->option_srl = $option_srl;
+		$args->quantity = $quantity;
+		$args->regdate = date('YmdHis');
+
+		$oHotopayModel->insertCart($args);
+
+		$this->setMessage('장바구니에 추가되었습니다.');
+	}
+
+	public function procHotopayDeleteCartItem()
+	{
+		$logged_info = Context::get('logged_info');
+		$member_srl = $logged_info->member_srl;
+		if(!$member_srl)
+		{
+			return new BaseObject(-1, '로그인이 필요합니다.');
+		}
+
+		$cart_item_srl = Context::get('cart_item_srl');
+
+		$oHotopayModel->deleteCartItem($cart_item_srl, $member_srl);
+
+		$this->setMessage('장바구니에서 삭제되었습니다.');
+	}
+
+	public function procHotopayUpdateCartItem()
+	{
+		$logged_info = Context::get('logged_info');
+		$member_srl = $logged_info->member_srl;
+		if(!$member_srl)
+		{
+			return new BaseObject(-1, '로그인이 필요합니다.');
+		}
+
+		$cart_item_srl = Context::get('cart_item_srl');
+		$option_srl = Context::get('option_srl');
+		$quantity = Context::get('quantity');
+
+		$args = new stdClass();
+		$args->cart_item_srl = $cart_item_srl;
+		$args->member_srl = $member_srl;
+		$args->option_srl = $option_srl;
+		$args->quantity = $quantity;
+		$args->regdate = date('YmdHis');
+		$oHotopayModel->updateCartItem($args);
+
+		$this->setMessage('장바구니가 수정되었습니다.');
+	}
 }

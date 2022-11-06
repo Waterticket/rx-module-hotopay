@@ -1,0 +1,8 @@
+<table name="hotopay_cart">
+	<column name="cart_item_srl" type="number" notnull="notnull" auto_increment="auto_increment" primary_key="primary_key" />
+	<column name="member_srl" type="number" notnull="notnull" index="idx_member_srl" />
+	<column name="product_srl" type="number" notnull="notnull" index="idx_product_srl" />
+	<column name="option_srl" type="number" notnull="notnull" index="idx_option_srl" />
+	<column name="quantity" type="number" notnull="notnull" />
+	<column name="regdate" type="number" size="10" notnull="notnull" index="idx_regdate" />
+</table>

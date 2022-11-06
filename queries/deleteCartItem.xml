@@ -1,0 +1,9 @@
+<query id="deleteCartItem" action="delete">
+    <tables>
+        <table name="hotopay_cart" />
+    </tables>
+    <conditions>
+            <condition operation="equal" column="cart_item_srl" var="cart_item_srl" filter="number" notnull="notnull" />
+            <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" pipe="and" />
+    </conditions>
+</query>
