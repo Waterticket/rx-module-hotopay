@@ -1247,7 +1247,7 @@ class HotopayController extends Hotopay
 		$args->quantity = $quantity;
 		$args->regdate = date('YmdHis');
 
-		$oHotopayModel->insertCart($args);
+		$oHotopayModel->insertCartItem($args);
 
 		$this->setMessage('장바구니에 추가되었습니다.');
 	}

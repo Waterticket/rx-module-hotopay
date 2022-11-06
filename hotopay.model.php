@@ -416,12 +416,12 @@ class HotopayModel extends Hotopay
      * 
      * @param object $obj
      */
-    public static function insertCart(object $obj): object
+    public static function insertCartItem(object $obj): object
     {
         $oDB = DB::getInstance();
         $oDB->begin();
 
-        $output = executeQuery('hotopay.insertCart', $obj);
+        $output = executeQuery('hotopay.insertCartItem', $obj);
         if(!$output->toBool())
         {
             $oDB->rollback();
@@ -437,12 +437,12 @@ class HotopayModel extends Hotopay
      * 
      * @param array $member_srl
      */
-    public static function getCarts(array $member_srl): array
+    public static function getCartItems(array $member_srl): array
     {
         $args = new \stdClass();
         $args->member_srl = $member_srl;
 
-        $output = executeQueryArray('hotopay.getCarts', $args);
+        $output = executeQueryArray('hotopay.getCartItems', $args);
         if(!$output->toBool())
         {
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));

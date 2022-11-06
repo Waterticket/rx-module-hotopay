@@ -1,4 +1,4 @@
-<query id="getCart" action="select">
+<query id="getCartItems" action="select">
     <tables>
         <table name="hotopay_cart" />
     </tables>
