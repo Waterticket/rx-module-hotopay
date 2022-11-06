@@ -6,7 +6,6 @@
 	<input type="hidden" name="act" value="procHotopayOrderProcess" />
 	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
 
-    
     <section class="flex-container">
     <div id="p_content">
     <div id="r_content">
@@ -89,6 +88,13 @@
             <input type="text" id="depositor_name" name="depositor_name" maxlength="5" placeholder="입금자 명을 입력해주세요.">
         </section>
 
+        <!--@if($hotopay_config->point_discount == 'Y')-->
+        <section id="point_discount">
+            <p>포인트 할인 (보유 {number_format($point)} P) <a href="javascript:void(0)" onclick="useTotalPoint()">전체 적용</a></p>
+            <input type="number" id="use_point" name="use_point" value="0" min="0" max="{$point}" onkeyup="enforceMinMax(this)" onchange="optionChange()"> P
+        </section>
+        <!--@endif-->
+
         <section id="result">
             <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
         </section>
@@ -110,6 +116,9 @@ $(document).ready(function() {
     optionChange();
 });
 
+const user_point = {$point};
+var max_point = 0;
+
 function optionChange()
 {
     var t_price = 0;
@@ -118,6 +127,22 @@ function optionChange()
         var price = $('option:selected', item).attr('hotopay-option-price');
         t_price += parseInt(price);
     });
+
+    if (user_point > t_price) {
+        max_point = t_price;
+    } else {
+        max_point = user_point;
+    }
+
+    $('#use_point').attr('max', max_point);
+    var use_point = parseInt($('#use_point').val() ?? 0);
+
+    if (use_point > max_point) {
+        $('#use_point').val(max_point);
+        use_point = max_point;
+    }
+
+    t_price -= use_point;
 
     $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
 }
@@ -150,4 +175,22 @@ $('input[name=pay_method]').click(function(){
         $('#depositor_name').removeAttr('required');
     }
 });
+
+function enforceMinMax(el) {
+  if (el.value != "") {
+    if (parseInt(el.value) < parseInt(el.min)) {
+      el.value = el.min;
+    }
+    if (parseInt(el.value) > parseInt(el.max)) {
+      el.value = el.max;
+    }
+  }
+}
+
+function useTotalPoint()
+{
+    var max_point = $('#use_point').attr('max');
+    $('#use_point').val(max_point);
+    optionChange();
+}
 </script>

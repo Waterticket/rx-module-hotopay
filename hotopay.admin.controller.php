@@ -22,6 +22,7 @@ class HotopayAdminController extends Hotopay
 
 		$config->shop_name = $vars->shop_name;
 		$config->board_module_srl = $vars->board_module_srl;
+		$config->point_discount = empty($vars->point_discount) ? 'N' : 'Y';
 		
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_list = $vars->toss_payments_list ?? array();

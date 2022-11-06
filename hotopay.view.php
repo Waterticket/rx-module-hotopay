@@ -53,6 +53,11 @@ class HotopayView extends Hotopay
 
 		Context::set('product_list', $product_list);
 
+		$logged_info = Context::get('logged_info');	
+		$oPointModel = getModel('point');
+		$point = $oPointModel->getPoint($logged_info->member_srl, true);
+		Context::set('point', $point);
+
 		$this->setTemplateFile('order_page');
 	}
 

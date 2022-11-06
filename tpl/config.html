@@ -31,6 +31,14 @@
 				전자금융거래법 제 24조 1항에 명시된 금융거래 이용약관 명시에 따른 이용약관 URL입니다. 결제시 체크박스에 링크가 걸리게 됩니다.
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="point_discount">포인트 할인 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="point_discount" id="point_discount" checked="checked"|cond="$hotopay_config->point_discount == 'Y'">&nbsp;포인트 할인을 활성화 합니다.</label>
+				<p class="help-block">결제시에 회원이 가지고 있는 포인트를 소모하여 가격 할인을 할 수 있도록 합니다.</p>
+			</div>
+		</div>
 	</section>
 	
 	<section class="section">
@@ -208,7 +216,7 @@
 			<div class="x_controls">
 				<label><input type="checkbox" name="iamport_enabled" id="iamport_enabled" checked="checked"|cond="$hotopay_config->iamport_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;아임포트를 활성화 합니다.</label>
 				<div class="message error" cond="!$is_rhymix2">
-					<p>라이믹스 2.0 미만에서는 카카오페이 결제 수단을 사용할 수 없습니다.</p>
+					<p>라이믹스 2.0 미만에서는 아임포트 결제 수단을 사용할 수 없습니다.</p>
 				</div>
 				<p class="help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/iamport_api_key" target="_blank">설정방법</a></p>
 			</div>

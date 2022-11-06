@@ -92,6 +92,32 @@ class HotopayController extends Hotopay
 			$title .= " 외 ".$tc."개";
 		}
 
+		if ($config->point_discount == 'Y')
+		{
+			$oPointModel = getModel('point');
+			$user_point = $oPointModel->getPoint($logged_info->member_srl, true);
+			$input_point = intval($vars->use_point, 10) ?? 0;
+
+			if ($input_point < 0) $input_point = 0;
+			
+			if ($input_point > $user_point)
+			{
+				return $this->createObject(-1, "포인트가 부족합니다.");
+			}
+
+			if ($input_point > $total_price)
+			{
+				return $this->createObject(-1, "포인트가 결제 금액보다 많습니다.");
+			}
+
+            Context::set('__point_message_id__', 'module.hotopay.buy_point_discount');
+            Context::set('__point_message__', sprintf("[%s] 상품 구매시에 포인트를 사용하였습니다.", $title));
+			$oPointController = getController('point');
+			$oPointController->setPoint($logged_info->member_srl, $input_point, 'minus');
+
+			$total_price -= $input_point;
+		}
+
 		$args->title = $title;
 		$args->products = json_encode(array("t"=>$title)); // 구시대의 유물
 		$args->pay_method = $vars->pay_method;
