@@ -497,4 +497,31 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    public static function getCartItemCount(int $member_srl): int
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+
+        $output = executeQueryArray('hotopay.getCartItemCount', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data->count ?: 0;
+    }
+
+    public function getCartItemCountInCache(int $member_srl): int
+    {
+        $item_count = $this->getCache('cart_item_count_' . $member_srl);
+
+        if ($item_count === false)
+        {
+            $item_count = self::getCartItemCount($member_srl);
+            $this->setCache('cart_item_count_' . $member_srl, $item_count);
+        }
+
+        return $item_count;
+    }
 }

@@ -1214,6 +1214,11 @@ class HotopayController extends Hotopay
 		}
 	}
 
+	/**
+	 * 카트에 상품을 넣습니다
+	 * 
+	 * @return void
+	 */
 	public function procHotopayAddCartItem()
 	{
 		$logged_info = Context::get('logged_info');
@@ -1223,11 +1228,18 @@ class HotopayController extends Hotopay
 			return new BaseObject(-1, '로그인이 필요합니다.');
 		}
 
+		$config = $this->getConfig();
+		$oHotopayModel = getModel('hotopay');
+		$current_cart_item_count = $oHotopayModel->getCartItemCount($member_srl);
+		if($current_cart_item_count >= $config->cart_item_limit)
+		{
+			return new BaseObject(-1, '장바구니에는 최대 ' . $config->cart_item_limit . '개의 상품만 담을 수 있습니다.');
+		}
+
 		$product_srl = Context::get('product_srl');
 		$option_srl = Context::get('option_srl');
 		$quantity = Context::get('quantity');
 
-		$oHotopayModel = getModel('hotopay');
 		$product_info = $oHotopayModel->getProduct($product_srl);
 		if(!$product_info)
 		{
@@ -1249,9 +1261,16 @@ class HotopayController extends Hotopay
 
 		$oHotopayModel->insertCartItem($args);
 
+		$this->setCache('cart_item_count_' . $member_srl, $current_cart_item_count + 1);
+
 		$this->setMessage('장바구니에 추가되었습니다.');
 	}
 
+	/**
+	 * 카트에서 선택한 상품을 제거합니다
+	 * 
+	 * @return void
+	 */
 	public function procHotopayDeleteCartItem()
 	{
 		$logged_info = Context::get('logged_info');
@@ -1263,11 +1282,20 @@ class HotopayController extends Hotopay
 
 		$cart_item_srl = Context::get('cart_item_srl');
 
+		$oHotopayModel = getModel('hotopay');
 		$oHotopayModel->deleteCartItem($cart_item_srl, $member_srl);
+
+		$current_cart_item_count = $oHotopayModel->getCartItemCount($member_srl);
+		$this->setCache('cart_item_count_' . $member_srl, $current_cart_item_count);
 
 		$this->setMessage('장바구니에서 삭제되었습니다.');
 	}
 
+	/**
+	 * 카트에 들어있는 상품의 세부 값을 변경합니다
+	 * 
+	 * @return void
+	 */
 	public function procHotopayUpdateCartItem()
 	{
 		$logged_info = Context::get('logged_info');
