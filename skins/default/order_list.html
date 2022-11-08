@@ -39,7 +39,7 @@ $daily = array('일','월','화','수','목','금','토');
                         <span class="ht-order-thumbnail"><img src="{$product->product_pic_src}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-first-item">{$product->product_name}<br>({$options[$product->product_srl]->title}){$product_data->d}</span>
+                        <span class="ht-order-first-item">{$product->product_name}<br>({$options[$product->product_srl]->title}){$product->title}</span>
                     </td>
                     <td>
                         <span class="ht-order-total">₩{number_format($purchase->product_purchase_price)}</span>
