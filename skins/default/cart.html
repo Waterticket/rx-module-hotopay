@@ -1,0 +1,81 @@
+<include target="_header.html" />
+<load target="css/list.css" />
+<!--
+    Array
+    (
+        [0] => stdClass Object
+            (
+                [cart_item_srl] => 1
+                [member_srl] => 195
+                [product_srl] => 228
+                [option_srl] => 232
+                [quantity] => 1
+                [regdate] => 1658900749
+                [product_name] => 어드민1이 그림그려주는 컨텐츠
+                [product_des] => 
+                [product_status] => selling
+                [product_pic_src] => ./files/attach/images/2022/07/27/44af3520ad61139906aeea14427228c6.png
+                [product_pic_srl] => 229
+                [product_sale_price] => 20000
+                [product_original_price] => 20000
+                [product_option] => 
+                [product_buyer_group] => 0
+                [document_srl] => 
+                [tax_rate] => 0
+                [extra_vars] => O:8:"stdClass":1:{s:12:"process_date";s:1:"7";}
+                [title] => LD(상반신)
+                [description] => 상반신만 만들어 드립니다
+                [price] => 30000
+                [stock] => 999
+                [infinity_stock] => N
+                [status] => visible
+            )
+    
+    )
+-->
+
+<section class="flex-container">
+    <div id="p_content">
+    <div id="r_content">
+        <h1>내 카트</h1>
+        <br>
+        <table class="ht-table ht-orders">
+            <thead>
+                <tr>
+                    <th colspan="2">구매 상품 정보</th>
+                    <th>개수</th>
+                    <th>금액</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--@foreach($cart_items as $item)-->
+                <tr class="ht-order">
+                    <td>
+                        <span class="ht-order-thumbnail"><img src="{$item->product_pic_src}"></span>
+                    </td>
+                    <td>
+                        <span class="ht-order-first-item">{$item->product_name}<br>- 옵션 : {$item->option_title}</span>
+                    </td>
+                    <td>
+                        <span class="ht-order-quantity"><input type="number" class="ht-quantity" value="{$item->quantity}"></span>
+                    </td>
+                    <td>
+                        <span class="ht-order-total" data-original-price="{$item->option_price}">₩<span class="price">{number_format($item->option_price)}</span></span>
+                    </td>
+                    <td>
+                        <span class="ht-order-delete"><input type="button" /></span>
+                    </td>
+                </tr>
+                <!--@endforeach-->
+
+                <!--@if(count($cart_items) < 1)-->
+                <tr class="ht-order">
+                    <td colspan="5">카트가 비어있습니다.</td>
+                </tr>
+                <!--@endif-->
+            </tbody>
+        </table>
+    </div>
+    </div>
+</section>

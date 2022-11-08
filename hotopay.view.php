@@ -244,4 +244,26 @@ class HotopayView extends Hotopay
 
 		$this->setTemplateFile('order_list');
 	}
+
+	public function dispHotopayCart()
+	{
+		$config = $this->getConfig();
+		Context::set('hotopay_config', $config);
+
+		$logged_info = Context::get('logged_info');
+		Context::set('logged_info', $logged_info);
+
+		$member_srl = $logged_info->member_srl;
+
+		if(empty($member_srl))
+		{
+			return $this->createObject(-1, "로그인이 필요합니다.");
+		}
+
+		$oHotopayModel = getModel('hotopay');
+		$cart_items = $oHotopayModel->getCartItems($member_srl);
+		Context::set('cart_items', $cart_items);
+
+		$this->setTemplateFile('cart');
+	}
 }

@@ -435,9 +435,9 @@ class HotopayModel extends Hotopay
     /**
      * hotopay_cart 테이블에서 멤버의 카트 아이템을 가져온다.
      * 
-     * @param array $member_srl
+     * @param int $member_srl
      */
-    public static function getCartItems(array $member_srl): array
+    public static function getCartItems(int $member_srl): array
     {
         $args = new \stdClass();
         $args->member_srl = $member_srl;
