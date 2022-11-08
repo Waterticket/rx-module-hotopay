@@ -1,43 +1,10 @@
 <include target="_header.html" />
 <load target="css/list.css" />
-<!--
-    Array
-    (
-        [0] => stdClass Object
-            (
-                [cart_item_srl] => 1
-                [member_srl] => 195
-                [product_srl] => 228
-                [option_srl] => 232
-                [quantity] => 1
-                [regdate] => 1658900749
-                [product_name] => 어드민1이 그림그려주는 컨텐츠
-                [product_des] => 
-                [product_status] => selling
-                [product_pic_src] => ./files/attach/images/2022/07/27/44af3520ad61139906aeea14427228c6.png
-                [product_pic_srl] => 229
-                [product_sale_price] => 20000
-                [product_original_price] => 20000
-                [product_option] => 
-                [product_buyer_group] => 0
-                [document_srl] => 
-                [tax_rate] => 0
-                [extra_vars] => O:8:"stdClass":1:{s:12:"process_date";s:1:"7";}
-                [title] => LD(상반신)
-                [description] => 상반신만 만들어 드립니다
-                [price] => 30000
-                [stock] => 999
-                [infinity_stock] => N
-                [status] => visible
-            )
-    
-    )
--->
 
 <section class="flex-container">
     <div id="p_content">
     <div id="r_content">
-        <h1>내 카트</h1>
+        <h1>내 장바구니</h1>
         <br>
         <table class="ht-table ht-orders">
             <thead>
@@ -50,32 +17,131 @@
             </thead>
             <tbody>
                 <!--@foreach($cart_items as $item)-->
-                <tr class="ht-order">
+                <tr class="ht-order" data-cart-item-srl="{$item->cart_item_srl}">
                     <td>
                         <span class="ht-order-thumbnail"><img src="{$item->product_pic_src}"></span>
                     </td>
                     <td>
                         <span class="ht-order-first-item">{$item->product_name}<br>- 옵션 : {$item->option_title}</span>
+                        <input type="hidden" class="option_srl" value="{$item->option_srl}">
                     </td>
                     <td>
                         <span class="ht-order-quantity"><input type="number" class="ht-quantity" value="{$item->quantity}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-total" data-original-price="{$item->option_price}">₩<span class="price">{number_format($item->option_price)}</span></span>
+                        <span class="ht-order-total" data-original-price="{$item->option_price}">₩<span class="price">{number_format($item->option_price * $item->quantity)}</span></span>
                     </td>
                     <td>
-                        <span class="ht-order-delete"><input type="button" /></span>
+                        <span class="ht-order-delete"><input type="button" class="delete_item" value="X" /></span>
                     </td>
                 </tr>
                 <!--@endforeach-->
 
                 <!--@if(count($cart_items) < 1)-->
-                <tr class="ht-order">
-                    <td colspan="5">카트가 비어있습니다.</td>
+                <tr class="ht-order-empty">
+                    <td colspan="5" style="padding: 20px;">카트가 비어있습니다.</td>
                 </tr>
                 <!--@endif-->
             </tbody>
         </table>
+
+        <br>
+        <section id="result">
+            <p>총 결제 금액: <span id="purchase_price">0</span> 원</p>
+        </section>
+
+        <br>
+        <section id="purchase">
+            <input type="button" id="purchase_btn" value="결제하기" />
+        </section>
     </div>
     </div>
 </section>
+
+<script>
+    var purchase_price = 0;
+
+    function calculatePurchasePrice()
+    {
+        purchase_price = 0;
+        $('.ht-order').each(function(){
+            var price = $(this).find('.ht-order-total').data('original-price');
+            var quantity = $(this).find('.ht-quantity').val();
+            purchase_price += price * quantity;
+        });
+        $('#purchase_price').text(purchase_price);
+    }
+    
+    jQuery(function($){
+        $(document).ready(function() {
+            calculatePurchasePrice();
+        });
+
+        $('.ht-quantity').on('change', function(){
+            var $this = $(this);
+            var quantity = $this.val();
+            if (quantity < 1) {
+                alert('최소 1개 이상 구매해야 합니다.');
+                $this.val(1);
+                quantity = 1;
+            }
+
+            var $tr = $this.closest('tr');
+            var $price = $tr.find('.price');
+            var $total = $tr.find('.ht-order-total');
+            var original_price = $total.data('original-price');
+            var total = original_price * quantity;
+            $price.text(Number(total).toLocaleString());
+            calculatePurchasePrice();
+
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                data: {
+                    module: 'hotopay',
+                    act: 'procHotopayUpdateCartItem',
+                    cart_item_srl: $this.closest('.ht-order').data('cart-item-srl'),
+                    option_srl: $this.closest('.ht-order').find('.option_srl').val(),
+                    quantity: quantity
+                },
+                success: function(data){
+                    if (data.error) {
+                        alert(data.message);
+                        return;
+                    }
+                }
+            });
+        });
+
+        $('.delete_item').on('click', function(){
+            if (!confirm('해당 상품을 장바구니에서 삭제하시겠습니까?')) {
+                return;
+            }
+
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            var cart_item_srl = $tr.data('cart-item-srl');
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                data: {
+                    module: 'hotopay',
+                    act: 'procHotopayDeleteCartItem',
+                    cart_item_srl: cart_item_srl
+                },
+                success: function(data){
+                    alert(data.message);
+                    if (data.error) {
+                        return;
+                    }
+                    $tr.remove();
+                    calculatePurchasePrice();
+
+                    if ($('.ht-order').length < 1) {
+                        location.reload();
+                    }
+                }
+            });
+        });
+    });
+</script>

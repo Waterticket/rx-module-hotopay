@@ -1221,6 +1221,7 @@ class HotopayController extends Hotopay
 	 */
 	public function procHotopayAddCartItem()
 	{
+		Context::setResponseMethod('JSON');
 		$logged_info = Context::get('logged_info');
 		$member_srl = $logged_info->member_srl;
 		if(!$member_srl)
@@ -1273,6 +1274,7 @@ class HotopayController extends Hotopay
 	 */
 	public function procHotopayDeleteCartItem()
 	{
+		Context::setResponseMethod('JSON');
 		$logged_info = Context::get('logged_info');
 		$member_srl = $logged_info->member_srl;
 		if(!$member_srl)
@@ -1298,6 +1300,7 @@ class HotopayController extends Hotopay
 	 */
 	public function procHotopayUpdateCartItem()
 	{
+		Context::setResponseMethod('JSON');
 		$logged_info = Context::get('logged_info');
 		$member_srl = $logged_info->member_srl;
 		if(!$member_srl)
@@ -1315,6 +1318,8 @@ class HotopayController extends Hotopay
 		$args->option_srl = $option_srl;
 		$args->quantity = $quantity;
 		$args->regdate = date('YmdHis');
+
+		$oHotopayModel = getModel('hotopay');
 		$oHotopayModel->updateCartItem($args);
 
 		$this->setMessage('장바구니가 수정되었습니다.');
