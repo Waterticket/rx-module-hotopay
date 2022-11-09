@@ -174,7 +174,104 @@ class HotopayController extends Hotopay
 
 		executeQuery("hotopay.insertPurchase", $args);
 
-		$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayPayProcess','order_id',$order_id));
+		header('HTTP/1.1 307 Temporary move');
+		header('Location: ' . getNotEncodedUrl('','mid','hotopay','act','procHotopayPayProcess','order_id',$order_id));
+		return;
+	}
+
+	public function procHotopayPayProcess()
+	{
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+		$logged_info = Context::get('logged_info');
+
+		Context::set('logged_info', $logged_info);
+		Context::set('hotopay_config', $config);
+		Context::set('vars', $vars);
+
+		if(!empty($_SESSION['hotopay_HT'.$vars->order_id]))
+		{
+			return $this->createObject(-1, "이미 진행된 결제입니다.");
+		}
+
+		$args = new stdClass();
+		$args->purchase_srl = $vars->order_id;
+		$purchase = executeQuery('hotopay.getPurchase', $args);
+		$purchase_data = $purchase->data;
+
+		if($purchase_data->member_srl != $logged_info->member_srl)
+		{
+			return $this->createObject(-1, "결제 실패. (CODE: -1000)");
+		}
+
+		if(!empty($purchase_data->pay_data)) // pay_data가 있다면
+			$purchase_data->pay_data = json_decode($purchase_data->pay_data);
+
+		$products = json_decode($purchase_data->products);
+		$purchase_data->title = $products->t;
+		switch($purchase_data->pay_method)
+		{
+			case 'card':
+				$purchase_data->pay_method_korean = '카드';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'ts_account':
+				$purchase_data->pay_method_korean = '계좌이체';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'v_account':
+				$purchase_data->pay_method_korean = '가상계좌';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'voucher':
+				$purchase_data->pay_method_korean = '문화상품권';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'cellphone':
+				$purchase_data->pay_method_korean = '휴대폰';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'kakaopay':
+				$purchase_data->pay_method_korean = '카카오페이';
+				$purchase_data->pay_pg = 'kakaopay';
+				break;
+
+			case 'n_account':
+				$purchase_data->pay_method_korean = '무통장 입금';
+				$purchase_data->pay_pg = 'n_account';
+				break;
+
+			case 'paypal':
+				$purchase_data->pay_method_korean = 'PayPal';
+				$purchase_data->pay_pg = 'paypal';
+				break;
+
+			case 'toss':
+				$purchase_data->pay_method_korean = '토스결제';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
+			case 'point':
+				$purchase_data->pay_method_korean = '포인트 결제';
+				$purchase_data->pay_pg = 'point';
+				break;
+		}
+
+		if(substr($purchase_data->pay_method, 0, 5) === 'inic_')
+		{
+			$purchase_data->pay_method_korean = '이니시스';
+			$purchase_data->pay_pg = 'inicis';
+		}
+
+
+		Context::set('purchase', $purchase_data);
+
+		$this->setTemplateFile('pay_process');
 	}
 
 	/**
