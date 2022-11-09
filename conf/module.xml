@@ -44,6 +44,7 @@
 
 		<!-- 카트 액션 -->
 		<action name="dispHotopayCart" type="view" route="cart" />
+		<action name="dispHotopayCartCheckout" type="view" route="checkout" />
 		<action name="procHotopayAddCartItem" type="controller" route="cart/add" />
 		<action name="procHotopayDeleteCartItem" type="controller" route="cart/delete" />
 		<action name="procHotopayUpdateCartItem" type="controller" route="cart/update" />

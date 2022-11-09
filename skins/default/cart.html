@@ -39,7 +39,7 @@
 
                 <!--@if(count($cart_items) < 1)-->
                 <tr class="ht-order-empty">
-                    <td colspan="5" style="padding: 20px;">카트가 비어있습니다.</td>
+                    <td colspan="5" style="padding: 20px;">장바구니가 비어있습니다.</td>
                 </tr>
                 <!--@endif-->
             </tbody>
@@ -69,7 +69,7 @@
             var quantity = $(this).find('.ht-quantity').val();
             purchase_price += price * quantity;
         });
-        $('#purchase_price').text(purchase_price);
+        $('#purchase_price').text(Number(purchase_price).toLocaleString());
     }
     
     jQuery(function($){
@@ -142,6 +142,17 @@
                     }
                 }
             });
+        });
+
+        $('#purchase_btn').on('click', function(){
+            calculatePurchasePrice();
+
+            if (purchase_price < 1) {
+                alert('결제할 상품이 없습니다.');
+                return;
+            }
+
+            location.href = '{getUrl("","mid","hotopay","act","dispHotopayCartCheckout")}';
         });
     });
 </script>

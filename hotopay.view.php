@@ -33,6 +33,23 @@ class HotopayView extends Hotopay
 		$this->setTemplateFile('index');
 	}
 
+	public function dispHotopayCartCheckout()
+	{
+		$logged_info = Context::get('logged_info');	
+		$member_srl = $logged_info->member_srl;
+		if (!$member_srl)
+		{
+			throw new \Rhymix\Framework\Exception('로그인이 필요합니다.');
+		}
+
+		$oHotopayModel = getModel('hotopay');
+		$cart_items = $oHotopayModel->getCartItems($member_srl);
+		Context::set('cart_items', $cart_items);
+
+		// 스킨 파일명 지정
+		$this->setTemplateFile('cart_checkout');
+	}
+
 	public function dispHotopayOrderPage()
 	{
 		$config = $this->getConfig();
@@ -48,12 +65,6 @@ class HotopayView extends Hotopay
 		Context::set('inicis_enabled', $config->inicis_enabled == 'Y' && $iamport_enabled);
 		Context::set('n_account_enabled', $config->n_account_enabled == 'Y' && !empty($config->n_account_string));
 
-		$oHotopayModel = getModel('hotopay');
-		$product_list = $oHotopayModel->getProducts($vars->product_id);
-
-		Context::set('product_list', $product_list);
-
-		$logged_info = Context::get('logged_info');	
 		$oPointModel = getModel('point');
 		$point = $oPointModel->getPoint($logged_info->member_srl, true);
 		Context::set('point', $point);
