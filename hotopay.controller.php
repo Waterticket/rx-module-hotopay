@@ -56,7 +56,7 @@ class HotopayController extends Hotopay
 			$option_srl = $option_list[$product->product_srl];
 			$option = $product->product_option[$option_srl];
 
-			if($option->stock < 1) return $this->createObject(-1, "재고가 부족한 항목이 있습니다.");
+			if($option->infinity_stock != 'Y' && $option->stock < 1) return $this->createObject(-1, "재고가 부족한 항목이 있습니다.");
 		}
 
 		foreach($product_list as $product)
@@ -84,7 +84,10 @@ class HotopayController extends Hotopay
 			$obj->regdate = time();
 			executeQuery('hotopay.insertPurchaseItem', $obj);
 
-			$oHotopayModel->minusOptionStock($option_srl, 1);
+			if($option->infinity_stock != 'Y')
+			{
+				$oHotopayModel->minusOptionStock($option_srl, 1);
+			}
 		}
 
 		if($tc > 0)
