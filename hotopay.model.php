@@ -36,6 +36,7 @@ class HotopayModel extends Hotopay
         $args = new stdClass();
         $args->product_srl = $product_srls;
         $output = executeQueryArray('hotopay.getProducts', $args);
+        self::updateExpiredPurchaseStatus();
 
         if(!$output->toBool() || empty($output->data))
         {
@@ -523,5 +524,25 @@ class HotopayModel extends Hotopay
         }
 
         return $item_count;
+    }
+
+    public static function updateExpiredPurchaseStatus(): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $args = new \stdClass();
+        $args->pay_status = array('WAITING_FOR_DEPOSIT', 'PENDING');
+        $args->regdate = time() - 86400 * 3; // 3 days
+        $args->pay_status_to = 'CANCELED';
+        $output = executeQuery('hotopay.updateExpiredPurchaseStatus', $args);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
     }
 }

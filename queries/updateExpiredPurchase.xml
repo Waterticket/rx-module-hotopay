@@ -1,0 +1,12 @@
+<query id="updateExpiredPurchaseStatus" action="update">
+	<tables>
+		<table name="hotopay_purchase" />
+	</tables>
+	<columns>
+        <column name="pay_status" var="pay_status_to" default="CANCELED" />
+	</columns>
+	<conditions>
+		<condition operation="in" column="pay_status" var="pay_status" notnull="notnull" />
+		<condition operation="below" column="regdate" var="regdate" notnull="notnull" pipe="and" />
+	</conditions>
+</query>
