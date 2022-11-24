@@ -322,7 +322,7 @@ class HotopayModel extends Hotopay
             switch($change_currency)
             {
                 case 'USD':
-                    return round($amount/1400, 2);
+                    return round($amount/1250, 2);
                     break;
             }
         }
@@ -332,7 +332,7 @@ class HotopayModel extends Hotopay
             switch($change_currency)
             {
                 case 'KRW':
-                    return $amount*1400;
+                    return $amount*1250;
                     break;
             }
         }
