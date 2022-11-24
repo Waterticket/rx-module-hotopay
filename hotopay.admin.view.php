@@ -145,6 +145,8 @@ class HotopayAdminView extends Hotopay
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 
+		HotopayModel::updateExpiredPurchaseStatus();
+
 		$sort_index = $vars->sort_index ?: 'purchase_srl';
 		$sort_order = in_array($vars->sort_order, ['asc','desc']) ? $vars->sort_order : 'desc';
 
