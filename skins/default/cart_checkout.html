@@ -1,0 +1,144 @@
+<include target="_header.html" />
+<load target="css/list.css" />
+
+<section class="flex-container">
+    <div id="p_content">
+    <div id="r_content">
+        <h1>주문서</h1>
+        <br>
+        <table class="ht-table ht-orders">
+            <thead>
+                <tr>
+                    <th colspan="2">구매 상품 정보</th>
+                    <th>개수</th>
+                    <th>금액</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--@foreach($cart_items as $item)-->
+                <tr class="ht-order" data-cart-item-srl="{$item->cart_item_srl}">
+                    <td>
+                        <span class="ht-order-thumbnail"><img src="{$item->product_pic_src}"></span>
+                    </td>
+                    <td>
+                        <span class="ht-order-first-item">{$item->product_name}<br>- 옵션 : {$item->option_title}</span>
+                        <input type="hidden" class="option_srl" value="{$item->option_srl}">
+                    </td>
+                    <td>
+                        <span class="ht-order-quantity">{$item->quantity}</span>
+                    </td>
+                    <td>
+                        <span class="ht-order-total" data-original-price="{$item->option_price}">₩<span class="price">{number_format($item->option_price * $item->quantity)}</span></span>
+                    </td>
+                </tr>
+                <!--@endforeach-->
+            </tbody>
+        </table>
+
+        <section id="pay_method">
+            <!--@if($toss_enabled)-->
+                <!--@if(in_array(1, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_card" value="card" checked="checked" required="required"><label for="pm_card"> 카드</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(6, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_acct" value="ts_account" required="required"><label for="pm_acct"> 계좌이체</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(2, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vacc" value="v_account" required="required"><label for="pm_vacc"> 가상계좌</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(3, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vouc" value="voucher" required="required"><label for="pm_vouc"> 상품권</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(4, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_cphn" value="cellphone" required="required"><label for="pm_cphn"> 휴대폰</label>&nbsp;<!--@endif-->
+            <!--@endif-->
+            <!--@if($n_account_enabled)-->
+            <input type="radio" name="pay_method" id="pm_nacc" value="n_account" required="required"><label for="pm_nacc"> 무통장 입금</label>&nbsp;
+            <!--@endif-->
+            <!--@if($toss_enabled)-->
+                <!--@if(in_array(5, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_toss" value="toss" required="required"><label for="pm_toss"> <img src="/modules/hotopay/skins/default/img/toss_payment_icon.png" style="width: 53px; display: inline;" alt="토스" title="토스" /></label>&nbsp;<!--@endif-->
+            <!--@endif-->
+            <!--@if($kakaopay_enabled)-->
+            <input type="radio" name="pay_method" id="pm_kapy" value="kakaopay" required="required"><label for="pm_kapy"> <img src="/modules/hotopay/skins/default/img/kakao_payment_icon_yellow_small.png" style="width: 53px; display: inline;" alt="카카오페이" title="카카오페이" /></label>
+            <!--@endif-->
+            <!--@if($inicis_enabled)-->
+                <!--@if(in_array('card', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_card" value="inic_card" checked="checked" required="required"><label for="pm_inic_card"> 카드(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('trans', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_trans" value="inic_trans" checked="checked" required="required"><label for="pm_inic_trans"> 실시간계좌이체(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('vbank', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_vbank" value="inic_vbank" checked="checked" required="required"><label for="pm_inic_vbank"> 가상계좌(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('phone', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_phone" value="inic_phone" checked="checked" required="required"><label for="pm_inic_phone"> 휴대폰(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('cultureland', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_cultureland" value="inic_cultureland" checked="checked" required="required"><label for="pm_inic_cultureland"> 컬쳐랜드(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('smartculture', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_smartculture" value="inic_smartculture" checked="checked" required="required"><label for="pm_inic_smartculture"> 스마트문상(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('happymoney', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_happymoney" value="inic_happymoney" checked="checked" required="required"><label for="pm_inic_happymoney"> 해피머니(이니시스)</label>&nbsp;<!--@endif-->
+            <!--@endif-->
+            <!--@if($paypal_enabled)-->
+            <input type="radio" name="pay_method" id="pm_payp" value="paypal" required="required"><label for="pm_payp"> <img src="/modules/hotopay/skins/default/img/paypal_PP_logo_h_100x26.png" style="width: 53px; display: inline-block;" alt="PayPal" title="PayPal" /></label>
+            <!--@endif-->
+        </section>
+        <br>
+
+        <section id="depositor" style="display: none">
+            <p>입금자 이름 <span id="required">*</span></p>
+            <input type="text" id="depositor_name" name="depositor_name" maxlength="5" placeholder="입금자 명을 입력해주세요.">
+        </section>
+
+        <!--@if($hotopay_config->point_discount == 'Y')-->
+        <section id="point_discount">
+            <p>포인트 할인 (보유 {number_format($point)} P) <a href="javascript:void(0)" onclick="useTotalPoint()">전체 적용</a></p>
+            <input type="number" id="use_point" name="use_point" value="0" min="0" max="{$point}" onkeyup="enforceMinMax(this)" onchange="optionChange()"> P
+        </section>
+        <!--@endif-->
+
+        <br>
+        <section id="result">
+            <p>상품 금액 : <span id="product_price">{number_format($purchase_price)}</span> 원</p>
+            <p>할인 금액 : <span id="discount_price">{number_format($purchase_price)}</span> 원</p>
+            <p>총 결제 금액: <span id="purchase_price">{number_format($purchase_price)}</span> 원</p>
+        </section>
+
+        <br>
+        <section id="purchase">
+            <input type="button" id="purchase_btn" value="결제하기" />
+        </section>
+    </div>
+    </div>
+</section>
+
+<script>
+function _purchaseSubmit()
+{
+	var purchase_checkbox = $('#purchase_checkbox');
+	if(!purchase_checkbox.is(":checked"))
+	{
+		alert('결제 사항 확인을 체크해주세요!');
+		return false;
+	}
+	
+	return true;
+}
+
+$('#pm_payp').click(function(){
+    alert('Paypal 결제는 한국 거주자는 이용할 수 없습니다.\n\n해외 거주자를 위한 기능입니다.');
+});
+
+$('input[name=pay_method]').click(function(){
+    if($(this).attr('id') == 'pm_nacc')
+    {
+        $('#depositor').show();
+        $('#depositor_name').attr('required', 'required');
+    }
+    else
+    {
+        $('#depositor').hide();
+        $('#depositor_name').removeAttr('required');
+    }
+});
+
+function enforceMinMax(el) {
+  if (el.value != "") {
+    if (parseInt(el.value) < parseInt(el.min)) {
+      el.value = el.min;
+    }
+    if (parseInt(el.value) > parseInt(el.max)) {
+      el.value = el.max;
+    }
+  }
+}
+
+function useTotalPoint()
+{
+    var max_point = $('#use_point').attr('max');
+    $('#use_point').val(max_point);
+    optionChange();
+}
+</script>

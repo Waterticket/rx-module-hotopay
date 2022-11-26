@@ -42,9 +42,18 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('로그인이 필요합니다.');
 		}
 
+		$this->dispHotopayOrderPage();
+
 		$oHotopayModel = getModel('hotopay');
 		$cart_items = $oHotopayModel->getCartItems($member_srl);
 		Context::set('cart_items', $cart_items);
+
+		$purchase_price = 0;
+		foreach ($cart_items as $item)
+		{
+			$purchase_price += $item->option_price * $item->quantity;
+		}
+		Context::set('purchase_price', $purchase_price);
 
 		// 스킨 파일명 지정
 		$this->setTemplateFile('cart_checkout');
