@@ -89,6 +89,7 @@ class HotopayAdminController extends Hotopay
 		$args->product_pic_srl = 0;
 		$args->document_srl = $vars->document_srl ?: 0;
 		$args->tax_rate = $vars->tax_rate ?: 0;
+		$args->market_srl = $vars->market_srl ?: 0;
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
 		$upfile = $vars->product_pic;
