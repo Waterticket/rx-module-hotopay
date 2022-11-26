@@ -11,4 +11,8 @@
 		<page_count var="page_count" default="10" />
 		<page var="page" default="1" />
 	</navigation>
+	<conditions>
+		<condition operation="equal" column="market_srl" var="market_srl" />
+		<condition operation="equal" column="member_srl" var="member_srl" pipe="and" />
+	</conditions>
 </query>
