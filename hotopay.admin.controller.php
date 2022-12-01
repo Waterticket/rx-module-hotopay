@@ -151,7 +151,7 @@ class HotopayAdminController extends Hotopay
 			$obj->title = $item->title;
 			$obj->description = $item->description ?? "";
 			$obj->price = $item->price;
-			$obj->stock = $item->stock ?? 0;
+			$obj->stock = $item->stock ?: 0;
 			$obj->infinity_stock = $item->infinity_stock ?? "N";
 			$obj->status = 'visible';
 			$obj->extra_vars = $item->extra_vars ? serialize((object) $item->extra_vars) : serialize(new stdClass());
