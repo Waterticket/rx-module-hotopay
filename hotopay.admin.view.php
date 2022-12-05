@@ -39,8 +39,8 @@ class HotopayAdminView extends Hotopay
 		$total = $oHotopayAdminModel->getSales(0);
 		$month = $oHotopayAdminModel->getSales(strtotime("first day of this month midnight"));
 		$last_month = $oHotopayAdminModel->getSales(strtotime("first day of last month midnight"), strtotime("first day of this month midnight"));
-		$week = $oHotopayAdminModel->getSales(strtotime("last Sunday"));
-		$last_week = $oHotopayAdminModel->getSales(strtotime("last Sunday") - 604800, strtotime("last Saturday"));
+		$week = $oHotopayAdminModel->getSales(strtotime('monday this week midnight'));
+		$last_week = $oHotopayAdminModel->getSales(strtotime('monday this week midnight') - 604800, strtotime('monday this week midnight'));
 		$today = $oHotopayAdminModel->getSales(strtotime("today midnight"));
 		$yesterday = $oHotopayAdminModel->getSales(strtotime("today midnight") - 86400, strtotime("today midnight"));
 

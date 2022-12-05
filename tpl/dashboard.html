@@ -56,7 +56,7 @@ $oHotopayAdminModel = getAdminModel('hotopay');
     </div>
 
     <div class="dash_square">
-        <p class="title">이번 주 매출 ({date('Y-m-d', strtotime("last Sunday"))} ~ {date('Y-m-d', strtotime("next Saturday"))})</p>
+        <p class="title">이번 주 매출 ({date('Y-m-d', strtotime('monday this week midnight'))} ~ {date('Y-m-d', strtotime('monday next week midnight') - 1)})</p>
         <p class="price">{number_format($week->sum_price)}원</p>
         <p>{number_format($week->count)}개 판매</p>
         <p class="comp {$oHotopayAdminModel->getNumberStatus($week->sum_price - $last_week->sum_price)}"><span title="{number_format($last_week->sum_price)}원">지난 주</span>에 비해 {$oHotopayAdminModel->setNumberComp($week->sum_price - $last_week->sum_price)}원 ({$oHotopayAdminModel->getPercentage($week->sum_price, $last_week->sum_price)})</p>
