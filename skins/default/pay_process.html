@@ -94,7 +94,7 @@ function openPay() {
         if (rsp.success) {
             location.href = window.location.origin + '/hotopay/payStatus/inicis/success/HT{$vars->order_id}?imp_uid=' + rsp.imp_uid + '&merchant_uid=' + rsp.merchant_uid;
         } else {
-          location.href = window.location.origin + '/hotopay/payStatus/inicis/fail/HT{$vars->order_id}';
+          location.href = window.location.origin + '/hotopay/payStatus/inicis/fail/HT{$vars->order_id}?code='+rsp.error_code+'&message='+rsp.error_msg;
         }
     });
 }
