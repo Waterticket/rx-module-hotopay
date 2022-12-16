@@ -89,7 +89,7 @@ function openPay() {
         buyer_email : '{$logged_info->email_address}',
         buyer_name : '{$logged_info->user_name}',
         buyer_tel : '{!empty($logged_info->phone_number) ? $logged_info->phone_number : "010-0000-0000"}',
-        m_redirect_url : '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","inicis","pay_status","success","order_id","HT".$vars->order_id)}',
+        m_redirect_url : '{getNotEncodedFullUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","inicis","pay_status","success","order_id","HT".$vars->order_id)}',
     }, function (rsp) { // callback
         if (rsp.success) {
             location.href = window.location.origin + '/hotopay/payStatus/inicis/success/HT{$vars->order_id}?imp_uid=' + rsp.imp_uid + '&merchant_uid=' + rsp.merchant_uid;
