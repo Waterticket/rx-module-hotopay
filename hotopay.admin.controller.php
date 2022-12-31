@@ -91,8 +91,23 @@ class HotopayAdminController extends Hotopay
 		$args->tax_rate = $vars->tax_rate ?: 0;
 		$args->market_srl = $vars->market_srl ?: 0;
 
-		if (empty($args->product_name) || empty($args->product_des) || empty($args->product_sale_price) || empty($args->product_original_price)) {
+		if (empty($args->product_name) || empty($args->product_des)) {
 			return $this->createObject(-1, "필수 값이 누락되었습니다.");
+		}
+
+		if (empty($args->product_sale_price) || empty($args->product_original_price))
+		{
+			$min_price = -1;
+			foreach ($vars->sale_option as $item)
+			{
+				if ($min_price == -1 || $min_price > $item->price)
+				{
+					$min_price = $item->price;
+				}
+			}
+
+			$args->product_sale_price = $min_price;
+			$args->product_original_price = $min_price;
 		}
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
