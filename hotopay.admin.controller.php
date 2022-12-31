@@ -90,6 +90,7 @@ class HotopayAdminController extends Hotopay
 		$args->document_srl = $vars->document_srl ?: 0;
 		$args->tax_rate = $vars->tax_rate ?: 0;
 		$args->market_srl = $vars->market_srl ?: 0;
+		$auto_calc_price = $vars->auto_calc_price ?: 'N';
 
 		if (empty($args->product_name) || empty($args->product_des)) {
 			return $this->createObject(-1, "필수 값이 누락되었습니다.");
@@ -97,17 +98,24 @@ class HotopayAdminController extends Hotopay
 
 		if (empty($args->product_sale_price) || empty($args->product_original_price))
 		{
-			$min_price = -1;
-			foreach ($vars->sale_option as $item)
+			if ($auto_calc_price == 'Y')
 			{
-				if ($min_price == -1 || $min_price > $item->price)
+				$min_price = -1;
+				foreach ($vars->sale_option as $item)
 				{
-					$min_price = $item->price;
+					if ($min_price == -1 || $min_price > $item['price'])
+					{
+						$min_price = $item['price'];
+					}
 				}
-			}
 
-			$args->product_sale_price = $min_price;
-			$args->product_original_price = $min_price;
+				$args->product_sale_price = $min_price;
+				$args->product_original_price = $min_price;
+			}
+			else
+			{
+				return $this->createObject(-1, "필수 값이 누락되었습니다.");
+			}
 		}
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
@@ -289,6 +297,22 @@ class HotopayAdminController extends Hotopay
 		$args->document_srl = $vars->document_srl ?: 0;
 		$args->tax_rate = $vars->tax_rate ?: 0;
 		$args->extra_vars = serialize($vars->extra_vars ?? new stdClass());
+		$auto_calc_price = $vars->auto_calc_price ?: 'N';
+
+		if ($auto_calc_price == 'Y')
+		{
+			$min_price = -1;
+			foreach ($vars->sale_option as $item)
+			{
+				if ($min_price == -1 || $min_price > $item['price'])
+				{
+					$min_price = $item['price'];
+				}
+			}
+
+			$args->product_sale_price = $min_price;
+			$args->product_original_price = $min_price;
+		}
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
 		$upfile = $vars->product_pic;
