@@ -24,6 +24,7 @@ class HotopayAdminController extends Hotopay
 		$config->board_module_srl = $vars->board_module_srl;
 		$config->point_discount = empty($vars->point_discount) ? 'N' : 'Y';
 		$config->cart_item_limit = $vars->cart_item_limit;
+		$config->min_product_price = $vars->min_product_price;
 		
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_list = $vars->toss_payments_list ?? array();
@@ -92,8 +93,8 @@ class HotopayAdminController extends Hotopay
 		$args->market_srl = $vars->market_srl ?: 0;
 		$auto_calc_price = $vars->auto_calc_price ?: 'N';
 
-		if (empty($args->product_name) || empty($args->product_des)) {
-			return $this->createObject(-1, "필수 값이 누락되었습니다.");
+		if (($args->product_sale_price < $config->min_product_price) && ($this->user->is_admin !== 'Y')) {
+			return $this->createObject(-1, "최소 판매가는 {$config->min_product_price}원 입니다.");
 		}
 
 		if (empty($args->product_sale_price) || empty($args->product_original_price))
@@ -116,6 +117,10 @@ class HotopayAdminController extends Hotopay
 			{
 				return $this->createObject(-1, "필수 값이 누락되었습니다.");
 			}
+		}
+
+		if ($args->product_sale_price < $config->min_product_price) {
+			return $this->createObject(-1, "최소 판매가는 {$config->min_product_price}원 입니다.");
 		}
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');
@@ -312,6 +317,10 @@ class HotopayAdminController extends Hotopay
 
 			$args->product_sale_price = $min_price;
 			$args->product_original_price = $min_price;
+		}
+
+		if (($args->product_sale_price < $config->min_product_price) && ($this->user->is_admin !== 'Y')) {
+			return $this->createObject(-1, "최소 판매가는 {$config->min_product_price}원 입니다.");
 		}
 
         $allow_mime_type = array('image/jpeg', 'image/png', 'image/gif');

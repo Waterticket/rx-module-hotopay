@@ -47,6 +47,14 @@
 				<p class="help-block">회원이 카트에 넣을 수 있는 최대 상품 개수를 제한합니다. 비정상적인 서버 부하를 방지하기 위한 기능입니다.</p>
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="min_product_price">등록가능 최소 가격</label>
+			<div class="x_controls">
+				<input type="number" name="min_product_price" id="min_product_price" value="{$hotopay_config->min_product_price}">
+				<p class="help-block">상품 등록시 최소 가격을 제한합니다. 단, 관리자는 예외입니다.</p>
+			</div>
+		</div>
 	</section>
 	
 	<section class="section">
