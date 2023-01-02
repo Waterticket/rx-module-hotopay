@@ -82,7 +82,9 @@
         <br>
         <section id="result">
             <p>상품 금액 : <span id="product_price">{number_format($purchase_price)}</span> 원</p>
+			<!--@if($hotopay_config->point_discount == 'Y')-->
             <p>할인 금액 : <span id="discount_price">{number_format($purchase_price)}</span> 원</p>
+			<!--@endif-->
             <p>총 결제 금액: <span id="purchase_price">{number_format($purchase_price)}</span> 원</p>
         </section>
 
