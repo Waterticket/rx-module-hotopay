@@ -419,6 +419,7 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product","tax_rate")) return true;
 		if(!$oDB->isColumnExists("hotopay_product","market_srl")) return true;
 		if(!$oDB->isIndexExists("hotopay_product","idx_market_srl")) return true;
+		if(!$oDB->isColumnExists("hotopay_purchase_item","quantity")) return true;
 
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
@@ -514,6 +515,11 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isIndexExists("hotopay_product","idx_market_srl"))
 		{
 			$oDB->addIndex('hotopay_product',"idx_market_srl","market_srl");
+		}
+
+		if(!$oDB->isColumnExists("hotopay_purchase_item","quantity"))
+		{
+			$oDB->addColumn('hotopay_purchase_item',"quantity","number",20,1,false,"original_price");
 		}
 
 		$config = $this->getConfig();

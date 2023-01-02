@@ -6,6 +6,7 @@
 	<column name="option_name" type="varchar" size="500" notnull="notnull" />
 	<column name="purchase_price" type="number" size="10" notnull="notnull" default="0" />
 	<column name="original_price" type="number" size="10" notnull="notnull" default="0" />
+	<column name="quantity" type="number" size="10" notnull="notnull" default="1" />
 	<column name="extra_vars" type="text" />
 	<column name="regdate" type="number" size="10" notnull="notnull" index="idx_regdate" />
 </table>
