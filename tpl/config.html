@@ -17,6 +17,14 @@
 	<section class="section">
 		<h1>쇼핑몰 설정</h1>
 		<div class="x_control-group">
+			<label class="x_control-label" for="hotopay_purchase_enabled">결제 모듈 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="hotopay_purchase_enabled" id="hotopay_purchase_enabled" checked="checked"|cond="$hotopay_config->hotopay_purchase_enabled == 'Y'">&nbsp;결제 모듈을 활성화합니다.</label>
+				<p class="help-block">회원이 Hotopay를 사용하여 결제할 수 있도록 활성화합니다. 비활성화 상태에서 결제 시도시 회원에게 결제 시스템 점검중이라는 메세지가 나옵니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="shop_name">쇼핑몰 이름</label>
 			<div class="x_controls">
 				<input type="text" name="shop_name" id="shop_name" value="{$hotopay_config->shop_name}"><br>
