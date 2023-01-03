@@ -1382,6 +1382,15 @@ class HotopayController extends Hotopay
 			return new BaseObject(-1, '옵션 정보가 없습니다.');
 		}
 
+		$cart_items = $oHotopayModel->getCartItems($member_srl);
+		foreach ($cart_items as $item)
+		{
+			if($item->product_srl == $product_srl && $item->option_srl == $option_srl)
+			{
+				return new BaseObject(-1, '이미 장바구니에 담겨있는 상품입니다.');
+			}
+		}
+
 		$args = new stdClass();
 		$args->member_srl = $member_srl;
 		$args->product_srl = $product_srl;
