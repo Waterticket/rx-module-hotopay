@@ -914,6 +914,12 @@ class HotopayController extends Hotopay
 
 		$oHotopayModel = getModel('hotopay');
 		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		
+		$trigger_obj = new stdClass();
+		$trigger_obj->member_srl = $member_srl;
+		$trigger_obj->purchase_srl = $purchase_srl;
+		$output = ModuleHandler::triggerCall('hotopay.activePurchase', 'before', $trigger_obj);
+		if(!$output->toBool()) return $output;
 
 		$args = new stdClass();
 		$args->purchase_srl = $purchase_srl;
@@ -935,9 +941,6 @@ class HotopayController extends Hotopay
 			}
 		}
 
-		$trigger_obj = new stdClass();
-		$trigger_obj->member_srl = $member_srl;
-		$trigger_obj->purchase_srl = $purchase_srl;
 		$trigger_obj->group_srl = $group_srl;
 		ModuleHandler::triggerCall('hotopay.activePurchase', 'after', $trigger_obj);
 	}
