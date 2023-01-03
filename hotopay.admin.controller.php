@@ -78,7 +78,7 @@ class HotopayAdminController extends Hotopay
 		$vars = Context::getRequestVars();
 		$logged_info = Context::get('logged_info');
 
-		$product_srl = getNextSequence();
+		$product_srl = $vars->product_srl ?: getNextSequence();
 
 		$args = new stdClass();
 		$args->member_srl = $logged_info->member_srl;
