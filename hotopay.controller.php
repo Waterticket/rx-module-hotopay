@@ -34,17 +34,34 @@ class HotopayController extends Hotopay
 		$args->purchase_srl = $order_id;
 		$args->member_srl = $logged_info->member_srl;
 
+		$product_srl_list = [];
 		$product_list = [];
-		$option_list = [];
 		foreach ($vars->purchase_info as $product)
 		{
-			$product_list[] = $product['product_srl'];
-			$option_list[$product['product_srl']] = $product['option_srl'];
-
 			if(!isset($product['option_srl'])) return $this->createObject(-1, "유효한 옵션을 선택해주세요");
+
+			$product_srl_list[] = $product['product_srl'];
+			$obj = new stdClass();
+			$obj->product_srl = $product['product_srl'];
+			$obj->option_srl = $product['option_srl'];
+			$obj->cart_item_srl = $product['cart_item_srl'];
+			$obj->quantity = $product['quantity'] ?: 1;
+			$product_list[] = $obj;
 		}
 
-		$product_list = $oHotopayModel->getProducts($product_list);
+		$product_info = $oHotopayModel->getProducts($product_srl_list);
+
+		foreach ($product_list as &$product)
+		{
+			foreach ($product_info as $info)
+			{
+				if($product->product_srl == $info->product_srl)
+				{
+					$product->info = $info;
+					break;
+				}
+			}
+		}
 
 		$title = "";
 		$tc = -1;
@@ -53,36 +70,45 @@ class HotopayController extends Hotopay
 
 		foreach($product_list as $product)
 		{
-			$option_srl = $option_list[$product->product_srl];
-			$option = $product->product_option[$option_srl];
+			$option_srl = $product->option_srl;
+			$option = $product->info->product_option[$option_srl];
 
 			if($option->infinity_stock != 'Y' && $option->stock < 1) return $this->createObject(-1, "재고가 부족한 항목이 있습니다.");
 		}
 
-		foreach($product_list as $product)
+		foreach($product_list as $product_meta)
 		{
+			$option_srl = $product_meta->option_srl;
+			$cart_item_srl = $product_meta->cart_item_srl;
+			$quantity = $product_meta->quantity;
+			$product = $product_meta->info;
+
+			$option = $product->product_option[$option_srl];
+
 			if($tc < 0)
 			{
 				$title = $product->product_name;
 				$tc++;
 			}
 
-			$option_srl = $option_list[$product->product_srl];
-			$option = $product->product_option[$option_srl];
-			$total_price += $option->price + round($option->price * ($product->tax_rate / 100));
-			$original_price += $option->price;
 
 			$obj = new StdClass();
 			$obj->item_srl = getNextSequence();
 			$obj->purchase_srl = $order_id;
 			$obj->product_srl = $product->product_srl;
-			$obj->option_srl = $option_list[$product->product_srl];
+			$obj->option_srl = $option_srl;
 			$obj->option_name = $option->title;
-			$obj->purchase_price = $option->price + round($option->price * ($product->tax_rate / 100));
-			$obj->original_price = $option->price;
+			$obj->purchase_price = ($option->price + round($option->price * ($product->tax_rate / 100))) * $quantity;
+			$obj->original_price = $option->price * $quantity;
+			$obj->quantity = $quantity;
 			$obj->extra_vars = serialize($option->extra_vars ?: new stdClass());
 			$obj->regdate = time();
 			executeQuery('hotopay.insertPurchaseItem', $obj);
+
+			$oHotopayModel->deleteCartItem($cart_item_srl, $logged_info->member_srl);
+
+			$total_price += $obj->purchase_price;
+			$original_price += $obj->original_price;
 
 			if($option->infinity_stock != 'Y')
 			{
