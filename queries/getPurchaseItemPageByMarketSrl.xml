@@ -1,22 +1,18 @@
 <query id="getPurchaseItemPageByMarketSrl" action="select">
 	<tables>
-		<table name="hotopay_purchase_item" />
+		<table name="hotopay_purchase_item" alias="i" />
+		<table name="hotopay_product" alias="p" type="inner join">
+			<conditions>
+				<condition operation="equal" column="p.market_srl" var="market_srl" notnull="notnull" />
+				<condition operation="equal" column="p.product_srl" default="i.product_srl" />
+			</conditions>
+		</table>
 	</tables>
 	<columns>
-		<column name="*" />
+		<column name="i.*" />
+		<column name="p.product_name" alias="product_name" />
 	</columns>
 	<conditions>
-		<query operation="in" column="product_srl" action="select">
-            <tables>
-                <table name="hotopay_product" />
-            </tables>
-            <columns>
-                <column name="product_srl" />
-            </columns>
-            <conditions>
-                <condition operation="equal" column="market_srl" var="market_srl" notnull="notnull" />
-            </conditions>
-        </query>
 	</conditions>
 	<navigation>
 		<index var="sort_index" default="item_srl" order="desc" />
