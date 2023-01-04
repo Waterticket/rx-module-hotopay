@@ -1,0 +1,27 @@
+<query id="getPurchaseItemPageByMarketSrl" action="select">
+	<tables>
+		<table name="hotopay_purchase_item" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<query operation="in" column="product_srl" action="select">
+            <tables>
+                <table name="hotopay_product" />
+            </tables>
+            <columns>
+                <column name="product_srl" />
+            </columns>
+            <conditions>
+                <condition operation="equal" column="market_srl" var="market_srl" notnull="notnull" />
+            </conditions>
+        </query>
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="item_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>
