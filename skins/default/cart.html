@@ -29,7 +29,10 @@
                         <span class="ht-order-quantity"><input type="number" class="ht-quantity" value="{$item->quantity}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-total" data-original-price="{$item->option_price}">₩<span class="price">{number_format($item->option_price * $item->quantity)}</span></span>
+                        {@
+                            $tax_price = $item->option_price + $item->option_price * ($item->tax_rate / 100);
+                        }
+                        <span class="ht-order-total" data-original-price="{$tax_price}">₩<span class="price">{number_format($tax_price * $item->quantity)}</span></span>
                     </td>
                     <td>
                         <span class="ht-order-delete"><input type="button" class="delete_item" value="X" /></span>
