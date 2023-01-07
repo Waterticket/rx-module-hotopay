@@ -524,9 +524,9 @@ class Hotopay extends ModuleObject
 			$oDB->addColumn('hotopay_purchase_item',"quantity","number",20,1,false,"original_price");
 		}
 
-		if(!$oDB->isColumnExists("hotopay_purchase_item","is_adult"))
+		if(!$oDB->isColumnExists("hotopay_product","is_adult"))
 		{
-			$oDB->addColumn('hotopay_purchase_item',"is_adult","char",1,'N',false,"tax_rate");
+			$oDB->addColumn('hotopay_product',"is_adult","char",1,'N',false,"tax_rate");
 		}
 
 		$config = $this->getConfig();
