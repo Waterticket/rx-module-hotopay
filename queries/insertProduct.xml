@@ -16,6 +16,7 @@
         <column name="market_srl" var="market_srl" />
         <column name="document_srl" var="document_srl" />
         <column name="tax_rate" var="tax_rate" />
+        <column name="is_adult" var="is_adult" />
         <column name="extra_vars" var="extra_vars" />
         <column name="regdate" var="regdate" />
 	</columns>
