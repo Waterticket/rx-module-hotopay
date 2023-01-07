@@ -95,10 +95,6 @@ class HotopayAdminController extends Hotopay
 		$args->market_srl = $vars->market_srl ?: 0;
 		$auto_calc_price = $vars->auto_calc_price ?: 'N';
 
-		if (($args->product_sale_price < $config->min_product_price) && ($this->user->is_admin !== 'Y')) {
-			return $this->createObject(-1, "최소 판매가는 {$config->min_product_price}원 입니다.");
-		}
-
 		if (empty($args->product_sale_price) || empty($args->product_original_price))
 		{
 			if ($auto_calc_price == 'Y')
@@ -121,7 +117,7 @@ class HotopayAdminController extends Hotopay
 			}
 		}
 
-		if ($args->product_sale_price < $config->min_product_price) {
+		if (($config->min_product_price > 0) && ($args->product_sale_price < $config->min_product_price) && ($this->user->is_admin !== 'Y')) {
 			return $this->createObject(-1, "최소 판매가는 {$config->min_product_price}원 입니다.");
 		}
 
@@ -322,7 +318,7 @@ class HotopayAdminController extends Hotopay
 			$args->product_original_price = $min_price;
 		}
 
-		if (($args->product_sale_price < $config->min_product_price) && ($this->user->is_admin !== 'Y')) {
+		if (($config->min_product_price > 0) && ($args->product_sale_price < $config->min_product_price) && ($this->user->is_admin !== 'Y')) {
 			return $this->createObject(-1, "최소 판매가는 {$config->min_product_price}원 입니다.");
 		}
 
