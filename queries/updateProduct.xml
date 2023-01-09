@@ -5,6 +5,7 @@
 	<columns>
         <column name="product_name" var="product_name" />
         <column name="product_des" var="product_des" />
+        <column name="product_status" var="product_status" />
         <column name="product_pic_src" var="product_pic_src" />
         <column name="product_pic_srl" var="product_pic_srl" />
         <column name="product_sale_price" var="product_sale_price" />

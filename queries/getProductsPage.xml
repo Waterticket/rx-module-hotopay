@@ -14,5 +14,6 @@
 	<conditions>
 		<condition operation="equal" column="market_srl" var="market_srl" />
 		<condition operation="equal" column="member_srl" var="member_srl" pipe="and" />
+		<condition operation="in" column="product_status" var="product_status" pipe="and" />
 	</conditions>
 </query>

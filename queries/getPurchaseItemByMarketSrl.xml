@@ -1,0 +1,30 @@
+<query id="getPurchaseItemPageByMarketSrl" action="select">
+	<tables>
+		<table name="hotopay_purchase_item" alias="item" />
+		<table name="hotopay_product" alias="product" type="inner join">
+			<conditions>
+				<condition operation="equal" column="product.market_srl" var="market_srl" notnull="notnull" />
+				<condition operation="equal" column="product.product_srl" default="item.product_srl" />
+			</conditions>
+		</table>
+        <table name="hotopay_purchase" alias="purchase" type="inner join">
+			<conditions>
+				<condition operation="equal" column="purchase.purchase_srl" default="item.purchase_srl" />
+			</conditions>
+		</table>
+        <table name="member" alias="member" type="left join">
+			<conditions>
+				<condition operation="equal" column="member.member_srl" default="purchase.member_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="item.*" />
+		<column name="product.product_name" alias="product_name" />
+		<column name="member.user_name" alias="user_name" />
+		<column name="member.nick_name" alias="nick_name" />
+		<column name="member.email_address" alias="email_address" />
+	</columns>
+	<conditions>
+	</conditions>
+</query>
