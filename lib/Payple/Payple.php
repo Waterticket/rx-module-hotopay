@@ -9,6 +9,11 @@ class Payple extends Hotopay {
         $config = $this->getConfig();
         $http_host = getenv('HTTP_HOST');
 
+        if (empty($config->payple_referer_domain))
+        {
+            $config->payple_referer_domain = $http_host;
+        }
+
         if ($http_host != $config->payple_referer_domain)
         {
             throw new Exception('Referer domain is not matched.');

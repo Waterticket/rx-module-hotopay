@@ -347,7 +347,7 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="payple_referer_domain">리퍼러 도메인 (https:// 제외)</label>
 			<div class="x_controls">
-				<input type="text" name="payple_referer_domain" id="payple_referer_domain" value="{$hotopay_config->payple_referer_domain}"><br>
+				<input type="text" name="payple_referer_domain" id="payple_referer_domain" value="{$hotopay_config->payple_referer_domain}" placeholder="{getenv('HTTP_HOST')}"><br>
 			</div>
 		</div>
 
