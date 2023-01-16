@@ -11,6 +11,7 @@ spl_autoload_register(function($className) {
         "Toss" => "Toss/Toss.php",
         "KakaoPay" => "KakaoPay/KakaoPay.php",
         "Iamport" => "Iamport/Iamport.php",
+        "Payple" => "Payple/Payple.php",
     );
 
     if(array_key_exists($className, $target))

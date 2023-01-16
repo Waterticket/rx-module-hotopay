@@ -198,6 +198,17 @@ class HotopayController extends Hotopay
 				$args->pay_data = json_encode($order_obj);
 				break;
 
+			case 'payple':
+				$paypleController = new Payple();
+				$partner_auth = $paypleController->getPartnerAuth();
+				if ($partner_auth->error != 0)
+				{
+					return $this->createObject(-1, $partner_auth->message);
+				}
+
+				$args->pay_data = json_encode($partner_auth->data);
+				break;
+
 			case "n_account":
 				$order_obj = new stdClass();
 				$order_obj->depositor_name = $vars->depositor_name ?: mb_substr(($logged_info->user_name ?: ('구매자'.rand(100, 999))), 0, 6);
