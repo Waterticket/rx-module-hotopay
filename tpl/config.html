@@ -156,6 +156,13 @@
 				<p class="help-block">회원이 결제시에 선택할 수 있는 할부 개월 수의 최댓값을 설정합니다.</p>
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="toss_callback_url">Webhook 콜백 URL<br>가상계좌 입금 알림 URL</label>
+			<div class="x_controls">
+				<p style="margin-top:12px;">{getUrl()}hotopay/api/v1/toss/paymentCallback</p><br>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">
@@ -267,6 +274,13 @@
 			</div>
 		</div>
 
+		<div class="x_control-group">
+			<label class="x_control-label" for="iamport_callback_url">스토어 웹훅 (Webhook) URL</label>
+			<div class="x_controls">
+				<p style="margin-top:5px;">{getUrl()}hotopay/api/v1/iamport/paymentCallback</p><br>
+			</div>
+		</div>
+
 		<h2>Inicis(이니시스) 설정 (with 아임포트)</h2>
 		<div class="x_control-group">
 			<label class="x_control-label" for="inicis_enabled">이니시스 활성화</label>
@@ -334,6 +348,13 @@
 			<label class="x_control-label" for="payple_referer_domain">리퍼러 도메인 (https:// 제외)</label>
 			<div class="x_controls">
 				<input type="text" name="payple_referer_domain" id="payple_referer_domain" value="{$hotopay_config->payple_referer_domain}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_callback_url">Webhook URL</label>
+			<div class="x_controls">
+				<p style="margin-top:5px;">{getUrl()}hotopay/api/v1/payple/paymentCallback</p><br>
 			</div>
 		</div>
 	</section>
