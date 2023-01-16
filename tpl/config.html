@@ -301,6 +301,44 @@
 	</section>
 
 	<section class="section">
+		<h1>페이플 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_enabled">페이플 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="payple_enabled" id="payple_enabled" checked="checked"|cond="$hotopay_config->payple_enabled == 'Y'">&nbsp;페이플 결제 방식을 활성화 합니다.</label>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_cst_id">cst_id</label>
+			<div class="x_controls">
+				<input type="text" name="payple_cst_id" id="payple_cst_id" value="{$hotopay_config->payple_cst_id}" placeholder="8자리 키입니다.""><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_cust_key">custKey</label>
+			<div class="x_controls">
+				<input type="text" name="payple_cust_key" id="payple_cust_key" value="{$hotopay_config->payple_cust_key}" placeholder="255자리 키입니다."><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_refund_key">취소 KEY (PCD_REFUND_KEY)</label>
+			<div class="x_controls">
+				<input type="text" name="payple_refund_key" id="payple_refund_key" value="{$hotopay_config->payple_refund_key}"><br>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_referer_domain">리퍼러 도메인 (https:// 제외)</label>
+			<div class="x_controls">
+				<input type="text" name="payple_referer_domain" id="payple_referer_domain" value="{$hotopay_config->payple_referer_domain}"><br>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
 		<h1>무통장 입금 설정</h1>
 		<div class="x_control-group">
 			<label class="x_control-label" for="n_account_enabled">무통장 입금 활성화</label>

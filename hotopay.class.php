@@ -112,6 +112,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->n_account_enabled)) self::$_config_cache->n_account_enabled = 'N'; // 무통장입금 활성화
 			if(!isset(self::$_config_cache->iamport_enabled)) self::$_config_cache->iamport_enabled = 'N'; // 아임포트 활성화
 			if(!isset(self::$_config_cache->inicis_enabled)) self::$_config_cache->inicis_enabled = 'N'; // 이니시스 결제 활성화
+			if(!isset(self::$_config_cache->payple_enabled)) self::$_config_cache->payple_enabled = 'N'; // 페이플 결제 활성화
 			
 			if(!isset(self::$_config_cache->toss_payments_list)) self::$_config_cache->toss_payments_list = array(1,2); // 토스 결제 방식 목록
 			if(!isset(self::$_config_cache->toss_payments_client_key)) self::$_config_cache->toss_payments_client_key = ''; // 토스 클라이언트 키
@@ -130,6 +131,11 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->iamport_rest_api_secret)) self::$_config_cache->iamport_rest_api_secret = ''; // 아임포트 REST API SECRET
 			if(!isset(self::$_config_cache->inicis_list)) self::$_config_cache->inicis_list = array('card', 'trans', 'vbank'); // 이니시스 결제 방식 목록
 			if(!isset(self::$_config_cache->inicis_mid)) self::$_config_cache->inicis_mid = ''; // 이니시스 mid
+
+			if(!isset(self::$_config_cache->payple_cst_id)) self::$_config_cache->payple_cst_id = ''; // 페이플 cst_id
+			if(!isset(self::$_config_cache->payple_cust_key)) self::$_config_cache->payple_cust_key = ''; // 페이플 custKey
+			if(!isset(self::$_config_cache->payple_refund_key)) self::$_config_cache->payple_refund_key = ''; // 페이플 환불키 (PCD_REFUND_KEY)
+			if(!isset(self::$_config_cache->payple_referer_domain)) self::$_config_cache->payple_referer_domain = ''; // 페이플 도메인 검증용 referer 도메인 (https:// 제외)
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
