@@ -99,6 +99,31 @@ function openPay() {
     });
 }
 </script>
+<!--@elseif($purchase->pay_pg == 'payple')-->
+<!--// <script src="https://democpay.payple.kr/js/cpay.payple.1.0.1.js"></script> -->
+<script src="https://cpay.payple.kr/js/cpay.payple.1.0.1.js"></script>
+<script>
+$(document).ready(function () {
+  var obj = new Object();
+  obj.PCD_PAY_TYPE = "card";
+  obj.PCD_PAY_WORK = "PAY";
+  obj.PCD_CARD_VER = "01";
+  obj.PCD_PAY_GOODS = "{$purchase->title}";
+  obj.PCD_PAY_TOTAL = "{$purchase->product_purchase_price}";
+  obj.PCD_AUTH_KEY = "{$purchase->pay_data->AuthKey}";
+  obj.PCD_PAY_URL = "{$purchase->pay_data->PCD_PAY_URL}";
+  obj.PCD_RST_URL =  window.location.origin + '/hotopay/payStatus/payple/success/HT{$vars->order_id}';
+
+  obj.PCD_PAY_OID = "HT{$vars->order_id}";
+  obj.PCD_PAYER_NO = "{$logged_info->member_srl}";
+  obj.PCD_PAYER_NAME = "{$logged_info->user_name}";
+  obj.PCD_PAYER_EMAIL = "{$logged_info->email_address}";
+  obj.PCD_PAYER_HP = '{$logged_info->phone_number}';
+  obj.PCD_TAXSAVE_FLAG = 'Y';
+
+  PaypleCpayAuthCheck(obj);
+});
+</script>
 <!--@elseif($purchase->pay_pg == 'n_account')-->
 <script>
 function openPay()
