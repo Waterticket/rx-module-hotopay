@@ -1,4 +1,4 @@
-<query id="getBillingKeys" action="select">
+<query id="getBillingKey" action="select">
     <tables>
         <table name="hotopay_billing_key" />
     </tables>
@@ -6,6 +6,6 @@
         <column name="*" />
     </columns>
     <conditions>
-            <condition operation="equal" column="member_srl" var="member_srl" filter="number" />
+            <condition operation="equal" column="key_idx" var="key_idx" filter="number" />
     </conditions>
 </query>

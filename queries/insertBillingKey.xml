@@ -3,11 +3,13 @@
         <table name="hotopay_billing_key" />
     </tables>
     <columns>
-        <column name="key_srl" var="key_srl" notnull="notnull" />
+        <column name="key_idx" var="key_idx" notnull="notnull" />
         <column name="member_srl" var="member_srl" notnull="notnull" />
         <column name="pg" var="pg" notnull="notnull" />
         <column name="type" var="type" notnull="notnull" />
         <column name="key" var="key" notnull="notnull" />
-        <column name="regdate" var="regdate" notnull="notnull" />
+        <column name="alias" var="alias" notnull="notnull" />
+        <column name="number" var="number" notnull="notnull" />
+        <column name="regdate" var="regdate" default="curdate()" />
     </columns>
 </query>

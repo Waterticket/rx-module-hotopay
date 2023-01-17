@@ -3,12 +3,15 @@
         <table name="hotopay_billing_key" />
     </tables>
     <columns>
-            <column name="key_srl" var="key_srl" />
+            <column name="member_srl" var="member_srl" />
+            <column name="pg" var="pg" />
+            <column name="type" var="type" />
             <column name="key" var="key" />
+            <column name="alias" var="alias" />
+            <column name="number" var="number" />
+            <column name="regdate" var="regdate" />
     </columns>
     <conditions>
-            <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
-            <condition operation="equal" column="pg" var="pg" filter="varchar" notnull="notnull" pipe="and" />
-            <condition operation="equal" column="type" var="type" filter="varchar" notnull="notnull" pipe="and" />
+            <condition operation="equal" column="key_idx" var="key_idx" filter="number" notnull="notnull" />
     </conditions>
 </query>

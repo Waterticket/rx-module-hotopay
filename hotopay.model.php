@@ -551,18 +551,10 @@ class HotopayModel extends Hotopay
      * 
      * @param object $obj
      */
-    public static function insertBillingKey(int $member_srl, string $pg, string $type, string $key): object
+    public static function insertBillingKey(object $obj): object
     {
         $oDB = DB::getInstance();
         $oDB->begin();
-
-        $args = new stdClass();
-        $args->key_srl = getNextSequence();
-        $args->member_srl = $member_srl;
-        $args->pg = $pg;
-        $args->type = $type;
-        $args->key = $key;
-        $args->regdate = time();
 
         $output = executeQuery('hotopay.insertBillingKey', $obj);
         if(!$output->toBool())
@@ -576,18 +568,33 @@ class HotopayModel extends Hotopay
     }
 
     /**
-     * hotopay_billing_key 테이블에서 BillingKey들을 가져온다.
+     * hotopay_billing_key 테이블에서 BillingKey를 가져온다.
+     * 
+     * @param int $key_idx
+     */
+    public static function getBillingKey(int $key_idx): object
+    {
+        $args = new \stdClass();
+        $args->key_idx = $key_idx;
+
+        $output = executeQuery('hotopay.getBillingKey', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: new \stdClass();
+    }
+
+    /**
+     * hotopay_billing_key 테이블에서 BillingKey 여러 건을 가져온다.
      * 
      * @param int $member_srl
-     * @param string $pg
-     * @param string $type
      */
-    public static function getBillingKeys(int $member_srl, string $pg, string $type): array
+    public static function getBillingKeys(int $member_srl): array
     {
         $args = new \stdClass();
         $args->member_srl = $member_srl;
-        $args->pg = $pg;
-        $args->type = $type;
 
         $output = executeQueryArray('hotopay.getBillingKeys', $args);
         if(!$output->toBool())
@@ -622,16 +629,12 @@ class HotopayModel extends Hotopay
     /**
      * hotopay_billing_key 테이블에서 BillingKey를 삭제한다.
      * 
-     * @param int $member_srl
-     * @param string $pg
-     * @param string $type
+     * @param int $key_idx
      */
-    public static function deleteBillingKey(int $member_srl, string $pg, string $type): object
+    public static function deleteBillingKey(int $key_idx): object
     {
         $args = new \stdClass();
-        $args->member_srl = $member_srl;
-        $args->pg = $pg;
-        $args->type = $type;
+        $args->key_idx = $key_idx;
 
         $oDB = DB::getInstance();
         $oDB->begin();
