@@ -685,7 +685,7 @@ class HotopayController extends Hotopay
 				}
 
 				$args->pay_data = json_encode($vars);
-				if ($vars->PCD_PAY_RST == 'success' && $vars->PCD_PAY_CODE == '0000')
+				if ($vars->PCD_PAY_RST == 'success' && str_contains($vars->PCD_PAY_CODE, '0000'))
 				{
 					$args->pay_status = "DONE";
 				}

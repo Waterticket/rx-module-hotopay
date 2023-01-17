@@ -118,7 +118,7 @@ class Payple extends Hotopay {
 
         $output = json_decode($response_json);
 
-        if ($output->PCD_PAY_RST != "success" || $output->PCD_PAY_RST_CODE != "0000")
+        if ($output->PCD_PAY_RST != "success" || !str_contains($output->PCD_PAY_CODE, "0000"))
         {
             return new BaseObject(-1, $output->PCD_PAY_MSG);
         }
