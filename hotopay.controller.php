@@ -707,6 +707,67 @@ class HotopayController extends Hotopay
 					else
 					{
 						$this->_ActivePurchase($purchase_srl);
+						$receipt_args = new stdClass();
+						$receipt_args->purchase_srl = $purchase_srl;
+						$receipt_args->receipt_url = $result->PCD_PAY_CARDRECEIPT ?? "";
+						executeQuery('hotopay.updatePurchaseReceiptUrl', $receipt_args);
+
+						if ($config->payple_purchase_type == 'password')
+						{
+							if (isset($_SESSION['hotopay_purchase_key_idx']))
+							{
+								$before_idx = $_SESSION['hotopay_purchase_key_idx'];
+								$key = $oHotopayModel->getBillingKey($before_idx);
+								if (!empty($key->key) && $key->key != $result->PCD_PAYER_ID)
+								{
+									// update
+									$billing_key_obj = new stdClass();
+									$billing_key_obj->key_idx = $before_idx;
+									$billing_key_obj->key = $result->PCD_PAYER_ID;
+									switch ($reesult->PCD_PAY_TYPE)
+									{
+										case 'card':
+										default:
+											$billing_key_obj->alias = $result->PCD_PAY_CARDNAME;
+											$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
+											break;
+
+										case 'transfer':
+											$billing_key_obj->alias = $result->PCD_PAY_BANKNAME;
+											$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
+											break;
+									}
+
+									$oHotopayModel->updateBillingKey($billing_key_obj);
+								}
+							}
+							else
+							{
+								$billing_key_obj = new stdClass();
+								$billing_key_obj->key_idx = getNextSequence();
+								$billing_key_obj->member_srl = $purchase->data->member_srl;
+								$billing_key_obj->pg = 'payple';
+								$billing_key_obj->type = 'password';
+								$billing_key_obj->key = $result->PCD_PAYER_ID;
+								$billing_key_obj->regdate = time();
+
+								switch ($reesult->PCD_PAY_TYPE)
+								{
+									case 'card':
+									default:
+										$billing_key_obj->alias = $result->PCD_PAY_CARDNAME ?? 'CARD';
+										$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
+										break;
+
+									case 'transfer':
+										$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
+										$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
+										break;
+								}
+
+								$oHotopayModel->insertBillingKey($billing_key_obj);
+							}
+						}
 					}
 				}
 
