@@ -114,7 +114,7 @@ function openPay() {
   obj.PCD_PAY_GOODS = "{$purchase->title}";
   obj.PCD_PAY_TOTAL = "{$purchase->product_purchase_price}";
   obj.PCD_AUTH_KEY = "{$purchase->pay_data->AuthKey}";
-  obj.PCD_PAY_URL = "{$purchase->pay_data->PCD_PAY_URL}";
+  obj.PCD_PAY_URL = "{$purchase->pay_data->return_url}";
   obj.PCD_RST_URL =  window.location.origin + '/hotopay/payStatus/payple/success/HT{$vars->order_id}';
 
   obj.PCD_PAY_OID = "HT{$vars->order_id}";
