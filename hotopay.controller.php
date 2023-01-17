@@ -1150,6 +1150,12 @@ class HotopayController extends Hotopay
 				$kakaoPayController = new KakaoPay();
 				$output = $kakaoPayController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
 				break;
+
+			case 'paypl_transfer':
+			case 'paypl_card':
+				$paypleController = new Payple();
+				$output = $paypleController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
+				break;
 			
 			case 'n_account':
 				$output = $this->createObject();
