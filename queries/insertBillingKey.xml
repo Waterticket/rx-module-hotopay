@@ -1,0 +1,11 @@
+<query id="insertBillingKey" action="insert">
+    <tables>
+        <table name="hotopay_billing_key" />
+    </tables>
+    <columns>
+        <column name="member_srl" var="member_srl" notnull="notnull" />
+        <column name="pg" var="pg" notnull="notnull" />
+        <column name="type" var="type" notnull="notnull" />
+        <column name="key" var="key" notnull="notnull" />
+    </columns>
+</query>

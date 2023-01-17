@@ -1,0 +1,7 @@
+<table name="hotopay_billing_key">
+    <column name="idx" type="bigint" primary_key="primary_key" auto_increment="auto_increment" />
+    <column name="member_srl" type="bigint" index="idx_member_srl" notnull="notnull" />
+    <column name="pg" type="varchar" size="20" notnull="notnull" />
+    <column name="type" type="varchar" size="20" notnull="notnull" />
+    <column name="key" type="varchar" size="500" notnull="notnull" />
+</table>

@@ -545,4 +545,97 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    /**
+     * hotopay_billing_key 테이블에 BillingKey 하나를 추가한다.
+     * 
+     * @param object $obj
+     */
+    public static function insertBillingKey(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.insertBillingKey', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_billing_key 테이블에서 BillingKey들을 가져온다.
+     * 
+     * @param int $member_srl
+     * @param string $pg
+     * @param string $type
+     */
+    public static function getBillingKeys(int $member_srl, string $pg, string $type): array
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+        $args->pg = $pg;
+        $args->type = $type;
+
+        $output = executeQueryArray('hotopay.getBillingKeys', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: array();
+    }
+
+    /**
+     * hotopay_billing_key 테이블에서 BillingKey를 업데이트한다.
+     * 
+     * @param object $obj
+     */
+    public static function updateBillingKey(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.updateBillingKey', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_billing_key 테이블에서 BillingKey를 삭제한다.
+     * 
+     * @param int $member_srl
+     * @param string $pg
+     * @param string $type
+     */
+    public static function deleteBillingKey(int $member_srl, string $pg, string $type): object
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+        $args->pg = $pg;
+        $args->type = $type;
+
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.deleteBillingKey', $args);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
 }

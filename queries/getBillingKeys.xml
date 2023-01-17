@@ -1,0 +1,13 @@
+<query id="getBillingKeys" action="select">
+    <tables>
+        <table name="hotopay_billing_key" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+            <condition operation="in" column="member_srl" var="member_srl" filter="number" />
+            <condition operation="in" column="pg" var="pg" filter="varchar" pipe="and" />
+            <condition operation="in" column="type" var="type" filter="varchar" pipe="and" />
+    </conditions>
+</query>

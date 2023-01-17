@@ -1,0 +1,14 @@
+<query id="updateBillingKey" action="update">
+    <tables>
+        <table name="hotopay_billing_key" />
+    </tables>
+    <columns>
+            <column name="idx" var="idx" />
+            <column name="key" var="key" />
+    </columns>
+    <conditions>
+            <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
+            <condition operation="equal" column="pg" var="pg" filter="varchar" notnull="notnull" pipe="and" />
+            <condition operation="equal" column="type" var="type" filter="varchar" notnull="notnull" pipe="and" />
+    </conditions>
+</query>
