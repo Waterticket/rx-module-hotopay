@@ -53,7 +53,7 @@
 			$purchase_done_url = getUrl("","module","hotopay","act","procHotopayAdminPurchaseStatusChange","purchase_srl",$val->purchase_srl,"status","DONE");
         }
 		<tr>
-			<td>HT{$val->purchase_srl}</td>
+			<td>HT{str_pad($val->purchase_srl, 4, "0", STR_PAD_LEFT)}</td>
 			<td><a href="#popup_menu_area" class="member_{$val->member_srl}">{$member_data->nick_name}</a> ({$val->member_srl})</td>
             <td>{$val->title}</td>
             <td>₩{number_format($val->product_purchase_price)}</td>
@@ -61,7 +61,7 @@
             <td><span class="paystatus {$val->pay_status}">{$oHotopayModel->payStatusCodeToString($val->pay_status)}</span></td>
 			<td>
 				<!--@if(strcmp($val->pay_status, "PENDING") === 0 || strcmp($val->pay_status, "WAITING_FOR_DEPOSIT") === 0)-->&nbsp;<input type="button" class="btn" value="결제 확정하기" onclick="var _u='{$purchase_done_url}';var _a=function(){if(confirm('정상 결제 처리를 하시겠습니까?')){window.location=_u}};_a();" /><!--@endif-->
-				<!--@if(strcmp($val->pay_status, "DONE") === 0 || strcmp($val->pay_status, "APPROVED") === 0)-->&nbsp;<input type="button" class="btn btn-danger" value="환불하기" onclick="opendialog('HT{$val->purchase_srl}',{$val->product_purchase_price},'{$val->pay_method}');" style="color: #ff4757;" /><!--@endif-->
+				<!--@if(strcmp($val->pay_status, "DONE") === 0 || strcmp($val->pay_status, "APPROVED") === 0)-->&nbsp;<input type="button" class="btn btn-danger" value="환불하기" onclick="opendialog('HT{str_pad($val->purchase_srl, 4, "0", STR_PAD_LEFT)}',{$val->product_purchase_price},'{$val->pay_method}');" style="color: #ff4757;" /><!--@endif-->
 			</td>
             <td>{date("Y-m-d H:i:s",$val->regdate)}</td>
             <td><a href="{getUrl('','module','admin','act','dispHotopayAdminPurchaseData','purchase_srl',$val->purchase_srl)}">데이터</a></td>
