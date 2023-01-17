@@ -136,6 +136,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->payple_cust_key)) self::$_config_cache->payple_cust_key = ''; // 페이플 custKey
 			if(!isset(self::$_config_cache->payple_refund_key)) self::$_config_cache->payple_refund_key = ''; // 페이플 환불키 (PCD_REFUND_KEY)
 			if(!isset(self::$_config_cache->payple_referer_domain)) self::$_config_cache->payple_referer_domain = ''; // 페이플 도메인 검증용 referer 도메인 (https:// 제외)
+			if(!isset(self::$_config_cache->payple_purchase_type)) self::$_config_cache->payple_purchase_type = 'none'; // 페이플 결제 데이터 저장 타입 (none, password, billing)
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
