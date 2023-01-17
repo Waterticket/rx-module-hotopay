@@ -83,7 +83,7 @@ class HotopayController extends Hotopay
 		foreach($product_list as $product_meta)
 		{
 			$option_srl = $product_meta->option_srl;
-			$cart_item_srl = $product_meta->cart_item_srl;
+			$cart_item_srl = $product_meta->cart_item_srl ?? null;
 			$quantity = $product_meta->quantity;
 			$product = $product_meta->info;
 
@@ -109,7 +109,10 @@ class HotopayController extends Hotopay
 			$obj->regdate = time();
 			executeQuery('hotopay.insertPurchaseItem', $obj);
 
-			$oHotopayModel->deleteCartItem($cart_item_srl, $logged_info->member_srl);
+			if ($cart_item_srl)
+			{
+				$oHotopayModel->deleteCartItem($cart_item_srl, $logged_info->member_srl);
+			}
 
 			$total_price += $obj->purchase_price;
 			$original_price += $obj->original_price;
