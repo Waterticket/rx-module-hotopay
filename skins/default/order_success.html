@@ -165,6 +165,26 @@
         <p id="s_title">결제 금액</p>
         <p id="s_value">{number_format($pay_data->pay_data->amount)}</p>
     </div>
+    <!--@elseif($pay_data->method == "payple")-->
+    <div id="s_content">
+        <p id="s_title">결제 ID</p>
+        <p id="s_value">{$pay_data->orderId}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">상품명</p>
+        <p id="s_value">{$pay_data->product_title}</p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 수단</p>
+        <p id="s_value">{$pay_data->pay_data->PCD_PAY_CARDNAME ?? $pay_data->pay_data->PCD_PAY_BANKNAME} <span style="color:gray">({$pay_data->pay_data->PCD_PAY_CARDNUM ?? $pay_data->pay_data->PCD_PAY_BANKNUM})</span></p>
+    </div>
+    <br>
+    <div id="s_content">
+        <p id="s_title">결제 금액</p>
+        <p id="s_value">{number_format($pay_data->pay_data->PCD_PAY_TOTAL)} 원</p>
+    </div>
     <!--@if($pay_data->pay_status == "WAITING_FOR_DEPOSIT")-->
     <br>
     <hr id="s_hr">
