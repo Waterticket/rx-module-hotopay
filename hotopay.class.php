@@ -132,6 +132,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->inicis_list)) self::$_config_cache->inicis_list = array('card', 'trans', 'vbank'); // 이니시스 결제 방식 목록
 			if(!isset(self::$_config_cache->inicis_mid)) self::$_config_cache->inicis_mid = ''; // 이니시스 mid
 
+			if(!isset(self::$_config_cache->payple_list)) self::$_config_cache->payple_list = array('card', 'transfer'); // 페이플 결제 방식 목록
 			if(!isset(self::$_config_cache->payple_cst_id)) self::$_config_cache->payple_cst_id = ''; // 페이플 cst_id
 			if(!isset(self::$_config_cache->payple_cust_key)) self::$_config_cache->payple_cust_key = ''; // 페이플 custKey
 			if(!isset(self::$_config_cache->payple_refund_key)) self::$_config_cache->payple_refund_key = ''; // 페이플 환불키 (PCD_REFUND_KEY)

@@ -105,8 +105,8 @@ function openPay() {
 <script>
 $(document).ready(function () {
   var obj = new Object();
-  obj.PCD_PAY_TYPE = "card";
-  obj.PCD_PAY_WORK = "PAY";
+  obj.PCD_PAY_TYPE = "{substr($purchase->pay_method, 6)}";
+  obj.PCD_PAY_WORK = "CERT";
   obj.PCD_CARD_VER = "01";
   obj.PCD_PAY_GOODS = "{$purchase->title}";
   obj.PCD_PAY_TOTAL = "{$purchase->product_purchase_price}";

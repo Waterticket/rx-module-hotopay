@@ -324,6 +324,16 @@
 		</div>
 
 		<div class="x_control-group">
+			<label class="x_control-label">페이플 결제 수단</label>
+			<div class="x_controls">
+				<label class="no-block"><input type="checkbox" name="payple_list[]" id="payple_list_card" value="card" checked="checked"|cond="in_array('card', $hotopay_config->payple_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="payple_list[]" id="payple_list_transfer" value="transfer" checked="checked"|cond="in_array('transfer', $hotopay_config->payple_list)"> 계좌</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <br>
+				페이플에서 사용할 결제 수단입니다.
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="payple_cst_id">cst_id</label>
 			<div class="x_controls">
 				<input type="text" name="payple_cst_id" id="payple_cst_id" value="{$hotopay_config->payple_cst_id}" placeholder="8자리 키입니다.""><br>

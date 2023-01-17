@@ -67,11 +67,13 @@ class HotopayView extends Hotopay
 		Context::set('vars', $vars);
 
 		$iamport_enabled = $config->iamport_enabled == 'Y' && !empty($config->iamport_mid) && !empty($config->iamport_rest_api_key) && !empty($config->iamport_rest_api_secret);
+		$payple_enabled = $config->payple_enabled == 'Y' && !empty($config->payple_cst_id) && !empty($config->payple_cust_key);
 
 		Context::set('toss_enabled', $config->toss_enabled == 'Y' && !empty($config->toss_payments_client_key) && !empty($config->toss_payments_secret_key));
 		Context::set('paypal_enabled', $config->paypal_enabled == 'Y' && !empty($config->paypal_client_key) && !empty($config->paypal_secret_key));
 		Context::set('kakaopay_enabled', $config->kakaopay_enabled == 'Y' && !empty($config->kakaopay_admin_key) && !empty($config->kakaopay_cid_key));
 		Context::set('inicis_enabled', $config->inicis_enabled == 'Y' && $iamport_enabled);
+		Context::set('payple_enabled', $config->payple_enabled == 'Y' && $payple_enabled);
 		Context::set('n_account_enabled', $config->n_account_enabled == 'Y' && !empty($config->n_account_string));
 
 		$oHotopayModel = getModel('hotopay');
