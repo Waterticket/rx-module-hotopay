@@ -121,6 +121,8 @@ $(document).ready(function () {
   obj.PCD_PAYER_HP = '{$logged_info->phone_number}';
   obj.PCD_TAXSAVE_FLAG = 'Y';
 
+  {($hotopay_config->payple_purchase_type == 'password') ? "obj.PCD_SIMPLE_FLAG = 'Y'; obj.PCD_PAYER_AUTHTYPE = 'pwd';" : ''}
+
   PaypleCpayAuthCheck(obj);
 });
 </script>
