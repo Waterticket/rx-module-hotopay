@@ -4,6 +4,7 @@
     <column name="pg" type="varchar" size="20" notnull="notnull" />
     <column name="type" type="varchar" size="20" notnull="notnull" />
     <column name="key" type="varchar" size="500" notnull="notnull" />
+    <column name="payment_type" type="varchar" size="20" notnull="notnull" />
     <column name="alias" type="varchar" size="50" notnull="notnull" />
     <column name="number" type="varchar" size="50" notnull="notnull" />
     <column name="regdate" type="bigint" notnull="notnull" />

@@ -7,6 +7,7 @@
             <column name="pg" var="pg" />
             <column name="type" var="type" />
             <column name="key" var="key" />
+            <column name="payment_type" var="payment_type" />
             <column name="alias" var="alias" />
             <column name="number" var="number" />
             <column name="regdate" var="regdate" />

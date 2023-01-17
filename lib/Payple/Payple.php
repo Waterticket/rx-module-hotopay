@@ -133,7 +133,9 @@ class Payple extends Hotopay {
             return new BaseObject(-1, '결제금액이 일치하지 않습니다. ERR2');
         }
 
-        return new BaseObject();
+        $output_obj = new BaseObject();
+        $output_obj->data = $output;
+        return $output_obj;
     }
 
     public function cancelOrder($purchase_srl, $cancel_reason, $cancel_amount = -1)

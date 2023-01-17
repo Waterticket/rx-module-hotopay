@@ -707,6 +707,8 @@ class HotopayController extends Hotopay
 					}
 					else
 					{
+						$result = $result->data;
+
 						$this->_ActivePurchase($purchase_srl);
 						$receipt_args = new stdClass();
 						$receipt_args->purchase_srl = $purchase_srl;
@@ -728,12 +730,14 @@ class HotopayController extends Hotopay
 									switch ($result->PCD_PAY_TYPE)
 									{
 										case 'transfer':
+											$billing_key_obj->payment_type = 'transfer';
 											$billing_key_obj->alias = $result->PCD_PAY_BANKNAME;
 											$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
 											break;
 
 										case 'card':
 										default:
+											$billing_key_obj->payment_type = 'card';
 											$billing_key_obj->alias = $result->PCD_PAY_CARDNAME;
 											$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
 											break;
@@ -756,16 +760,17 @@ class HotopayController extends Hotopay
 								switch ($result->PCD_PAY_TYPE)
 								{
 									case 'transfer':
+										$billing_key_obj->payment_type = 'transfer';
 										$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
 										$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
 										break;
 
 									case 'card':
 									default:
+										$billing_key_obj->payment_type = 'card';
 										$billing_key_obj->alias = $result->PCD_PAY_CARDNAME ?? 'CARD';
 										$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
 										break;
-		
 								}
 
 								$oHotopayModel->insertBillingKey($billing_key_obj);
@@ -1122,12 +1127,14 @@ class HotopayController extends Hotopay
 				switch ($vars->PCD_PAY_TYPE)
 				{
 					case 'transfer':
+						$billing_key_obj->payment_type = 'transfer';
 						$billing_key_obj->alias = $vars->PCD_PAY_BANKNAME ?? 'BANK';
 						$billing_key_obj->number = $vars->PCD_PAY_BANKNUM ?? '0000*******0000';
 						break;
 
 					case 'card':
 					default:
+						$billing_key_obj->payment_type = 'card';
 						$billing_key_obj->alias = $vars->PCD_PAY_CARDNAME ?? 'CARD';
 						$billing_key_obj->number = $vars->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
 						break;
