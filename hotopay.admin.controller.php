@@ -57,7 +57,8 @@ class HotopayAdminController extends Hotopay
 		$config->payple_cst_id = $vars->payple_cst_id;
 		$config->payple_cust_key = $vars->payple_cust_key;
 		$config->payple_refund_key = $vars->payple_refund_key;
-		$config->payple_referer_domain = preg_replace('/^[^:/.]*[:/]+/i', '', $vars->payple_referer_domain ?? '');
+		$config->payple_referer_domain = preg_replace('#^[^:/.]*[:/]+#i', '', $vars->payple_referer_domain);
+		$config->payple_purchase_type = $vars->payple_purchase_type;
 
 		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
 		$config->n_account_string = $vars->n_account_string;
