@@ -3,7 +3,7 @@
         <table name="hotopay_billing_key" />
     </tables>
     <columns>
-            <column name="idx" var="idx" />
+            <column name="key_srl" var="key_srl" />
             <column name="key" var="key" />
     </columns>
     <conditions>

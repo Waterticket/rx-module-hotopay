@@ -312,6 +312,11 @@ class HotopayController extends Hotopay
 			$purchase_data->pay_pg = 'inicis';
 		}
 
+		if(substr($purchase_data->pay_method, 0, 6) === 'paypl_')
+		{
+			$purchase_data->pay_method_korean = '페이플';
+			$purchase_data->pay_pg = 'payple';
+		}
 
 		Context::set('purchase', $purchase_data);
 
@@ -659,6 +664,81 @@ class HotopayController extends Hotopay
 				$response_json->orderId = $vars->order_id;
 				$response_json->pay_status = $args->pay_status;
 				$response_json->pay_data = $imp_purchase;
+				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				return;
+			}
+			else if(strcmp($vars->pay_pg, "payple") === 0) // 페이플 처리
+			{
+				if ($vars->PCD_PAY_OID != $vars->order_id)
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1010)");
+				}
+
+				$args->pay_data = json_encode($vars);
+				if ($vars->PCD_PAY_RST == 'success' && $vars->PCD_PAY_CODE == '0000')
+				{
+					$args->pay_status = "DONE";
+				}
+				else
+				{
+					$args->pay_status = "FAILED";
+				}
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				executeQuery('hotopay.updatePurchaseData', $args);
+
+				if($args->pay_status == "DONE") // 결제 완료에 경우
+				{
+					$payple = new Payple();
+					$result = $payple->confirmPaywork($vars, $purchase->data);
+					if (!$result->toBool())
+					{
+						$args->pay_status == "FAILED";
+					}
+					else
+					{
+						$this->_ActivePurchase($purchase_srl);
+					}
+				}
+
+				if($args->pay_status == "FAILED")
+				{
+					$_SESSION['hotopay_'.$vars->order_id] = array(
+						"p_status" => "failed",
+						"orderId" => $vars->order_id,
+						"code" => "PAYPLE_FAILED",
+						"message" => "결제를 실패하였습니다. ".$vars->PCD_PAY_MSG." (code: 1011)"
+					);
+
+					$oHotopayModel->rollbackOptionStock($purchase_srl);
+
+					$trigger_obj = new stdClass();
+					$trigger_obj->purchase_srl = $purchase_srl;
+					$trigger_obj->pay_status = "FAILED";
+					$trigger_obj->pay_data = $vars;
+					$trigger_obj->pay_pg = "payple";
+					$trigger_obj->amount = $vars->PCD_PAY_AMOUNT;
+					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+					return;
+				}
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $purchase_srl;
+				$trigger_obj->pay_status = $args->pay_status;
+				$trigger_obj->pay_data = $vars;
+				$trigger_obj->pay_pg = "payple";
+				$trigger_obj->amount = $vars->PCD_PAY_AMOUNT;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$response_json = new stdClass();
+				$response_json->method = 'payple';
+				$response_json->p_status = "success";
+				$response_json->product_title = $vars->PCD_PAY_GOODS;
+				$response_json->orderId = $vars->order_id;
+				$response_json->pay_status = $args->pay_status;
+				$response_json->pay_data = $vars;
 				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;

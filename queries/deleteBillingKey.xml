@@ -3,8 +3,6 @@
         <table name="hotopay_billing_key" />
     </tables>
     <conditions>
-            <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
-            <condition operation="equal" column="pg" var="pg" filter="varchar" notnull="notnull" pipe="and" />
-            <condition operation="equal" column="type" var="type" filter="varchar" notnull="notnull" pipe="and" />
+            <condition operation="equal" column="key_srl" var="key_srl" filter="number" notnull="notnull" />
     </conditions>
 </query>

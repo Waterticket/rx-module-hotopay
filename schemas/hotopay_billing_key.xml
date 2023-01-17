@@ -4,4 +4,5 @@
     <column name="pg" type="varchar" size="20" notnull="notnull" />
     <column name="type" type="varchar" size="20" notnull="notnull" />
     <column name="key" type="varchar" size="500" notnull="notnull" />
+    <column name="regdate" type="bigint" notnull="notnull" />
 </table>

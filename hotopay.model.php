@@ -551,10 +551,18 @@ class HotopayModel extends Hotopay
      * 
      * @param object $obj
      */
-    public static function insertBillingKey(object $obj): object
+    public static function insertBillingKey(int $member_srl, string $pg, string $type, string $key): object
     {
         $oDB = DB::getInstance();
         $oDB->begin();
+
+        $args = new stdClass();
+        $args->key_srl = getNextSequence();
+        $args->member_srl = $member_srl;
+        $args->pg = $pg;
+        $args->type = $type;
+        $args->key = $key;
+        $args->regdate = time();
 
         $output = executeQuery('hotopay.insertBillingKey', $obj);
         if(!$output->toBool())
