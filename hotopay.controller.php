@@ -160,6 +160,23 @@ class HotopayController extends Hotopay
 			$extra_vars->use_point = $input_point;
 		}
 
+		if (str_starts_with($vars->pay_method, 'billing_key_'))
+		{
+			$key_idx = intval(substr($vars->pay_method, 12));
+			$key = $oHotopayModel->getBillingKey($key_idx);
+			if (!$key->key)
+			{
+				return $this->createObject(-1, "결제 정보가 올바르지 않습니다.");
+			}
+
+			if ($key->pg == 'payple')
+			{
+				$vars->pay_method = 'paypl_' . $key->payment_type;
+			}
+
+			$_SESSION['hotopay_billing_key'] = $key;
+		}
+
 		$args->title = $title;
 		$args->products = json_encode(array("t"=>$title)); // 구시대의 유물
 		$args->pay_method = $vars->pay_method;
@@ -717,9 +734,11 @@ class HotopayController extends Hotopay
 
 						if ($config->payple_purchase_type == 'password')
 						{
-							if (isset($_SESSION['hotopay_purchase_key_idx']))
+							if (isset($_SESSION['hotopay_billing_key']))
 							{
-								$before_idx = $_SESSION['hotopay_purchase_key_idx'];
+								$before_idx = $_SESSION['hotopay_billing_key']['key_idx'];
+								unset($_SESSION['hotopay_billing_key']);
+
 								$key = $oHotopayModel->getBillingKey($before_idx);
 								if (!empty($key->key) && $key->key != $result->PCD_PAYER_ID)
 								{

@@ -42,11 +42,17 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('로그인이 필요합니다.');
 		}
 
-		$this->dispHotopayOrderPage();
-
 		$oHotopayModel = getModel('hotopay');
 		$cart_items = $oHotopayModel->getCartItems($member_srl);
 		Context::set('cart_items', $cart_items);
+
+		if (!$cart_items)
+		{
+			$this->setRedirectUrl(getNotEncodedUrl('', 'mid', 'hotopay', 'act', 'dispHotopayCart'));
+			return;
+		}
+
+		$this->dispHotopayOrderPage();
 
 		$purchase_price = 0;
 		foreach ($cart_items as $item)
@@ -54,6 +60,10 @@ class HotopayView extends Hotopay
 			$purchase_price += $item->option_price * $item->quantity;
 		}
 		Context::set('purchase_price', $purchase_price);
+
+		$billing_keys = $oHotopayModel->getBillingKeys($member_srl);
+		Context::set('billing_keys', $billing_keys);
+		debugPrint($billing_keys);
 
 		// 스킨 파일명 지정
 		$this->setTemplateFile('cart_checkout');

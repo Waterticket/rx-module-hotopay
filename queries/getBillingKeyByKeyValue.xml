@@ -7,6 +7,6 @@
     </columns>
     <conditions>
             <condition operation="equal" column="member_srl" var="member_srl" filter="number" />
-            <condition operation="equal" column="key" var="key" filter="number" />
+            <condition operation="equal" column="key" var="key" />
     </conditions>
 </query>
