@@ -1343,6 +1343,11 @@ class HotopayController extends Hotopay
 			$oMemberController->clearMemberCache($member_srl);
 		}
 
+		$trigger_obj = new stdClass();
+		$trigger_obj->member_srl = $member_srl;
+		$trigger_obj->purchase_srl = $purchase_srl;
+		ModuleHandler::triggerCall('hotopay.refundPurchase', 'after', $trigger_obj);
+
 		$this->_MessageMailer("REFUNDED", $purchase);
 
 		return $this->createObject();
