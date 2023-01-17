@@ -54,6 +54,7 @@ class HotopayAdminController extends Hotopay
 		$config->inicis_list = $vars->inicis_list;
 
 		$config->payple_enabled = empty($vars->payple_enabled) ? 'N' : 'Y';
+		$config->payple_server = $vars->payple_server ?? 'demo';
 		$config->payple_list = $vars->payple_list;
 		$config->payple_cst_id = $vars->payple_cst_id;
 		$config->payple_cust_key = $vars->payple_cust_key;

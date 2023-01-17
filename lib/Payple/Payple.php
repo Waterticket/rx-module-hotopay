@@ -1,8 +1,16 @@
 <?php
 
 class Payple extends Hotopay {
-    // public static $PAYPLE_URL = 'https://democpay.payple.kr'; // 테스트용 도메인
     public static $PAYPLE_URL = 'https://cpay.payple.kr'; // 서비스 도메인
+
+    public function __construct()
+    {
+        $config = $this->getConfig();
+        if ($config->payple_server == 'demo')
+        {
+            self::$PAYPLE_URL = 'https://democpay.payple.kr'; // 테스트용 도메인
+        }
+    }
 
     public function getPartnerAuth()
     {

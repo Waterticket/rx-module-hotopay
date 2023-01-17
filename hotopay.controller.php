@@ -170,7 +170,13 @@ class HotopayController extends Hotopay
 		$args->pay_data = '';
 		$args->extra_vars = serialize($extra_vars);
 
-		switch($vars->pay_method)
+		$pg = $vars->pay_method;
+		if(substr($pg, 0, 6) === 'paypl_')
+		{
+			$pg = 'payple';
+		}
+
+		switch($pg)
 		{
 			case 'paypal':
 				$usd_total = $oHotopayModel->changeCurrency('KRW', 'USD', $total_price);

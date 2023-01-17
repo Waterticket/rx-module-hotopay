@@ -324,6 +324,17 @@
 		</div>
 
 		<div class="x_control-group">
+			<label class="x_control-label" for="payple_server">결제 처리 방식</label>
+			<div class="x_controls">
+				<select name="payple_server" id="payple_server">
+					<option value="demo" selected="selected"|cond="$hotopay_config->payple_server == 'demo'">테스트 서버</option>
+					<option value="real" selected="selected"|cond="$hotopay_config->payple_server == 'real'">실운영 서버</option>
+				</select>
+				<p class="help-block">결제 데이터 저장 방식을 설정합니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label">페이플 결제 수단</label>
 			<div class="x_controls">
 				<label class="no-block"><input type="checkbox" name="payple_list[]" id="payple_list_card" value="card" checked="checked"|cond="in_array('card', $hotopay_config->payple_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;

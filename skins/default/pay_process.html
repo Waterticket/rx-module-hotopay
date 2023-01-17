@@ -100,10 +100,13 @@ function openPay() {
 }
 </script>
 <!--@elseif($purchase->pay_pg == 'payple')-->
-<!--// <script src="https://democpay.payple.kr/js/cpay.payple.1.0.1.js"></script> -->
+<!--@if($hotopay_config->payple_server == 'demo')-->
+<script src="https://democpay.payple.kr/js/cpay.payple.1.0.1.js"></script>
+<!--@else-->
 <script src="https://cpay.payple.kr/js/cpay.payple.1.0.1.js"></script>
+<!--@endif-->
 <script>
-$(document).ready(function () {
+function openPay() {
   var obj = new Object();
   obj.PCD_PAY_TYPE = "{substr($purchase->pay_method, 6)}";
   obj.PCD_PAY_WORK = "CERT";
@@ -124,7 +127,7 @@ $(document).ready(function () {
   {($hotopay_config->payple_purchase_type == 'password') ? "obj.PCD_SIMPLE_FLAG = 'Y'; obj.PCD_PAYER_AUTHTYPE = 'pwd';" : ''}
 
   PaypleCpayAuthCheck(obj);
-});
+}
 </script>
 <!--@elseif($purchase->pay_pg == 'n_account')-->
 <script>
