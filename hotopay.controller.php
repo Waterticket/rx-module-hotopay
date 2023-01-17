@@ -703,6 +703,7 @@ class HotopayController extends Hotopay
 					if (!$result->toBool())
 					{
 						$args->pay_status == "FAILED";
+						executeQuery('hotopay.updatePurchaseStatus', $args);
 					}
 					else
 					{
@@ -724,18 +725,19 @@ class HotopayController extends Hotopay
 									$billing_key_obj = new stdClass();
 									$billing_key_obj->key_idx = $before_idx;
 									$billing_key_obj->key = $result->PCD_PAYER_ID;
-									switch ($reesult->PCD_PAY_TYPE)
+									switch ($result->PCD_PAY_TYPE)
 									{
+										case 'transfer':
+											$billing_key_obj->alias = $result->PCD_PAY_BANKNAME;
+											$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
+											break;
+
 										case 'card':
 										default:
 											$billing_key_obj->alias = $result->PCD_PAY_CARDNAME;
 											$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
 											break;
-
-										case 'transfer':
-											$billing_key_obj->alias = $result->PCD_PAY_BANKNAME;
-											$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
-											break;
+	
 									}
 
 									$oHotopayModel->updateBillingKey($billing_key_obj);
@@ -751,18 +753,19 @@ class HotopayController extends Hotopay
 								$billing_key_obj->key = $result->PCD_PAYER_ID;
 								$billing_key_obj->regdate = time();
 
-								switch ($reesult->PCD_PAY_TYPE)
+								switch ($result->PCD_PAY_TYPE)
 								{
+									case 'transfer':
+										$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
+										$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
+										break;
+
 									case 'card':
 									default:
 										$billing_key_obj->alias = $result->PCD_PAY_CARDNAME ?? 'CARD';
 										$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
 										break;
-
-									case 'transfer':
-										$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
-										$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
-										break;
+		
 								}
 
 								$oHotopayModel->insertBillingKey($billing_key_obj);
@@ -1065,6 +1068,84 @@ class HotopayController extends Hotopay
 		die(json_encode(array("status"=>"success", "message"=>"success")));
 	}
 
+	public function procHotopayPaypleCallback()
+	{
+		Context::setRequestMethod('JSON');
+		Context::setResponseMethod('JSON');
+
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+		$oHotopayModel = HotopayModel::getInstance();
+
+		if ($vars->PCD_PAY_OID)
+		{
+			$purchase_srl = (int) substr($vars->PCD_PAY_OID, 2);
+			$purchase = $oHotopayModel->getPurchase($purchase_srl);
+
+			if ($vars->PCD_REFUND_TOTAL)
+			{
+				// 결제 취소
+				if (!in_array($purchase->status, ['CANCELED', 'FAILED', 'REFUND', 'REFUNDING']))
+				{
+					$args = new stdClass();
+					$args->purchase_srl = $purchase_srl;
+					$args->pay_status = 'REFUND';
+					executeQuery('hotopay.updatePurchaseStatus', $args);
+
+					$this->_RefundProcess($purchase_srl, $vars);
+				}
+			}
+			else
+			{
+				// 결제 성공
+				if ($purchase->pay_status != "DONE")
+				{
+					$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
+				}
+			}
+		}
+		else
+		{
+			$member_srl = $vars->PCD_PAYER_NO;
+
+			if ($vars->PCD_AUTH_KEY)
+			{
+				// 카드/계좌 등록
+				$billing_key_obj = new stdClass();
+				$billing_key_obj->key_idx = getNextSequence();
+				$billing_key_obj->member_srl = $member_srl;
+				$billing_key_obj->pg = 'payple';
+				$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
+				$billing_key_obj->key = $vars->PCD_PAYER_ID;
+				$billing_key_obj->regdate = time();
+
+				switch ($vars->PCD_PAY_TYPE)
+				{
+					case 'transfer':
+						$billing_key_obj->alias = $vars->PCD_PAY_BANKNAME ?? 'BANK';
+						$billing_key_obj->number = $vars->PCD_PAY_BANKNUM ?? '0000*******0000';
+						break;
+
+					case 'card':
+					default:
+						$billing_key_obj->alias = $vars->PCD_PAY_CARDNAME ?? 'CARD';
+						$billing_key_obj->number = $vars->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
+						break;
+				}
+
+				$oHotopayModel->insertBillingKey($billing_key_obj);
+			}
+			else
+			{
+				// 카드/계좌 해지
+				$key = $vars->PCD_PAYER_ID;
+				$oHotopayModel->deleteBillingKeyByKeyValue($member_srl, $key);
+			}
+		}
+
+		return new BaseObject();
+	}
+
 	/**
 	 * 결제가 완료되었다면 결제 완료 알림을 보내며, 상품 구매를 최종 승인합니다
 	 * 
@@ -1127,6 +1208,12 @@ class HotopayController extends Hotopay
 		if(empty($member_srl))
 			return $this->createObject(-1, "member_srl을 찾을 수 없습니다.");
 
+		$original_pay_status = $purchase->pay_status;
+		$args = new stdClass();
+		$args->purchase_srl = $purchase_srl;
+		$args->pay_status = 'REFUNDING';
+		executeQuery('hotopay.updatePurchaseStatus', $args);
+
 		switch($purchase->pay_method)
 		{
 			case 'card':
@@ -1168,6 +1255,11 @@ class HotopayController extends Hotopay
 		}
 		else
 		{
+			$args = new stdClass();
+			$args->purchase_srl = $purchase_srl;
+			$args->pay_status = $original_pay_status;
+			executeQuery('hotopay.updatePurchaseStatus', $args);
+
 			return $output;
 		}
 	}

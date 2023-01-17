@@ -1,0 +1,9 @@
+<query id="deleteBillingKeyByKeyValue" action="delete">
+    <tables>
+        <table name="hotopay_billing_key" />
+    </tables>
+    <conditions>
+            <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
+            <condition operation="equal" column="key" var="key" filter="varchar" notnull="notnull" pipe="and" />
+    </conditions>
+</query>

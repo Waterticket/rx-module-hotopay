@@ -649,4 +649,24 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    public static function deleteBillingKeyByKeyValue(int $member_srl, string $key): object
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+        $args->key = $key;
+
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.deleteBillingKeyByKeyValue', $args);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
 }
