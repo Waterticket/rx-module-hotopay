@@ -741,7 +741,6 @@ class HotopayController extends Hotopay
 											$billing_key_obj->alias = $result->PCD_PAY_CARDNAME;
 											$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
 											break;
-	
 									}
 
 									$oHotopayModel->updateBillingKey($billing_key_obj);
@@ -749,31 +748,35 @@ class HotopayController extends Hotopay
 							}
 							else
 							{
-								$billing_key_obj = new stdClass();
-								$billing_key_obj->key_idx = getNextSequence();
-								$billing_key_obj->member_srl = $purchase->data->member_srl;
-								$billing_key_obj->pg = 'payple';
-								$billing_key_obj->type = 'password';
-								$billing_key_obj->key = $result->PCD_PAYER_ID;
-								$billing_key_obj->regdate = time();
-
-								switch ($result->PCD_PAY_TYPE)
+								$key = $oHotopayModel->getBillingKeyByKeyValue($purchase->data->member_srl, $result->PCD_PAYER_ID);
+								if (!$key->key_idx)
 								{
-									case 'transfer':
-										$billing_key_obj->payment_type = 'transfer';
-										$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
-										$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
-										break;
+									$billing_key_obj = new stdClass();
+									$billing_key_obj->key_idx = getNextSequence();
+									$billing_key_obj->member_srl = $purchase->data->member_srl;
+									$billing_key_obj->pg = 'payple';
+									$billing_key_obj->type = 'password';
+									$billing_key_obj->key = $result->PCD_PAYER_ID;
+									$billing_key_obj->regdate = time();
+	
+									switch ($result->PCD_PAY_TYPE)
+									{
+										case 'transfer':
+											$billing_key_obj->payment_type = 'transfer';
+											$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
+											$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
+											break;
+	
+										case 'card':
+										default:
+											$billing_key_obj->payment_type = 'card';
+											$billing_key_obj->alias = $result->PCD_PAY_CARDNAME ?? 'CARD';
+											$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
+											break;
+									}
 
-									case 'card':
-									default:
-										$billing_key_obj->payment_type = 'card';
-										$billing_key_obj->alias = $result->PCD_PAY_CARDNAME ?? 'CARD';
-										$billing_key_obj->number = $result->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
-										break;
+									$oHotopayModel->insertBillingKey($billing_key_obj);
 								}
-
-								$oHotopayModel->insertBillingKey($billing_key_obj);
 							}
 						}
 					}
@@ -1116,31 +1119,35 @@ class HotopayController extends Hotopay
 			if ($vars->PCD_AUTH_KEY)
 			{
 				// 카드/계좌 등록
-				$billing_key_obj = new stdClass();
-				$billing_key_obj->key_idx = getNextSequence();
-				$billing_key_obj->member_srl = $member_srl;
-				$billing_key_obj->pg = 'payple';
-				$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
-				$billing_key_obj->key = $vars->PCD_PAYER_ID;
-				$billing_key_obj->regdate = time();
-
-				switch ($vars->PCD_PAY_TYPE)
+				$key = $oHotopayModel->getBillingKeyByKeyValue($member_srl, $vars->PCD_PAYER_ID);
+				if (!$key->key_idx)
 				{
-					case 'transfer':
-						$billing_key_obj->payment_type = 'transfer';
-						$billing_key_obj->alias = $vars->PCD_PAY_BANKNAME ?? 'BANK';
-						$billing_key_obj->number = $vars->PCD_PAY_BANKNUM ?? '0000*******0000';
-						break;
+					$billing_key_obj = new stdClass();
+					$billing_key_obj->key_idx = getNextSequence();
+					$billing_key_obj->member_srl = $member_srl;
+					$billing_key_obj->pg = 'payple';
+					$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
+					$billing_key_obj->key = $vars->PCD_PAYER_ID;
+					$billing_key_obj->regdate = time();
 
-					case 'card':
-					default:
-						$billing_key_obj->payment_type = 'card';
-						$billing_key_obj->alias = $vars->PCD_PAY_CARDNAME ?? 'CARD';
-						$billing_key_obj->number = $vars->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
-						break;
+					switch ($vars->PCD_PAY_TYPE)
+					{
+						case 'transfer':
+							$billing_key_obj->payment_type = 'transfer';
+							$billing_key_obj->alias = $vars->PCD_PAY_BANKNAME ?? 'BANK';
+							$billing_key_obj->number = $vars->PCD_PAY_BANKNUM ?? '0000*******0000';
+							break;
+
+						case 'card':
+						default:
+							$billing_key_obj->payment_type = 'card';
+							$billing_key_obj->alias = $vars->PCD_PAY_CARDNAME ?? 'CARD';
+							$billing_key_obj->number = $vars->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
+							break;
+					}
+
+					$oHotopayModel->insertBillingKey($billing_key_obj);
 				}
-
-				$oHotopayModel->insertBillingKey($billing_key_obj);
 			}
 			else
 			{

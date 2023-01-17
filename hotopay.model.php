@@ -587,6 +587,26 @@ class HotopayModel extends Hotopay
     }
 
     /**
+     * hotopay_billing_key 테이블에서 BillingKey를 가져온다.
+     * 
+     * @param int $key_idx
+     */
+    public static function getBillingKeyByKeyValue(int $member_srl, string $key): object
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+        $args->key = $key;
+
+        $output = executeQuery('hotopay.getBillingKeyByKeyValue', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: new \stdClass();
+    }
+
+    /**
      * hotopay_billing_key 테이블에서 BillingKey 여러 건을 가져온다.
      * 
      * @param int $member_srl
