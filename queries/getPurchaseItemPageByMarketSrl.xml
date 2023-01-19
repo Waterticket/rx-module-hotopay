@@ -7,9 +7,16 @@
 				<condition operation="equal" column="p.product_srl" default="i.product_srl" />
 			</conditions>
 		</table>
+        <table name="hotopay_purchase" alias="purchase" type="inner join">
+			<conditions>
+				<condition operation="in" column="purchase.pay_status" var="pay_status" />
+				<condition operation="equal" column="purchase.purchase_srl" default="i.purchase_srl" />
+			</conditions>
+		</table>
 	</tables>
 	<columns>
 		<column name="i.*" />
+		<column name="purchase.pay_status" />
 		<column name="p.product_name" alias="product_name" />
 	</columns>
 	<conditions>

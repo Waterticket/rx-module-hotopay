@@ -9,6 +9,7 @@
 		</table>
         <table name="hotopay_purchase" alias="purchase" type="inner join">
 			<conditions>
+				<condition operation="in" column="purchase.pay_status" var="pay_status" />
 				<condition operation="equal" column="purchase.purchase_srl" default="item.purchase_srl" />
 			</conditions>
 		</table>
@@ -21,6 +22,7 @@
 	<columns>
 		<column name="item.*" />
 		<column name="product.product_name" alias="product_name" />
+		<column name="purchase.pay_status" alias="pay_status" />
 		<column name="member.user_name" alias="user_name" />
 		<column name="member.nick_name" alias="nick_name" />
 		<column name="member.email_address" alias="email_address" />
