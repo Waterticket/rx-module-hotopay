@@ -217,6 +217,14 @@ section#depositor span#required {
   height: 80px;
 }
 
+.ht-order.invalid {
+  opacity: 0.7;
+}
+
+.ht-order.invalid .ht-order-first-item > span {
+  text-decoration: line-through;
+}
+
 section#result p {
   margin: 10px;
 }

@@ -17,12 +17,12 @@
             </thead>
             <tbody>
                 <!--@foreach($cart_items as $item)-->
-                <tr class="ht-order" data-cart-item-srl="{$item->cart_item_srl}">
+                <tr class="ht-order<!--@if($item->product_status != 'selling')--> invalid<!--@endif-->" data-cart-item-srl="{$item->cart_item_srl}">
                     <td>
                         <span class="ht-order-thumbnail"><img src="{$item->product_pic_src}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-first-item">{$item->product_name}<br>- 옵션 : {$item->option_title}</span>
+                        <span class="ht-order-first-item"><!--@if($item->product_status != 'selling')-->(판매 중지) <!--@endif--><span>{$item->product_name}<br>- 옵션 : {$item->option_title}</span></span>
                         <input type="hidden" class="option_srl" value="{$item->option_srl}">
                     </td>
                     <td>
@@ -152,6 +152,21 @@
 
             if (purchase_price < 1) {
                 alert('결제할 상품이 없습니다.');
+                return;
+            }
+
+            jQuery('.ht-order').each(function(){
+                var $this = jQuery(this);
+                var quantity = $this.find('.ht-quantity').val();
+                if (quantity < 1) {
+                    alert('최소 1개 이상 구매해야 합니다.');
+                    $this.find('.ht-quantity').val(1);
+                    quantity = 1;
+                }
+            });
+
+            if (jQuery('.ht-order.invalid').length > 0) {
+                alert('결제할 수 없는 상품이 있습니다.');
                 return;
             }
 

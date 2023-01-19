@@ -74,6 +74,8 @@ class HotopayController extends Hotopay
 
 		foreach($product_list as $product)
 		{
+			if($product->product_status != 'selling') return $this->createObject(-1, "판매중이 아닌 상품이 있습니다.");
+
 			$option_srl = $product->option_srl;
 			$option = $product->info->product_option[$option_srl];
 
