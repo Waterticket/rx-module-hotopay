@@ -26,6 +26,9 @@ class HotopayAdminController extends Hotopay
 		$config->point_discount = empty($vars->point_discount) ? 'N' : 'Y';
 		$config->cart_item_limit = $vars->cart_item_limit;
 		$config->min_product_price = $vars->min_product_price;
+		$config->change_group_to_regular_when_pay = empty($vars->change_group_to_regular_when_pay) ? 'N' : 'Y';
+		$config->associate_group_srl = $vars->associate_group_srl;
+		$config->regular_group_srl = $vars->regular_group_srl;
 		
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_list = $vars->toss_payments_list ?? array();

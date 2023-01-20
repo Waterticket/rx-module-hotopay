@@ -1222,6 +1222,23 @@ class HotopayController extends Hotopay
 			}
 		}
 
+		$config = $this->getConfig();
+		if ($config->change_group_to_regular_when_pay == 'Y')
+		{
+			if ($config->regular_group_srl != 0)
+			{
+				$oMemberController->addMemberToGroup($member_srl, $config->regular_group_srl);
+			}
+
+			if ($config->associate_group_srl != 0)
+			{
+				$args = new stdClass();
+				$args->member_srl = $member_srl;
+				$args->group_srl = $config->associate_group_srl;
+				$output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
+			}
+		}
+
 		$trigger_obj->group_srl = $group_srl;
 		ModuleHandler::triggerCall('hotopay.activePurchase', 'after', $trigger_obj);
 	}

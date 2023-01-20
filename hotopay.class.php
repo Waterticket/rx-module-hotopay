@@ -105,6 +105,9 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->point_discount)) self::$_config_cache->point_discount = 'N'; // 포인트 할인 활성화
 			if(!isset(self::$_config_cache->cart_item_limit)) self::$_config_cache->cart_item_limit = 50; // 카트에 담을 수 있는 최대 상품 개수
 			if(!isset(self::$_config_cache->min_product_price)) self::$_config_cache->min_product_price = 0; // 등록할 수 있는 최소 가격
+			if(!isset(self::$_config_cache->change_group_to_regular_when_pay)) self::$_config_cache->change_group_to_regular_when_pay = 'N'; // 결제시에 회원 그룹을 정회원으로 변경
+			if(!isset(self::$_config_cache->associate_group_srl)) self::$_config_cache->associate_group_srl = 2; // 준회원 그룹 srl
+			if(!isset(self::$_config_cache->regular_group_srl)) self::$_config_cache->regular_group_srl = 3; // 정회원 그룹 srl
 			
 			if(!isset(self::$_config_cache->toss_enabled)) self::$_config_cache->toss_enabled = 'N'; // 토스 활성화
 			if(!isset(self::$_config_cache->paypal_enabled)) self::$_config_cache->paypal_enabled = 'N'; // 페이팔 활성화
