@@ -748,6 +748,7 @@ class HotopayController extends Hotopay
 									$billing_key_obj = new stdClass();
 									$billing_key_obj->key_idx = $before_idx;
 									$billing_key_obj->key = $result->PCD_PAYER_ID;
+									$billing_key_obj->key_hash = strtoupper(hash('sha256', $this->user->member_srl . $result->PCD_PAYER_ID));
 									switch ($result->PCD_PAY_TYPE)
 									{
 										case 'transfer':
@@ -769,7 +770,8 @@ class HotopayController extends Hotopay
 							}
 							else
 							{
-								$key = $oHotopayModel->getBillingKeyByKeyValue($purchase->data->member_srl, $result->PCD_PAYER_ID);
+								$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $result->PCD_PAYER_ID));
+								$key = $oHotopayModel->getBillingKeyByKeyHash($purchase->data->member_srl, $key_hash);
 								if (!$key->key_idx)
 								{
 									$billing_key_obj = new stdClass();
@@ -778,6 +780,7 @@ class HotopayController extends Hotopay
 									$billing_key_obj->pg = 'payple';
 									$billing_key_obj->type = 'password';
 									$billing_key_obj->key = $result->PCD_PAYER_ID;
+									$billing_key_obj->key_hash = $key_hash;
 									$billing_key_obj->regdate = time();
 	
 									switch ($result->PCD_PAY_TYPE)
@@ -1140,7 +1143,8 @@ class HotopayController extends Hotopay
 			if ($vars->PCD_AUTH_KEY)
 			{
 				// 카드/계좌 등록
-				$key = $oHotopayModel->getBillingKeyByKeyValue($member_srl, $vars->PCD_PAYER_ID);
+				$key_hash = strtoupper(hash('sha256', $member_srl . $vars->PCD_PAYER_ID));
+				$key = $oHotopayModel->getBillingKeyByKeyHash($member_srl, $key_hash);
 				if (!$key->key_idx)
 				{
 					$billing_key_obj = new stdClass();
@@ -1149,6 +1153,7 @@ class HotopayController extends Hotopay
 					$billing_key_obj->pg = 'payple';
 					$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
 					$billing_key_obj->key = $vars->PCD_PAYER_ID;
+					$billing_key_obj->key_hash = $key_hash;
 					$billing_key_obj->regdate = time();
 
 					switch ($vars->PCD_PAY_TYPE)
@@ -1173,8 +1178,8 @@ class HotopayController extends Hotopay
 			else
 			{
 				// 카드/계좌 해지
-				$key = $vars->PCD_PAYER_ID;
-				$oHotopayModel->deleteBillingKeyByKeyValue($member_srl, $key);
+				$key_hash = strtoupper(hash('sha256', $this->user->member_srl . $vars->PCD_PAYER_ID));
+				$oHotopayModel->deleteBillingKeyByKeyHash($member_srl, $key_hash);
 			}
 		}
 

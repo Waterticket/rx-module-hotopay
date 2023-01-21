@@ -591,13 +591,13 @@ class HotopayModel extends Hotopay
      * 
      * @param int $key_idx
      */
-    public static function getBillingKeyByKeyValue(int $member_srl, string $key): object
+    public static function getBillingKeyByKeyHash(int $member_srl, string $key_hash): object
     {
         $args = new \stdClass();
         $args->member_srl = $member_srl;
-        $args->key = $key;
+        $args->key_hash = $key_hash;
 
-        $output = executeQuery('hotopay.getBillingKeyByKeyValue', $args);
+        $output = executeQuery('hotopay.getBillingKeyByKeyHash', $args);
         if(!$output->toBool())
         {
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
@@ -670,16 +670,16 @@ class HotopayModel extends Hotopay
         return new BaseObject();
     }
 
-    public static function deleteBillingKeyByKeyValue(int $member_srl, string $key): object
+    public static function deleteBillingKeyByKeyHash(int $member_srl, string $key_hash): object
     {
         $args = new \stdClass();
         $args->member_srl = $member_srl;
-        $args->key = $key;
+        $args->key_hash = $key_hash;
 
         $oDB = DB::getInstance();
         $oDB->begin();
 
-        $output = executeQuery('hotopay.deleteBillingKeyByKeyValue', $args);
+        $output = executeQuery('hotopay.deleteBillingKeyByKeyHash', $args);
         if(!$output->toBool())
         {
             $oDB->rollback();

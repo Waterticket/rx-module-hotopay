@@ -1,9 +1,9 @@
-<query id="deleteBillingKeyByKeyValue" action="delete">
+<query id="deleteBillingKeyByKeyHash" action="delete">
     <tables>
         <table name="hotopay_billing_key" />
     </tables>
     <conditions>
             <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
-            <condition operation="equal" column="key" var="key" filter="varchar" notnull="notnull" pipe="and" />
+            <condition operation="equal" column="key_hash" var="key_hash" filter="varchar" notnull="notnull" pipe="and" />
     </conditions>
 </query>
