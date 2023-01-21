@@ -112,6 +112,43 @@
 			</div>
 		</div>
 	</section>
+
+	<section class="section">
+		<h1>보안 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="hotopay_billingkey_encryption">빌링키 암호화 수단</label>
+			<div class="x_controls">
+				<select name="hotopay_billingkey_encryption" id="hotopay_billingkey_encryption">
+					<option value="none" selected="selected"|cond="$hotopay_config->hotopay_billingkey_encryption == 'none'">설정 안함</option>
+					<option value="awskms" selected="selected"|cond="$hotopay_config->hotopay_billingkey_encryption == 'awskms'">AWS KMS</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="x_control-group hotopay_aws_kms_arn-wrapper" style="display:none"|cond="$hotopay_config->hotopay_billingkey_encryption != 'awskms'">
+			<label class="x_control-label" for="hotopay_aws_kms_arn">AWS KMS ARN</label>
+			<div class="x_controls">
+				<input type="password" id="hotopay_aws_kms_arn" name="hotopay_aws_kms_arn" value="{$hotopay_config->hotopay_aws_kms_arn}">
+			</div>
+			<script>
+				$(function() {
+					$('#hotopay_billingkey_encryption').change(function() {
+						if ($(this).val() == 'awskms') {
+							$('.hotopay_aws_kms_arn-wrapper').show();
+						} else {
+							$('.hotopay_aws_kms_arn-wrapper').hide();
+						}
+					}).change();
+
+					$('#hotopay_aws_kms_arn').on('focus', function() {
+						$(this).attr('type', 'text');
+					}).on('blur', function() {
+						$(this).attr('type', 'password');
+					});
+				});
+			</script>
+		</div>
+	</section>
 	
 	<section class="section">
 		<h1>Toss Payments 설정</h1>

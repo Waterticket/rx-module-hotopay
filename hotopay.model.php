@@ -689,4 +689,32 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    public function encryptKey($key)
+    {
+        $config = $this->getConfig();
+        switch($config->hotopay_billingkey_encryption)
+        {
+            case 'none':
+                return sprintf("none:%s", $key);
+
+            case 'awskms':
+                return sprintf("awskms:%s", \Rhymix\Modules\Keyenc\Models\AWSKMS::EncryptShort($config->hotopay_aws_kms_arn, $key));
+        }
+    }
+
+    public function decryptKey($key)
+    {
+        $config = $this->getConfig();
+
+        $part = explode(':', $key);
+        switch($part[0])
+        {
+            case 'none':
+                return $part[1];
+
+            case 'awskms':
+                return \Rhymix\Modules\Keyenc\Models\AWSKMS::DecryptShort($config->hotopay_aws_kms_arn, $part[1]);
+        }
+    }
 }

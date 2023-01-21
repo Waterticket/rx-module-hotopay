@@ -176,7 +176,7 @@ class HotopayController extends Hotopay
 				$vars->pay_method = 'paypl_' . $key->payment_type;
 			}
 
-			$_SESSION['hotopay_billing_key'] = $key;
+			$_SESSION['hotopay_billing_key'] = $oHotopayModel->decryptKey($key);
 		}
 
 		$args->title = $title;
@@ -742,13 +742,14 @@ class HotopayController extends Hotopay
 								unset($_SESSION['hotopay_billing_key']);
 
 								$key = $oHotopayModel->getBillingKey($before_idx);
-								if (!empty($key->key) && $key->key != $result->PCD_PAYER_ID)
+								$calculated_key_hash = strtoupper(hash('sha256', $this->user->member_srl . $result->PCD_PAYER_ID));
+								if (!empty($key->key) && $key->key_hash != $calculated_key_hash)
 								{
 									// update
 									$billing_key_obj = new stdClass();
 									$billing_key_obj->key_idx = $before_idx;
-									$billing_key_obj->key = $result->PCD_PAYER_ID;
-									$billing_key_obj->key_hash = strtoupper(hash('sha256', $this->user->member_srl . $result->PCD_PAYER_ID));
+									$billing_key_obj->key = $oHotopayModel->encryptKey($result->PCD_PAYER_ID);
+									$billing_key_obj->key_hash = $calculated_key_hash;
 									switch ($result->PCD_PAY_TYPE)
 									{
 										case 'transfer':
@@ -779,7 +780,7 @@ class HotopayController extends Hotopay
 									$billing_key_obj->member_srl = $purchase->data->member_srl;
 									$billing_key_obj->pg = 'payple';
 									$billing_key_obj->type = 'password';
-									$billing_key_obj->key = $result->PCD_PAYER_ID;
+									$billing_key_obj->key = $oHotopayModel->encryptKey($result->PCD_PAYER_ID);
 									$billing_key_obj->key_hash = $key_hash;
 									$billing_key_obj->regdate = time();
 	
@@ -1152,7 +1153,7 @@ class HotopayController extends Hotopay
 					$billing_key_obj->member_srl = $member_srl;
 					$billing_key_obj->pg = 'payple';
 					$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
-					$billing_key_obj->key = $vars->PCD_PAYER_ID;
+					$billing_key_obj->key = $oHotopayModel->encryptKey($vars->PCD_PAYER_ID);
 					$billing_key_obj->key_hash = $key_hash;
 					$billing_key_obj->regdate = time();
 
