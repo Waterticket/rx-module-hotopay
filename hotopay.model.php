@@ -690,7 +690,7 @@ class HotopayModel extends Hotopay
         return new BaseObject();
     }
 
-    public function encryptKey($key)
+    public function encryptKey(string $key): string
     {
         $config = $this->getConfig();
         switch($config->hotopay_billingkey_encryption)
@@ -703,7 +703,7 @@ class HotopayModel extends Hotopay
         }
     }
 
-    public function decryptKey($key)
+    public function decryptKey(string $key): string
     {
         $config = $this->getConfig();
 

@@ -176,7 +176,8 @@ class HotopayController extends Hotopay
 				$vars->pay_method = 'paypl_' . $key->payment_type;
 			}
 
-			$_SESSION['hotopay_billing_key'] = $oHotopayModel->decryptKey($key);
+			$key->key = $oHotopayModel->decryptKey($key->key);
+			$_SESSION['hotopay_billing_key'] = $key;
 		}
 
 		$args->title = $title;
