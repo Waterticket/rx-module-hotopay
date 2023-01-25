@@ -135,7 +135,7 @@
 <div id="dialog" title="주문 취소" style="display: none;">
 	<p class="validateTips">주문 취소를 위해 아래 폼을 입력해주세요.</p>
 
-	<form action="./" method="POST" onsubmit="return confirm('해당 주문을 환불하시겠습니까?');">
+	<form action="./" method="POST" onsubmit="return onSubmitCancelForm();">
 	  <input type="hidden" name="mid" value="admin">
 	  <input type="hidden" name="act" value="procHotopayAdminPurchaseStatusChange">
 	  <input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}">
@@ -223,4 +223,18 @@
 	  width: '500px',
       modal: true,
 	};
+
+	function onSubmitCancelForm()
+	{
+		if (confirm('해당 주문을 환불하시겠습니까?'))
+		{
+			$('#dialog input[type="submit"]').val("환불 처리중입니다");
+			$('#dialog input[type="submit"]').attr("disabled", "disabled");
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 </script>
