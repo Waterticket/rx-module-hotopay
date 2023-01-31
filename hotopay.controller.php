@@ -157,10 +157,10 @@ class HotopayController extends Hotopay
 			$oPointController->setPoint($logged_info->member_srl, $input_point, 'minus');
 
 			$total_price -= $input_point;
-
-			if ($total_price <= 0) $vars->pay_method = 'point';
 			$extra_vars->use_point = $input_point;
 		}
+
+		if ($total_price <= 0) $vars->pay_method = 'point';
 
 		if (str_starts_with($vars->pay_method, 'billing_key_'))
 		{

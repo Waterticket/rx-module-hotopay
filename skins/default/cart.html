@@ -150,10 +150,11 @@
         $('#purchase_btn').on('click', function(){
             calculatePurchasePrice();
 
-            if (purchase_price < 1) {
-                alert('결제할 상품이 없습니다.');
-                return;
-            }
+            // 무료상품만 구매하는 경우
+            // if (purchase_price < 1) {
+            //     alert('결제할 상품이 없습니다.');
+            //     return;
+            // }
 
             jQuery('.ht-order').each(function(){
                 var $this = jQuery(this);
