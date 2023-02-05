@@ -30,9 +30,9 @@ $oHotopayModel = getModel('hotopay');
             <td title="{$product->product_des}">{$oHotopayModel->stringCut($product->product_des, 30)}</td>
             <td>
 				<a href="{getUrl('','mid','hotopay','act','dispHotopayOrderPage','product_id',$product->product_srl)}">구매</a>&nbsp;
-				<a href="{getUrl('','mid','admin','act','dispHotopayAdminModifyProduct','product_srl',$product->product_srl)}">수정</a>&nbsp;
+				<a href="{getUrl('','module','admin','act','dispHotopayAdminModifyProduct','product_srl',$product->product_srl)}">수정</a>&nbsp;
 
-                {@ $productDeleteUrl = getUrl('','mid','admin','act','procHotopayAdminDeleteProduct','product_srl',$product->product_srl)}
+                {@ $productDeleteUrl = getUrl('','module','admin','act','procHotopayAdminDeleteProduct','product_srl',$product->product_srl)}
                 <a href="#" onclick="var _u='{$productDeleteUrl}';var _a=function(){if(confirm('물품을 삭제하시겠습니까?')){window.location=_u}};_a();">삭제</a></td>
         </tr>
         <!--@endforeach-->
@@ -79,6 +79,6 @@ $oHotopayModel = getModel('hotopay');
 	</form>
 
     <span class="x_pull-right x_btn-group">
-		<a class="x_btn x_btn-inverse" href="{getUrl('','mid','admin','act','dispHotopayAdminInsertProduct')}">상품 등록</a>
+		<a class="x_btn x_btn-inverse" href="{getUrl('','module','admin','act','dispHotopayAdminInsertProduct')}">상품 등록</a>
 	</span>
 </section>

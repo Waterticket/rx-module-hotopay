@@ -18,7 +18,7 @@
 <form class="x_form-horizontal" action="./" method="post" id="hotopay" enctype="multipart/form-data">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayAdminInsertProduct" />
-	<input type="hidden" name="success_return_url" value="{getUrl('','mid','admin','act','dispHotopayAdminProductList')}" />
+	<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispHotopayAdminProductList')}" />
 	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
 	<input type="hidden" name="product_pic_org_src" value="{$product->product_pic_src}" />
 	<input type="hidden" name="product_pic_org_srl" value="{$product->product_pic_srl}" />
