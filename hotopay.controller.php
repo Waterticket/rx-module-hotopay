@@ -1022,6 +1022,13 @@ class HotopayController extends Hotopay
 				$args->pay_status = "CANCELED";
 				executeQuery('hotopay.updatePurchaseStatus', $args);
 			}
+			else if(strcmp($vars->status, "EXPIRED") === 0)
+			{
+				$args = new stdClass();
+				$args->purchase_srl = $purchase_srl;
+				$args->pay_status = "CANCELED";
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+			}
 		}else{
 			http_response_code(400);
 			die(json_encode(array("status"=>"fail", "message"=>"Key doesn't match")));
