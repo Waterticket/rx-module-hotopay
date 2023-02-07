@@ -448,7 +448,10 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="payple_callback_url">Webhook URL</label>
 			<div class="x_controls">
-				<p style="margin-top:5px;">{getUrl()}hotopay/api/v1/payple/paymentCallback</p><br>
+				<p style="margin-top:-5px;"><ul>
+					<li><b>결제결과 수신 URL</b> : {getUrl()}hotopay/api/v1/payple/paymentCallback/paymentResult</li>
+					<li><b>계좌(카드)해지결과 수신 URL</b> : {getUrl()}hotopay/api/v1/payple/paymentCallback/paymentMethodTermination</li>
+				</ul></p><br>
 			</div>
 		</div>
 	</section>

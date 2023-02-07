@@ -35,7 +35,10 @@
 		<!-- Callback -->
 		<action name="procHotopayTossPaymentsCallback" type="controller" route="api/v1/toss/paymentCallback" check_csrf="false" />
 		<action name="procHotopayIamportCallback" type="controller" route="api/v1/iamport/paymentCallback" check_csrf="false" />
-		<action name="procHotopayPaypleCallback" type="controller" route="api/v1/payple/paymentCallback" check_csrf="false" />
+		<action name="procHotopayPaypleCallback" type="controller" check_csrf="false">
+			<route route="api/v1/payple/paymentCallback/paymentResult" />
+			<route route="api/v1/payple/paymentCallback/paymentMethodTermination" />
+		</action>
 
 		<!-- 일반 액션 -->
 		<action name="dispHotopayOrderList" type="view">
