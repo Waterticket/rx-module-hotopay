@@ -1148,11 +1148,16 @@ class HotopayController extends Hotopay
 		else
 		{
 			$member_srl = $vars->PCD_PAYER_NO;
+			$payer_id = $vars->PCD_PAYER_ID;
+			if (!$member_srl || !$payer_id)
+			{
+				return new BaseObject(-1, 'msg_invalid_request');
+			}
 
 			if ($vars->PCD_AUTH_KEY)
 			{
 				// 카드/계좌 등록
-				$key_hash = strtoupper(hash('sha256', $member_srl . $vars->PCD_PAYER_ID));
+				$key_hash = strtoupper(hash('sha256', $member_srl . $payer_id));
 				$key = $oHotopayModel->getBillingKeyByKeyHash($member_srl, $key_hash);
 				if (!$key->key_idx)
 				{
@@ -1161,7 +1166,7 @@ class HotopayController extends Hotopay
 					$billing_key_obj->member_srl = $member_srl;
 					$billing_key_obj->pg = 'payple';
 					$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
-					$billing_key_obj->key = $oHotopayModel->encryptKey($vars->PCD_PAYER_ID);
+					$billing_key_obj->key = $oHotopayModel->encryptKey($payer_id);
 					$billing_key_obj->key_hash = $key_hash;
 					$billing_key_obj->regdate = time();
 
@@ -1187,7 +1192,7 @@ class HotopayController extends Hotopay
 			else
 			{
 				// 카드/계좌 해지
-				$key_hash = strtoupper(hash('sha256', $this->user->member_srl . $vars->PCD_PAYER_ID));
+				$key_hash = strtoupper(hash('sha256', $this->user->member_srl . $payer_id));
 				$oHotopayModel->deleteBillingKeyByKeyHash($member_srl, $key_hash);
 			}
 		}
