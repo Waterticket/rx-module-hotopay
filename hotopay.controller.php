@@ -1120,6 +1120,11 @@ class HotopayController extends Hotopay
 
 		if ($vars->PCD_PAY_OID)
 		{
+			if ($vars->PCD_PAY_RST != 'success' || !str_contains($vars->PCD_PAY_CODE, "0000"))
+			{
+				return new BaseObject();
+			}
+
 			$purchase_srl = (int) substr($vars->PCD_PAY_OID, 2);
 			$purchase = $oHotopayModel->getPurchase($purchase_srl);
 
@@ -1139,10 +1144,12 @@ class HotopayController extends Hotopay
 			else
 			{
 				// 결제 성공
-				if ($purchase->pay_status != "DONE")
-				{
-					$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
-				}
+				// if ($purchase->pay_status != "DONE")
+				// {
+				// 	$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
+				// }
+
+				// Payple은 CERT 방식으로 결제하기 때문에 Webhook으로 결제 성공 처리를 할 필요가 없음
 			}
 		}
 		else
