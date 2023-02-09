@@ -469,10 +469,10 @@ class HotopayAdminController extends Hotopay
 	{
 		// 현재 설정 상태 불러오기
 		$config = $this->getConfig();
-		
+
 		// 제출받은 데이터 불러오기
 		$vars = Context::getRequestVars();
-		
+
 		$config->purchase_success_notification_method = $vars->purchase_success_notification_method ?? array();
 		$config->purchase_success_notification_message_note_title = $vars->purchase_success_notification_message_note_title;
 		$config->purchase_success_notification_message_note = $vars->purchase_success_notification_message_note;
@@ -493,7 +493,10 @@ class HotopayAdminController extends Hotopay
 		$config->purchase_refund_notification_message_mail_title = $vars->purchase_refund_notification_message_mail_title;
 		$config->purchase_refund_notification_message_mail = $vars->purchase_refund_notification_message_mail;
 		$config->purchase_refund_notification_message_sms = $vars->purchase_refund_notification_message_sms;
-		
+
+		$config->admin_mailing = empty($vars->admin_mailing) ? 'N' : 'Y';
+		$config->admin_mailing_status = $vars->admin_mailing_status ?? array();
+
 		// 변경된 설정을 저장
 		$output = $this->setConfig($config);
 		if (!$output->toBool())

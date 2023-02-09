@@ -216,6 +216,26 @@
 		</div>
 	</section>
 
+	<section class="section">
+		<h1>관리자 알림 설정</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="admin_mailing">관리자 알림 활성화</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="admin_mailing" id="admin_mailing" checked="checked"|cond="$hotopay_config->admin_mailing == 'Y'">&nbsp;관리자 알림을 활성화합니다.</label>
+				<p class="x_help-block">관리자 알림을 활성화하면 회원의 결제 상태 변동 알림을 메일/SMS로 받을 수 있습니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label">수신할 결제 상태</label>
+			<div class="x_controls">
+				<label class="no-block"><input type="checkbox" name="admin_mailing_status[]" id="admin_mailing_status_done" value="DONE" checked="checked"|cond="in_array('DONE', $hotopay_config->admin_mailing_status)"> 결제 완료</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="no-block"><input type="checkbox" name="admin_mailing_status[]" id="admin_mailing_status_refunded" value="REFUNDED" checked="checked"|cond="in_array('REFUNDED', $hotopay_config->admin_mailing_status)"> 환불</label>&nbsp;
+				<p class="x_help-block">관리자 알림으로 받을 결제 상태를 선택해주세요.</p>
+			</div>
+		</div>
+	</section>
+
 	<div class="btnArea x_clearfix">
 		<button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
 	</div>

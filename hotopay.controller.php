@@ -1394,6 +1394,7 @@ class HotopayController extends Hotopay
 		ModuleHandler::triggerCall('hotopay.refundPurchase', 'after', $trigger_obj);
 
 		$this->_MessageMailer("REFUNDED", $purchase);
+		$this->_AdminMailer("REFUNDED", $purchase);
 
 		return $this->createObject();
 	}
@@ -1490,6 +1491,16 @@ class HotopayController extends Hotopay
 	public function _AdminMailer($status, $purchase)
 	{
 		$config = $this->getConfig();
+		if (!$config->admin_mailing !== 'Y')
+		{
+			return;
+		}
+
+		if (!in_array($status, $config->admin_mailing_status))
+		{
+			return;
+		}
+
 		$member_srl = $purchase->member_srl;
 		$oMemberModel = getModel('member');
 		$oHotopayModel = getModel('hotopay');
@@ -1506,6 +1517,14 @@ class HotopayController extends Hotopay
 				$this->_sendMail(4, "[HotoPay] 회원의 결제가 완료되었습니다.", $message_body);
 
 				$sms_body = "[Hotopay] 결제알림 ({$pay_method_korean}/{$price}) {$purchase_title_substr}";
+				$this->_sendSMS(4, $sms_body);
+				break;
+
+			case 'REFUNDED':
+				$message_body = "결제 환불 알림 메일입니다.<br><br>결제 코드: HT{$purchase->purchase_srl}<br>회원 닉네임: {$member_info->nick_name}<br>회원 이름: {$member_info->user_name}<br>결제 품목: {$purchase->title}<br>결제 금액: {$price}<br>결제 수단: {$pay_method_korean}<br>결제 시각: {$purchase_date}<br>";
+				$this->_sendMail(4, "[HotoPay] 회원의 결제가 환불되었습니다.", $message_body);
+
+				$sms_body = "[Hotopay] 환불알림 ({$pay_method_korean}/{$price}) {$purchase_title_substr}";
 				$this->_sendSMS(4, $sms_body);
 				break;
 		}
