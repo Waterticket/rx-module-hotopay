@@ -265,6 +265,15 @@ class HotopayModel extends Hotopay
             case "inic_happymoney":
                 return "해피머니";
 
+            case "paypl_card":
+                return "신용카드";
+
+            case "paypl_transfer":
+                return "계좌이체";
+
+            case "point":
+                return "포인트";
+
             default:
                 return $pay_method;
         }
