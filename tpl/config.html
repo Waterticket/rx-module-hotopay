@@ -20,7 +20,7 @@
 			<label class="x_control-label" for="hotopay_purchase_enabled">결제 모듈 활성화</label>
 			<div class="x_controls">
 				<label><input type="checkbox" name="hotopay_purchase_enabled" id="hotopay_purchase_enabled" checked="checked"|cond="$hotopay_config->hotopay_purchase_enabled == 'Y'">&nbsp;결제 모듈을 활성화합니다.</label>
-				<p class="help-block">회원이 Hotopay를 사용하여 결제할 수 있도록 활성화합니다. 비활성화 상태에서 결제 시도시 회원에게 결제 시스템 점검중이라는 메세지가 나옵니다.</p>
+				<p class="x_help-block">회원이 Hotopay를 사용하여 결제할 수 있도록 활성화합니다. 비활성화 상태에서 결제 시도시 회원에게 결제 시스템 점검중이라는 메세지가 나옵니다.</p>
 			</div>
 		</div>
 
@@ -28,7 +28,7 @@
 			<label class="x_control-label" for="shop_name">쇼핑몰 이름</label>
 			<div class="x_controls">
 				<input type="text" name="shop_name" id="shop_name" value="{$hotopay_config->shop_name}"><br>
-				회원에게 노출될 쇼핑몰 이름입니다.
+				<p class="x_help-block">회원에게 노출될 쇼핑몰 이름입니다.</p>
 			</div>
 		</div>
 
@@ -36,7 +36,7 @@
 			<label class="x_control-label" for="purchase_term_url">전자금융거래 이용약관 URL</label>
 			<div class="x_controls">
 				<input type="text" name="purchase_term_url" id="purchase_term_url" value="{$hotopay_config->purchase_term_url}"><br>
-				전자금융거래법 제 24조 1항에 명시된 금융거래 이용약관 명시에 따른 이용약관 URL입니다. 결제시 체크박스에 링크가 걸리게 됩니다.
+				<p class="x_help-block">전자금융거래법 제 24조 1항에 명시된 금융거래 이용약관 명시에 따른 이용약관 URL입니다. 결제시 체크박스에 링크가 걸리게 됩니다.</p>
 			</div>
 		</div>
 
@@ -44,7 +44,7 @@
 			<label class="x_control-label" for="point_discount">포인트 할인 활성화</label>
 			<div class="x_controls">
 				<label><input type="checkbox" name="point_discount" id="point_discount" checked="checked"|cond="$hotopay_config->point_discount == 'Y'">&nbsp;포인트 할인을 활성화 합니다.</label>
-				<p class="help-block">결제시에 회원이 가지고 있는 포인트를 소모하여 가격 할인을 할 수 있도록 합니다.</p>
+				<p class="x_help-block">결제시에 회원이 가지고 있는 포인트를 소모하여 가격 할인을 할 수 있도록 합니다.</p>
 			</div>
 		</div>
 
@@ -52,7 +52,7 @@
 			<label class="x_control-label" for="cart_item_limit">카트 보관 최대 수량</label>
 			<div class="x_controls">
 				<input type="number" name="cart_item_limit" id="cart_item_limit" value="{$hotopay_config->cart_item_limit}"> 건
-				<p class="help-block">회원이 카트에 넣을 수 있는 최대 상품 개수를 제한합니다. 비정상적인 서버 부하를 방지하기 위한 기능입니다.</p>
+				<p class="x_help-block">회원이 카트에 넣을 수 있는 최대 상품 개수를 제한합니다. 비정상적인 서버 부하를 방지하기 위한 기능입니다.</p>
 			</div>
 		</div>
 
@@ -60,7 +60,7 @@
 			<label class="x_control-label" for="min_product_price">등록가능 최소 가격</label>
 			<div class="x_controls">
 				<input type="number" name="min_product_price" id="min_product_price" value="{$hotopay_config->min_product_price}">
-				<p class="help-block">상품 등록시 최소 가격을 제한합니다. 단, 관리자는 예외입니다.</p>
+				<p class="x_help-block">상품 등록시 최소 가격을 제한합니다. 단, 관리자는 예외입니다.</p>
 			</div>
 		</div>
 
@@ -68,7 +68,7 @@
 			<label class="x_control-label" for="change_group_to_regular_when_pay">결제 후 회원 그룹 변경</label>
 			<div class="x_controls">
 				<label><input type="checkbox" name="change_group_to_regular_when_pay" id="change_group_to_regular_when_pay" checked="checked"|cond="$hotopay_config->change_group_to_regular_when_pay == 'Y'">&nbsp;결제 이후 회원 그룹을 정회원으로 변경합니다.</label>
-				<p class="help-block">결제 이후에 회원 그룹을 준회원에서 정회원으로 변경합니다. 단, 환불시 그룹은 복구되지 않습니다.</p>
+				<p class="x_help-block">결제 이후에 회원 그룹을 준회원에서 정회원으로 변경합니다. 단, 환불시 그룹은 복구되지 않습니다.</p>
 
 				<p id="regular_associate_group_srl">
 					준회원 그룹 srl : <input type="number" name="associate_group_srl" id="associate_group_srl" value="{$hotopay_config->associate_group_srl}"><br>
@@ -108,7 +108,7 @@
 						</label>
 					<!--@endforeach-->
 				</fieldset>
-				선택된 게시판에 글을 작성하면 결제 데이터가 자동으로 생성됩니다. 다만, Hotopay 호환 게시판 스킨을 사용하셔야합니다.
+				<p class="x_help-block">선택된 게시판에 글을 작성하면 결제 데이터가 자동으로 생성됩니다. 다만, Hotopay 호환 게시판 스킨을 사용하셔야합니다.</p>
 			</div>
 		</div>
 	</section>
@@ -159,7 +159,7 @@
 				<div class="message error" cond="!$is_rhymix2">
 					<p>라이믹스 2.0 미만에서는 Toss 결제 수단을 사용할 수 없습니다.</p>
 				</div>
-				<p class="help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/tosspayments" target="_blank">설정방법</a></p>
+				<p class="x_help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/tosspayments" target="_blank">설정방법</a></p>
 			</div>
 		</div>
 
@@ -173,7 +173,7 @@
 				<label class="no-block"><input type="checkbox" name="toss_payments_list[]" id="toss_payments_list_4" value="4" checked="checked"|cond="in_array(4, $hotopay_config->toss_payments_list)"> 휴대폰</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<label class="no-block"><input type="checkbox" name="toss_payments_list[]" id="toss_payments_list_5" value="5" checked="checked"|cond="in_array(5, $hotopay_config->toss_payments_list)"> 토스앱 결제</label>&nbsp;
                 <br>
-				토스에서 사용할 결제 수단입니다.
+				<p class="x_help-block">토스에서 사용할 결제 수단입니다.</p>
 			</div>
 		</div>
 
@@ -201,7 +201,7 @@
 					<option value="{$i}" selected="selected"|cond="$hotopay_config->toss_payments_install_month == $i">{$i}개월</option>
 					<!--@end-->
 				</select>
-				<p class="help-block">할부 개월 수를 고정합니다. 설정시 회원이 할부 개월 수를 설정할 수 없습니다. 값을 설정할 경우, [최대 할부 개월 수] 항목은 무시됩니다.</p>
+				<p class="x_help-block">할부 개월 수를 고정합니다. 설정시 회원이 할부 개월 수를 설정할 수 없습니다. 값을 설정할 경우, [최대 할부 개월 수] 항목은 무시됩니다.</p>
 			</div>
 		</div>
 
@@ -214,7 +214,7 @@
 					<option value="{$i}" selected="selected"|cond="$hotopay_config->toss_payments_max_install_month == $i">{$i}개월</option>
 					<!--@end-->
 				</select>
-				<p class="help-block">회원이 결제시에 선택할 수 있는 할부 개월 수의 최댓값을 설정합니다.</p>
+				<p class="x_help-block">회원이 결제시에 선택할 수 있는 할부 개월 수의 최댓값을 설정합니다.</p>
 			</div>
 		</div>
 
@@ -296,7 +296,7 @@
 					<option value="{$i}" selected="selected"|cond="$hotopay_config->kakaopay_install_month == $i">{$i}개월</option>
 					<!--@end-->
 				</select>
-				<p class="help-block">할부 개월 수를 설정합니다.</p>
+				<p class="x_help-block">할부 개월 수를 설정합니다.</p>
 			</div>
 		</div>
 	</section>
@@ -310,7 +310,7 @@
 				<div class="message error" cond="!$is_rhymix2">
 					<p>라이믹스 2.0 미만에서는 아임포트 결제 수단을 사용할 수 없습니다.</p>
 				</div>
-				<p class="help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/iamport_api_key" target="_blank">설정방법</a></p>
+				<p class="x_help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/iamport_api_key" target="_blank">설정방법</a></p>
 			</div>
 		</div>
 
@@ -347,7 +347,7 @@
 			<label class="x_control-label" for="inicis_enabled">이니시스 활성화</label>
 			<div class="x_controls">
 				<label><input type="checkbox" name="inicis_enabled" id="inicis_enabled" checked="checked"|cond="$hotopay_config->inicis_enabled == 'Y'">&nbsp;이니시스 결제 방식을 활성화 합니다.</label>
-				<p class="help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/iamport_inicis" target="_blank">설정방법</a></p>
+				<p class="x_help-block">설정 방법은 링크를 참고해주세요. <a href="https://hotopaydocs.hotoproject.com/pg/iamport_inicis" target="_blank">설정방법</a></p>
 			</div>
 		</div>
 
@@ -369,8 +369,7 @@
 				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_smartculture" value="smartculture" checked="checked"|cond="in_array('smartculture', $hotopay_config->inicis_list)"> 스마트문상</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<label class="no-block"><input type="checkbox" name="inicis_list[]" id="inicis_list_happymoney" value="happymoney" checked="checked"|cond="in_array('happymoney', $hotopay_config->inicis_list)"> 해피머니</label>&nbsp;&nbsp;&nbsp;&nbsp;
                 <br>
-				<br>
-				이니시스에서 사용할 결제 수단입니다. 결제수단은 차후 추가될 예정입니다.
+				<p class="x_help-block">이니시스에서 사용할 결제 수단입니다. 결제수단은 차후 추가될 예정입니다.</p>
 			</div>
 		</div>
 	</section>
@@ -391,7 +390,7 @@
 					<option value="demo" selected="selected"|cond="$hotopay_config->payple_server == 'demo'">테스트 서버</option>
 					<option value="real" selected="selected"|cond="$hotopay_config->payple_server == 'real'">실운영 서버</option>
 				</select>
-				<p class="help-block">결제 서버를 선택해주세요.</p>
+				<p class="x_help-block">결제 서버를 선택해주세요.</p>
 			</div>
 		</div>
 
@@ -401,7 +400,7 @@
 				<label class="no-block"><input type="checkbox" name="payple_list[]" id="payple_list_card" value="card" checked="checked"|cond="in_array('card', $hotopay_config->payple_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<label class="no-block"><input type="checkbox" name="payple_list[]" id="payple_list_transfer" value="transfer" checked="checked"|cond="in_array('transfer', $hotopay_config->payple_list)"> 계좌</label>&nbsp;&nbsp;&nbsp;&nbsp;
                 <br>
-				페이플에서 사용할 결제 수단입니다.
+				<p class="x_help-block">페이플에서 사용할 결제 수단입니다.</p>
 			</div>
 		</div>
 
@@ -441,7 +440,7 @@
 					<option value="password" selected="selected"|cond="$hotopay_config->payple_purchase_type == 'password'">비밀번호 간편결제</option>
 					<option value="billing" selected="selected"|cond="$hotopay_config->payple_purchase_type == 'billing'" disabled>정기 결제 (지원 별도 문의)</option>
 				</select>
-				<p class="help-block">결제 데이터 저장 방식을 설정합니다.</p>
+				<p class="x_help-block">결제 데이터 저장 방식을 설정합니다.</p>
 			</div>
 		</div>
 
@@ -469,7 +468,7 @@
 			<label class="x_control-label" for="n_account_string">무통장 입금 계좌</label>
 			<div class="x_controls">
 				<textarea name="n_account_string" id="n_account_string" placeholder="신한 000-000-000 홍길동&#13;&#10;농협 000-000-000 홍길동&#13;&#10;...">{$hotopay_config->n_account_string}</textarea><br>
-				무통장 입금 계좌를 입력해주세요. 형식은 "은행명 계좌번호 예금주" 형식이며 엔터로 구분합니다.
+				<p class="x_help-block">무통장 입금 계좌를 입력해주세요. 형식은 "은행명 계좌번호 예금주" 형식이며 엔터로 구분합니다.</p>
 			</div>
 		</div>
 	</section>
