@@ -1131,11 +1131,11 @@ class HotopayController extends Hotopay
 			if ($vars->PCD_REFUND_TOTAL)
 			{
 				// 결제 취소
-				if (!in_array($purchase->status, ['CANCELED', 'FAILED', 'REFUND', 'REFUNDING']))
+				if (!in_array($purchase->status, ['CANCELED', 'FAILED', 'REFUNDED', 'REFUNDING']))
 				{
 					$args = new stdClass();
 					$args->purchase_srl = $purchase_srl;
-					$args->pay_status = 'REFUND';
+					$args->pay_status = 'REFUNDED';
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
 					$this->_RefundProcess($purchase_srl, $vars);
