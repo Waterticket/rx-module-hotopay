@@ -64,6 +64,10 @@ class HotopayAdminView extends Hotopay
 		
 		// Context에 세팅
 		Context::set('hotopay_config', $config);
+
+		$oMemberModel = MemberModel::getInstance();
+		$groups = $oMemberModel->getGroups();
+		Context::set('groups', $groups);
 		
 		// 스킨 파일 지정
 		Context::setBrowserTitle('모듈 설정 - Hotopay');

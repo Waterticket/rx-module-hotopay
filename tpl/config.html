@@ -63,13 +63,29 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="change_group_to_regular_when_pay">결제 후 회원 그룹 변경</label>
 			<div class="x_controls">
-				<label><input type="checkbox" name="change_group_to_regular_when_pay" id="change_group_to_regular_when_pay" checked="checked"|cond="$hotopay_config->change_group_to_regular_when_pay == 'Y'">&nbsp;결제 이후 회원 그룹을 정회원으로 변경합니다.</label>
-				<p class="x_help-block">결제 이후에 회원 그룹을 준회원에서 정회원으로 변경합니다. 단, 환불시 그룹은 복구되지 않습니다.</p>
+				<label><input type="checkbox" name="change_group_to_regular_when_pay" id="change_group_to_regular_when_pay" checked="checked"|cond="$hotopay_config->change_group_to_regular_when_pay == 'Y'">&nbsp;결제 이후 회원 그룹을 변경합니다.</label>
+				<p class="x_help-block">결제 이후에 회원의 그룹을 설정한 대로 변경합니다. 단, 환불시 그룹은 복구되지 않습니다.<br>[삭제할 그룹]은 결제 이후에 제거할 그룹(준회원)을 의미하며, [이동할 그룹]은 결제 이후에 추가할 그룹(정회원)을 의미합니다.</p>
 
-				<p id="regular_associate_group_srl">
-					준회원 그룹 srl : <input type="number" name="associate_group_srl" id="associate_group_srl" value="{$hotopay_config->associate_group_srl}"><br>
-					정회원 그룹 srl : <input type="number" name="regular_group_srl" id="regular_group_srl" value="{$hotopay_config->regular_group_srl}">
-				</p>
+				<div id="regular_associate_group_srl">
+					<div style="margin: 8px 0">
+						<label for="associate_group_srl" style="display:inline;margin-right: 10px">삭제할 그룹</label>
+						<select name="associate_group_srl" id="associate_group_srl">
+							<option value="0">선택 안함</option>
+							<!--@foreach($groups as $group)-->
+							<option value="{$group->group_srl}" selected="selected"|cond="$group->group_srl == $hotopay_config->associate_group_srl">{$group->title}<!--@if($group->is_default === 'Y')--> (기본 그룹)<!--@endif--><!--@if($group->is_admin === 'Y')--> (관리자 그룹)<!--@endif--></option>
+							<!--@endforeach-->
+						</select>
+					</div>
+					<div>
+						<label for="regular_group_srl" style="display:inline;margin-right: 10px">이동할 그룹</label>
+						<select name="regular_group_srl" id="regular_group_srl">
+							<option value="0">선택 안함</option>
+							<!--@foreach($groups as $group)-->
+							<option value="{$group->group_srl}" selected="selected"|cond="$group->group_srl == $hotopay_config->regular_group_srl">{$group->title}<!--@if($group->is_default === 'Y')--> (기본 그룹)<!--@endif--><!--@if($group->is_admin === 'Y')--> (관리자 그룹)<!--@endif--></option>
+							<!--@endforeach-->
+						</select>
+					</div>
+				</div>
 				<script>
 					jQuery(function($){
 						$('#change_group_to_regular_when_pay').change(function(){
