@@ -57,9 +57,6 @@ class HotopayAdminView extends Hotopay
 		$this->setTemplateFile('dashboard');
 	}
 	
-	/**
-	 * 관리자 설정 화면 예제
-	 */
 	public function dispHotopayAdminConfig()
 	{
 		// 현재 설정 상태 불러오기
@@ -71,6 +68,19 @@ class HotopayAdminView extends Hotopay
 		// 스킨 파일 지정
 		Context::setBrowserTitle('모듈 설정 - Hotopay');
 		$this->setTemplateFile('config');
+	}
+
+	public function dispHotopayAdminPaymentGatewayConfig()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+		
+		// 스킨 파일 지정
+		Context::setBrowserTitle('PG 설정 - Hotopay');
+		$this->setTemplateFile('pg_config');
 	}
 
 	public function dispHotopayAdminProductList()

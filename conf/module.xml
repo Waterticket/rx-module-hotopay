@@ -6,6 +6,7 @@
 		<!-- 관리자 액션 -->
 		<action name="dispHotopayAdminDashBoard" type="view" menu_name="hotopay" admin_index="true" />
 		<action name="dispHotopayAdminConfig" type="view" />
+		<action name="dispHotopayAdminPaymentGatewayConfig" type="view" />
 		<action name="dispHotopayAdminProductList" type="view" />
 		<action name="dispHotopayAdminInsertProduct" type="view" />
 		<action name="dispHotopayAdminModifyProduct" type="view" />
@@ -15,6 +16,7 @@
 		<action name="dispHotopayAdminNotification" type="view" />
 
 		<action name="procHotopayAdminInsertConfig" type="controller" />
+		<action name="procHotopayAdminInsertPaymentGatewayConfig" type="controller" />
 		<action name="procHotopayAdminInsertProduct" type="controller" />
 		<action name="procHotopayAdminModifyProduct" type="controller" />
 		<action name="procHotopayAdminInsertPurchase" type="controller" />

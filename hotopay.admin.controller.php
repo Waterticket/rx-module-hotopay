@@ -22,6 +22,7 @@ class HotopayAdminController extends Hotopay
 
 		$config->hotopay_purchase_enabled = empty($vars->hotopay_purchase_enabled) ? 'N' : 'Y';
 		$config->shop_name = $vars->shop_name;
+		$config->purchase_term_url = $vars->purchase_term_url;
 		$config->board_module_srl = $vars->board_module_srl;
 		$config->point_discount = empty($vars->point_discount) ? 'N' : 'Y';
 		$config->cart_item_limit = $vars->cart_item_limit;
@@ -32,6 +33,26 @@ class HotopayAdminController extends Hotopay
 
 		$config->hotopay_billingkey_encryption = $vars->hotopay_billingkey_encryption;
 		$config->hotopay_aws_kms_arn = $vars->hotopay_aws_kms_arn;
+		
+		// 변경된 설정을 저장
+		$output = $this->setConfig($config);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		
+		// 설정 화면으로 리다이렉트
+		$this->setMessage('success_registed');
+		$this->setRedirectUrl(Context::get('success_return_url'));
+	}
+
+	public function procHotopayAdminInsertPaymentGatewayConfig()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		
+		// 제출받은 데이터 불러오기
+		$vars = Context::getRequestVars();
 
 		$config->toss_enabled = empty($vars->toss_enabled) ? 'N' : 'Y';
 		$config->toss_payments_list = $vars->toss_payments_list ?? array();
@@ -70,7 +91,6 @@ class HotopayAdminController extends Hotopay
 
 		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
 		$config->n_account_string = $vars->n_account_string;
-		$config->purchase_term_url = $vars->purchase_term_url;
 		
 		// 변경된 설정을 저장
 		$output = $this->setConfig($config);
