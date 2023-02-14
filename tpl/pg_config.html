@@ -166,11 +166,11 @@
 	</section>
 
 	<section class="section">
-		<h1>아임포트 설정</h1>
+		<h1>포트원(구 아임포트) 설정</h1>
 		<div class="x_control-group">
-			<label class="x_control-label" for="iamport_enabled">아임포트 활성화</label>
+			<label class="x_control-label" for="iamport_enabled">포트원(구 아임포트) 활성화</label>
 			<div class="x_controls">
-				<label><input type="checkbox" name="iamport_enabled" id="iamport_enabled" checked="checked"|cond="$hotopay_config->iamport_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;아임포트를 활성화 합니다.</label>
+				<label><input type="checkbox" name="iamport_enabled" id="iamport_enabled" checked="checked"|cond="$hotopay_config->iamport_enabled == 'Y'" disabled="disabled"|cond="!$is_rhymix2">&nbsp;포트원(구 아임포트)를 활성화 합니다.</label>
 				<div class="message error" cond="!$is_rhymix2">
 					<p>라이믹스 2.0 미만에서는 아임포트 결제 수단을 사용할 수 없습니다.</p>
 				</div>
@@ -202,11 +202,11 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="iamport_callback_url">스토어 웹훅 (Webhook) URL</label>
 			<div class="x_controls">
-				<p style="margin-top:5px;">{getUrl()}hotopay/api/v1/iamport/paymentCallback</p><br>
+				<p style="margin-top:5px;">{getUrl()}hotopay/api/v1/portone/paymentCallback</p><br>
 			</div>
 		</div>
 
-		<h2>Inicis(이니시스) 설정 (with 아임포트)</h2>
+		<h2>Inicis(이니시스) 설정 (with 포트원)</h2>
 		<div class="x_control-group">
 			<label class="x_control-label" for="inicis_enabled">이니시스 활성화</label>
 			<div class="x_controls">
