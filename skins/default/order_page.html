@@ -1,6 +1,26 @@
 <include target="_header.html" />
 <load target="css/list.css" />
 
+<!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y')-->
+{@ $logged_info = Context::get('logged_info'); }
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
+<script>
+const clientKey = '{$hotopay_config->toss_payments_client_key}';
+const customerKey = 'HTMEMBER{$logged_info->member_srl}';
+const paymentWidget = PaymentWidget(clientKey, customerKey);  // 결제위젯 초기화
+
+function updatePrice(price)
+{
+    paymentWidget.renderPaymentMethods('#pay_method', t_price);
+}
+</script>
+<!--@else-->
+<!--// polyfill-->
+<script>
+function updatePrice(price){}
+</script>
+<!--@endif-->
+
 <form class="x_form-horizontal" action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit();">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayOrderProcess" />
@@ -148,6 +168,7 @@ function optionChange()
 
     t_price -= use_point;
 
+    updatePrice(t_price);
     $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
 }
 
