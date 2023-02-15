@@ -83,6 +83,14 @@
 		</div>
 
 		<div class="x_control-group">
+			<label class="x_control-label" for="toss_payments_widget_enabled">Toss 결제위젯 사용</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="toss_payments_widget_enabled" id="toss_payments_widget_enabled" checked="checked"|cond="$hotopay_config->toss_payments_widget_enabled == 'Y'">&nbsp;Toss 결제위젯을 사용합니다.</label>
+				<p class="x_help-block">(BETA) Hotopay 결제수단 선택 대신 Toss 결제 위젯을 사용합니다. 단, Hotopay에서 타 결제수단을 활용할 수 없습니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="toss_callback_url">Webhook 콜백 URL<br>가상계좌 입금 알림 URL</label>
 			<div class="x_controls">
 				<p style="margin-top:12px;">{getUrl()}hotopay/api/v1/toss/paymentCallback</p><br>
