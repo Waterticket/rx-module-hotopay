@@ -245,7 +245,11 @@ class HotopayController extends Hotopay
 				break;
 		}
 
-		executeQuery("hotopay.insertPurchase", $args);
+		$output = executeQuery("hotopay.insertPurchase", $args);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
 
 		if (Context::getRequestMethod() == 'JSON')
 		{
