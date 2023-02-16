@@ -1,12 +1,53 @@
 <include target="_header.html" />
 <load target="css/list.css" />
 
+<!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y')-->
+{@ $logged_info = Context::get('logged_info'); }
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
+<script>
+const clientKey = '{$hotopay_config->toss_payments_client_key}';
+const customerKey = 'HTMEMBER{$logged_info->member_srl}';
+const paymentWidget = PaymentWidget(clientKey, customerKey);  // 결제위젯 초기화
+
+function updatePrice(price)
+{
+    paymentWidget.renderPaymentMethods('#pay_method', price);
+}
+
+function _purchaseSubmit(form)
+{
+    if (!checkCheckbox()) return false;
+    var params = {pg: 'toss', pay_method: 'toss', module: 'hotopay', mid: 'hotopay'};
+    $(form).serializeArray().map(function(x){if(!['error_return_url','mid','act','module','xe_validator_id','_rx_csrf_token'].includes(x.name)) params[x.name] = x.value;});
+
+    $.exec_json('hotopay.procHotopayOrderProcess', params, function(data){
+        paymentWidget.requestPayment({
+            orderId: data.order_id,
+            orderName: data.order_name,
+            successUrl: window.location.origin + data.success_url,
+            failUrl: window.location.origin + data.fail_url,
+            customerEmail: '{$logged_info->email_address}',
+            customerName: '{$logged_info->user_name}'
+        });
+    });
+
+    return false;
+}
+</script>
+<!--@else-->
+<!--// polyfill-->
+<script>
+function updatePrice(price){}
+function _purchaseSubmit(form){return checkCheckbox();}
+</script>
+<!--@endif-->
+
 <section class="flex-container">
     <div id="p_content">
     <div id="r_content">
         <h1>주문서</h1>
         <br>
-        <form action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit();">
+        <form action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit(this);">
             <input type="hidden" name="module" value="hotopay" />
             <input type="hidden" name="act" value="procHotopayOrderProcess" />
             <table class="ht-table ht-orders">
@@ -41,7 +82,11 @@
                 </tbody>
             </table>
 
+            <!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y')-->
+            <section id="pay_method" style="margin:50px 0 0 0;">
+            <!--@else-->
             <section id="pay_method" style="margin-top:50px">
+            <!--@endif-->
                 <hr>
                 <br>
                 <!--@if(count($billing_keys) >= 1)-->
@@ -123,7 +168,7 @@
 </section>
 
 <script>
-function _purchaseSubmit()
+function checkCheckbox()
 {
 	var purchase_checkbox = $('#purchase_checkbox');
 	if(!purchase_checkbox.is(":checked"))
