@@ -24,8 +24,8 @@ function _purchaseSubmit(form)
         paymentWidget.requestPayment({
             orderId: data.order_id,
             orderName: data.order_name,
-            successUrl: data.success_url,
-            failUrl: data.fail_url,
+            successUrl: window.location.origin + data.success_url,
+            failUrl: window.location.origin + data.fail_url,
             customerEmail: '{$logged_info->email_address}',
             customerName: '{$logged_info->user_name}'
         });
