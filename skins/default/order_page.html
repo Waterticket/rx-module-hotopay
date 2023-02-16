@@ -17,7 +17,7 @@ function updatePrice(price)
 function _purchaseSubmit(form)
 {
     if (!checkCheckbox()) return false;
-    var params = {pg: 'toss'};
+    var params = {pg: 'toss', module: 'hotopay', mid: 'hotopay'};
     $(form).serializeArray().map(function(x){if(!['error_return_url','mid','act','module','xe_validator_id','_rx_csrf_token'].includes(x.name)) params[x.name] = x.value;});
 
     $.exec_json('hotopay.procHotopayOrderProcess', params, function(data){
