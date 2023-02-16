@@ -18,7 +18,7 @@ function _purchaseSubmit(form)
 {
     if (!checkCheckbox()) return false;
     var params = {pg: 'toss'};
-    $(form).serializeArray().map(function(x){params[x.name] = x.value;});
+    $(form).serializeArray().map(function(x){if(!['error_return_url','mid','act','module','xe_validator_id','_rx_csrf_token'].includes(x.name)) params[x.name] = x.value;});
 
     $.exec_json('hotopay.procHotopayOrderProcess', params, function(data){
         paymentWidget.requestPayment({
