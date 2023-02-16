@@ -17,7 +17,7 @@ function updatePrice(price)
 function _purchaseSubmit(form)
 {
     if (!checkCheckbox()) return false;
-    var params = {pg: toss};
+    var params = {pg: 'toss'};
     $(form).serializeArray().map(function(x){params[x.name] = x.value;});
 
     $.exec_json('hotopay.procHotopayOrderProcess', params, function(data){
