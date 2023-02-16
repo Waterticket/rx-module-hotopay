@@ -1316,6 +1316,7 @@ class HotopayController extends Hotopay
 			case 'card':
 			case 'voucher':
 			case 'cellphone':
+			case 'toss':
 				$tossController = new Toss();
 				$output = $tossController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
 				break;
@@ -1343,6 +1344,16 @@ class HotopayController extends Hotopay
 			
 			case 'n_account':
 				$output = $this->createObject();
+				break;
+
+			case 'point':
+				$oPointController = \PointController::getInstance();
+				Context::set('__point_message__', sprintf('구매 환불 #%d (사유: %s)', $purchase_srl, $cancel_reason));
+				$output = $oPointController->setPoint($member_srl, $cancel_amount, 'add');
+				break;
+
+			default:
+				$output = $this->createObject(-1, sprintf("환불할 수 없는 결제수단입니다. (%s)", $purchase->pay_method));
 				break;
 		}
 
