@@ -42,7 +42,7 @@ function _purchaseSubmit(form){return checkCheckbox();}
 </script>
 <!--@endif-->
 
-<form class="x_form-horizontal" action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit();">
+<form class="x_form-horizontal" action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit(this);">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayOrderProcess" />
 	<input type="hidden" name="xe_validator_id" value="modules/hotopay/tpl/config/1" />
