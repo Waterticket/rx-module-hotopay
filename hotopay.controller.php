@@ -190,7 +190,7 @@ class HotopayController extends Hotopay
 		$args->pay_data = '';
 		$args->extra_vars = serialize($extra_vars);
 
-		$pg = $vars->pay_method;
+		$pg = in_array($vars->pg, ['toss']) ? $vars->pg : $vars->pay_method;
 		if(substr($pg, 0, 6) === 'paypl_')
 		{
 			$pg = 'payple';
@@ -247,9 +247,24 @@ class HotopayController extends Hotopay
 
 		executeQuery("hotopay.insertPurchase", $args);
 
-		header('HTTP/1.1 307 Temporary move');
-		header('Location: ' . getNotEncodedUrl('','mid','hotopay','act','procHotopayPayProcess','order_id',$order_id));
-		return;
+		if (Context::getRequestMethod() == 'JSON')
+		{
+			$order_id_str = 'HT'.str_pad($order_id, 4, "0", STR_PAD_LEFT);
+			$this->add('order_id', $order_id_str);
+			$this->add('order_name', $args->title);
+
+			if ($pg == 'toss')
+			{
+				$this->add('success_url', '/hotopay/payStatus/toss/success/'.$order_id_str);
+				$this->add('fail_url', '/hotopay/payStatus/toss/fail/'.$order_id_str);
+			}
+		}
+		else
+		{
+			header('HTTP/1.1 307 Temporary move');
+			header('Location: ' . getNotEncodedUrl('','mid','hotopay','act','procHotopayPayProcess','order_id',$order_id));
+			return;
+		}
 	}
 
 	public function procHotopayPayProcess()

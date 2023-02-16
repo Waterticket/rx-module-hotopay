@@ -13,11 +13,30 @@ function updatePrice(price)
 {
     paymentWidget.renderPaymentMethods('#pay_method', price);
 }
+
+function _purchaseSubmit(form)
+{
+    if (!checkCheckbox()) return false;
+    var params = {pg: toss};
+    $(form).serializeArray().map(function(x){params[x.name] = x.value;});
+
+    $.exec_json('hotopay.procHotopayOrderProcess', params, function(data){
+        paymentWidget.requestPayment({
+            orderId: data.order_id,
+            orderName: data.order_name,
+            successUrl: data.success_url,
+            failUrl: data.fail_url,
+            customerEmail: '{$logged_info->email_address}',
+            customerName: '{$logged_info->user_name}'
+        });
+    });
+}
 </script>
 <!--@else-->
 <!--// polyfill-->
 <script>
 function updatePrice(price){}
+function _purchaseSubmit(form){return checkCheckbox();}
 </script>
 <!--@endif-->
 
@@ -72,7 +91,11 @@ function updatePrice(price){}
 
         <br><br>
 
+        <!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y')-->
+        <section id="pay_method" style="margin:0">
+        <!--@else-->
         <section id="pay_method">
+        <!--@endif-->
             <!--@if($toss_enabled)-->
                 <!--@if(in_array(1, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_card" value="card" checked="checked" required="required"><label for="pm_card"> 카드</label>&nbsp;<!--@endif-->
                 <!--@if(in_array(6, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_acct" value="ts_account" required="required"><label for="pm_acct"> 계좌이체</label>&nbsp;<!--@endif-->
@@ -172,7 +195,7 @@ function optionChange()
     $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
 }
 
-function _purchaseSubmit()
+function checkCheckbox()
 {
 	var purchase_checkbox = $('#purchase_checkbox');
 	if(!purchase_checkbox.is(":checked"))
