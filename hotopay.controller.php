@@ -1521,7 +1521,7 @@ class HotopayController extends Hotopay
 	public function _AdminMailer($status, $purchase)
 	{
 		$config = $this->getConfig();
-		if (!$config->admin_mailing !== 'Y')
+		if ($config->admin_mailing !== 'Y')
 		{
 			return;
 		}
