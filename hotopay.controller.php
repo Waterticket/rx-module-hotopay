@@ -55,7 +55,7 @@ class HotopayController extends Hotopay
 
 		$product_info = $oHotopayModel->getProducts($product_srl_list);
 
-		foreach ($product_list as &$product)
+		foreach ($product_list as $product)
 		{
 			foreach ($product_info as $info)
 			{
@@ -72,12 +72,12 @@ class HotopayController extends Hotopay
 		$total_price = 0;
 		$original_price = 0;
 
-		foreach($product_list as $product)
+		foreach($product_list as $_product)
 		{
-			if($product->info->product_status != 'selling') return $this->createObject(-1, "판매중이 아닌 상품이 있습니다.");
+			if($_product->info->product_status != 'selling') return $this->createObject(-1, "판매중이 아닌 상품이 있습니다.");
 
-			$option_srl = $product->option_srl;
-			$option = $product->info->product_option[$option_srl];
+			$option_srl = $_product->option_srl;
+			$option = $_product->info->product_option[$option_srl];
 
 			if($option->infinity_stock != 'Y' && $option->stock < 1) return $this->createObject(-1, "재고가 부족한 항목이 있습니다.");
 		}
@@ -96,7 +96,6 @@ class HotopayController extends Hotopay
 				$title = $product->product_name;
 				$tc++;
 			}
-
 
 			$obj = new StdClass();
 			$obj->item_srl = getNextSequence();
