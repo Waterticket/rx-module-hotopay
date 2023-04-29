@@ -945,6 +945,7 @@ class HotopayController extends Hotopay
 				$trigger_obj->amount = $purchase->data->product_purchase_price;
 				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
 
+				$this->_ActivePurchase($purchase_srl);
 				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
 				return;
 			}
