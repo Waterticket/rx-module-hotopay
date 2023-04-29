@@ -2,9 +2,9 @@
 
 /**
  * Hoto Pay
- * 
+ *
  * Copyright (c) Waterticket
- * 
+ *
  * Generated with https://www.poesis.org/tools/modulegen/
  */
 class HotopayModel extends Hotopay
@@ -72,7 +72,7 @@ class HotopayModel extends Hotopay
 
         return $output->data;
     }
-    
+
 	public function getProductOptions($product_srl)
     {
         $args = new stdClass();
@@ -86,7 +86,7 @@ class HotopayModel extends Hotopay
         }
 
         $product_options = array();
-        
+
         foreach($output->data as $key => $val)
         {
             $val->extra_vars = unserialize($val->extra_vars);
@@ -183,7 +183,7 @@ class HotopayModel extends Hotopay
             case 'PENDING':
                 return "결제 대기중";
                 break;
-            
+
             case 'WAITING_FOR_DEPOSIT':
                 return "입금 대기중";
                 break;
@@ -246,7 +246,7 @@ class HotopayModel extends Hotopay
 
             case "inic_card":
                 return "신용카드";
-            
+
             case "inic_trans":
                 return "실시간계좌이체";
 
@@ -282,7 +282,7 @@ class HotopayModel extends Hotopay
     public function stringCut($str,$length)
     {
         $result = "";
-         
+
         if(mb_strlen($str) > $length) {
             $result = mb_substr($str, 0, $length - 1);
             $result = $result."...";
@@ -290,7 +290,7 @@ class HotopayModel extends Hotopay
             $result = $str;
         }
 
-        return $result; 
+        return $result;
     }
 
     public function changeMessageRegisterKey($string, $purchase = null)
@@ -302,7 +302,7 @@ class HotopayModel extends Hotopay
 
         if(isset($pay_data->virtualAccount->accountNumber))
             $account = $pay_data->virtualAccount->bank.' '.$pay_data->virtualAccount->accountNumber;
-        
+
         if($purchase->pay_method == 'n_account')
         {
             $n_account_arr = preg_split('/\r\n|\r|\n/', $config->n_account_string);
@@ -423,7 +423,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_cart 테이블에 아이템 하나를 추가한다.
-     * 
+     *
      * @param object $obj
      */
     public static function insertCartItem(object $obj): object
@@ -444,7 +444,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_cart 테이블에서 멤버의 카트 아이템을 가져온다.
-     * 
+     *
      * @param int $member_srl
      */
     public static function getCartItems(int $member_srl): array
@@ -463,7 +463,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_cart 테이블에서 아이템을 삭제한다.
-     * 
+     *
      * @param int $cart_item_srl
      * @param int $member_srl
      */
@@ -489,7 +489,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_cart 테이블에서 아이템을 업데이트한다.
-     * 
+     *
      * @param object $obj
      */
     public static function updateCartItem(object $obj): object
@@ -529,7 +529,7 @@ class HotopayModel extends Hotopay
         if ($item_count === false)
         {
             $item_count = self::getCartItemCount($member_srl);
-            $this->setCache('cart_item_count_' . $member_srl, $item_count);
+            $this->setCache('cart_item_count_' . $member_srl, $item_count, 3600);
         }
 
         return $item_count;
@@ -557,7 +557,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_billing_key 테이블에 BillingKey 하나를 추가한다.
-     * 
+     *
      * @param object $obj
      */
     public static function insertBillingKey(object $obj): object
@@ -578,7 +578,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_billing_key 테이블에서 BillingKey를 가져온다.
-     * 
+     *
      * @param int $key_idx
      */
     public static function getBillingKey(int $key_idx): object
@@ -597,7 +597,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_billing_key 테이블에서 BillingKey를 가져온다.
-     * 
+     *
      * @param int $key_idx
      */
     public static function getBillingKeyByKeyHash(int $member_srl, string $key_hash): object
@@ -617,7 +617,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_billing_key 테이블에서 BillingKey 여러 건을 가져온다.
-     * 
+     *
      * @param int $member_srl
      */
     public static function getBillingKeys(int $member_srl): array
@@ -636,7 +636,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_billing_key 테이블에서 BillingKey를 업데이트한다.
-     * 
+     *
      * @param object $obj
      */
     public static function updateBillingKey(object $obj): object
@@ -657,7 +657,7 @@ class HotopayModel extends Hotopay
 
     /**
      * hotopay_billing_key 테이블에서 BillingKey를 삭제한다.
-     * 
+     *
      * @param int $key_idx
      */
     public static function deleteBillingKey(int $key_idx): object
