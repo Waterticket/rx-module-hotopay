@@ -124,6 +124,8 @@ class HotopayController extends Hotopay
 			}
 		}
 
+		$this->deleteCache('cart_item_count_' . $logged_info->member_srl);
+
 		if($tc > 0)
 		{
 			$title .= " 외 ".$tc."개";
