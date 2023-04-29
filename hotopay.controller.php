@@ -2,11 +2,11 @@
 /**
  * Hoto Pay
  * Hoto Pay Controller
- * 
+ *
  * Copyright (c) Waterticket
- * 
+ *
  * Generated with https://www.poesis.org/tools/modulegen/
- * 
+ *
  * @package HotoPay
  * @author Waterticket
  * @copyright Copyright (c) Waterticket
@@ -16,7 +16,7 @@ class HotopayController extends Hotopay
 {
 	/**
 	 * PG사로 데이터를 넘기기 전에 Form에서 넘어온 데이터를 처리합니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayOrderProcess()
@@ -140,7 +140,7 @@ class HotopayController extends Hotopay
 			$input_point = intval($vars->use_point, 10) ?? 0;
 
 			if ($input_point < 0) $input_point = 0;
-			
+
 			if ($input_point > $user_point)
 			{
 				return $this->createObject(-1, "포인트가 부족합니다.");
@@ -202,7 +202,7 @@ class HotopayController extends Hotopay
 				$usd_total = $oHotopayModel->changeCurrency('KRW', 'USD', $total_price);
 
 				$paypalController = new Paypal();
-		
+
 				$obj1 = (object) array(
 					"name" => $title,
 					"description" => $config->shop_name."에서 판매하는 상품입니다.",
@@ -216,7 +216,7 @@ class HotopayController extends Hotopay
 				$order->items = array(
 					$obj1,
 				);
-		
+
 				$order_obj = $paypalController->createOrder($order, $order_id);
 				$args->pay_data = json_encode($order_obj);
 				break;
@@ -374,7 +374,7 @@ class HotopayController extends Hotopay
 	/**
 	 * PG사에서 넘어온 결제 데이터를 처리합니다
 	 * Success라면 결제 승인 명령을 PG사로 보냅니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayPayStatus()
@@ -408,7 +408,7 @@ class HotopayController extends Hotopay
 				{
 					return $this->createObject(-1, "결제 실패. (code: 1003)");
 				}
-	
+
 				if($purchase->data->product_purchase_price != $vars->amount)
 				{
 					return $this->createObject(-1, "결제 실패.");
@@ -499,7 +499,7 @@ class HotopayController extends Hotopay
 				if(strcmp($order_detail->status,"APPROVED") === 0) // 결제 완료에 경우
 				{
 					$capture_output = $paypalController->captureOrder($pay_data->id);
-					
+
 					$args = new stdClass();
 					$args->purchase_srl = $purchase_srl;
 					$args->pay_data = json_encode($capture_output);
@@ -803,7 +803,7 @@ class HotopayController extends Hotopay
 									$billing_key_obj->key = $oHotopayModel->encryptKey($result->PCD_PAYER_ID);
 									$billing_key_obj->key_hash = $key_hash;
 									$billing_key_obj->regdate = time();
-	
+
 									switch ($result->PCD_PAY_TYPE)
 									{
 										case 'transfer':
@@ -811,7 +811,7 @@ class HotopayController extends Hotopay
 											$billing_key_obj->alias = $result->PCD_PAY_BANKNAME ?? 'BANK';
 											$billing_key_obj->number = $result->PCD_PAY_BANKNUM ?? '0000*******0000';
 											break;
-	
+
 										case 'card':
 										default:
 											$billing_key_obj->payment_type = 'card';
@@ -985,7 +985,7 @@ class HotopayController extends Hotopay
 			}
 
 			executeQuery('hotopay.updatePurchaseStatus', $args);
-			
+
 			$_SESSION['hotopay_'.$vars->orderId] = (object) $res_array;
 
 			$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->orderId));
@@ -994,7 +994,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * Toss Payments에서 넘어오는 결제 Callback을 처리합니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayTossPaymentsCallback()
@@ -1004,7 +1004,7 @@ class HotopayController extends Hotopay
 
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
-		
+
 		if(!isset($vars->orderId) || !isset($vars->secret) || !isset($vars->status))
 		{
 			http_response_code(400);
@@ -1058,7 +1058,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 아임포트에서 넘어오는 결제 Callback을 처리합니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayIamportCallback()
@@ -1228,7 +1228,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 결제가 완료되었다면 결제 완료 알림을 보내며, 상품 구매를 최종 승인합니다
-	 * 
+	 *
 	 * @param int $purchase_srl 결제 번호를 받습니다.
 	 * @param int $member_srl RX에서 멤버 번호를 받습니다.
 	 * @return void
@@ -1240,7 +1240,7 @@ class HotopayController extends Hotopay
 
 		$oHotopayModel = getModel('hotopay');
 		$purchase = $oHotopayModel->getPurchase($purchase_srl);
-		
+
 		$trigger_obj = new stdClass();
 		$trigger_obj->member_srl = $member_srl;
 		$trigger_obj->purchase_srl = $purchase_srl;
@@ -1251,7 +1251,7 @@ class HotopayController extends Hotopay
 		$args->purchase_srl = $purchase_srl;
 		$args->pay_status = "DONE";
 		executeQuery('hotopay.updatePurchaseStatus', $args);
-		
+
 		$this->_MessageMailer("DONE", $purchase);
 		$this->_AdminMailer("DONE", $purchase);
 
@@ -1290,7 +1290,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * PG사와 통신하여 결제를 환불합니다.
-	 * 
+	 *
 	 * @param int $purchase_srl 결제 번호입니다.
 	 * @param string $cancel_reason 환불 사유입니다. 클라이언트에게 보여집니다.
 	 * @param int $cancel_amount 환불 금액입니다. -1이면 전체환불, 0보다 크면 입력한 금액만큼 환불합니다.
@@ -1341,7 +1341,7 @@ class HotopayController extends Hotopay
 				$paypleController = new Payple();
 				$output = $paypleController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
 				break;
-			
+
 			case 'n_account':
 				$output = $this->createObject();
 				break;
@@ -1374,7 +1374,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * Hotopay에서 결제 취소 처리를 합니다.
-	 * 
+	 *
 	 * @param int $purchase_srl 결제 번호입니다.
 	 * @param array $output_data PG사에서 받은 환불 정보입니다. pay_data에 json으로 저장됩니다.
 	 * @return object
@@ -1431,7 +1431,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 결제 상태에 따라서 알림을 보내주는 함수 입니다.
-	 * 
+	 *
 	 * @param string $status 상태코드 입니다.
 	 * @param object $purchase_data 결제 데이터입니다. DB에서 나온 데이터를 그대로 넣어주시면 됩니다.
 	 * @return void
@@ -1513,7 +1513,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 결제 상태에 따라 관리자에게 알림을 보내주는 함수입니다.
-	 * 
+	 *
 	 * @param string $status 상태코드 입니다.
 	 * @param object $purchase 결제 데이터입니다. DB에서 나온 데이터를 그대로 넣어주시면 됩니다.
 	 * @return void
@@ -1562,7 +1562,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 멤버 정보에 있는 메일 주소로 메일을 보내는 함수입니다.
-	 * 
+	 *
 	 * @param int $member_srl 멤버 번호입니다.
 	 * @param string $mail_title 메일 제목입니다.
 	 * @param string $mail_content 메일 내용입니다.
@@ -1584,7 +1584,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 멤버 정보에 있는 전화번호로 SMS를 보내는 함수입니다.
-	 * 
+	 *
 	 * @param int $member_srl 멤버 번호입니다.
 	 * @param string $content SMS 내용입니다.
 	 * @return void
@@ -1624,7 +1624,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 멤버 메뉴에 목록을 추가합니다
-	 * 
+	 *
 	 * @param object $obj member.getMemberMenu 트리거 데이터가 들어있습니다.
 	 * @return void
 	 */
@@ -1641,7 +1641,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 쇼핑몰 게시판에 글을 쓸 경우 상품을 등록합니다.
-	 * 
+	 *
 	 * @param object $obj document.insertDocument 트리거 데이터가 들어있습니다.
 	 * @return void
 	 */
@@ -1687,7 +1687,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 쇼핑몰 게시판에 글을 쓸 경우 상품을 등록합니다.
-	 * 
+	 *
 	 * @param object $obj document.insertDocument 트리거 데이터가 들어있습니다.
 	 * @return void
 	 */
@@ -1706,7 +1706,7 @@ class HotopayController extends Hotopay
 			foreach($obj->sale_option as &$options)
 			{
 				$options = (object) $options;
-				$options->price = preg_replace("/[^\d]/", "", $options->price); 
+				$options->price = preg_replace("/[^\d]/", "", $options->price);
 				if($lowest_price == -1 || $options->price < $lowest_price)
 				{
 					$lowest_price = $options->price;
@@ -1740,7 +1740,7 @@ class HotopayController extends Hotopay
 
 	/**
 	 * 카트에 상품을 넣습니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayAddCartItem()
@@ -1794,15 +1794,14 @@ class HotopayController extends Hotopay
 		$args->regdate = date('YmdHis');
 
 		$oHotopayModel->insertCartItem($args);
-
-		$this->setCache('cart_item_count_' . $member_srl, $current_cart_item_count + 1);
+		$this->deleteCache('cart_item_count_' . $member_srl);
 
 		$this->setMessage('장바구니에 추가되었습니다.');
 	}
 
 	/**
 	 * 카트에서 선택한 상품을 제거합니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayDeleteCartItem()
@@ -1819,16 +1818,14 @@ class HotopayController extends Hotopay
 
 		$oHotopayModel = getModel('hotopay');
 		$oHotopayModel->deleteCartItem($cart_item_srl, $member_srl);
-
-		$current_cart_item_count = $oHotopayModel->getCartItemCount($member_srl);
-		$this->setCache('cart_item_count_' . $member_srl, $current_cart_item_count);
+		$this->deleteCache('cart_item_count_' . $member_srl);
 
 		$this->setMessage('장바구니에서 삭제되었습니다.');
 	}
 
 	/**
 	 * 카트에 들어있는 상품의 세부 값을 변경합니다
-	 * 
+	 *
 	 * @return void
 	 */
 	public function procHotopayUpdateCartItem()
