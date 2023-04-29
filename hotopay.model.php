@@ -513,7 +513,7 @@ class HotopayModel extends Hotopay
         $args = new \stdClass();
         $args->member_srl = $member_srl;
 
-        $output = executeQueryArray('hotopay.getCartItemCount', $args);
+        $output = executeQuery('hotopay.getCartItemCount', $args);
         if(!$output->toBool())
         {
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
