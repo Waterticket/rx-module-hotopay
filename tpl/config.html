@@ -100,6 +100,43 @@
 			</div>
 		</div>
 	</section>
+
+	<section class="section">
+		<h1>Hotopay Pro 설정</h1>
+		{@
+			$validator = new HotopayLicenseValidator();
+			$isValid = $validator->validate($hotopay_config->hotopay_license_key);
+			if ($isValid):
+				$license_info = $validator->validate($hotopay_config->hotopay_license_key, true);
+			endif;
+		}
+		<div class="x_control-group">
+			<label class="x_control-label" for="license_status">라이선스 상태</label>
+			<div class="x_controls">
+				<p cond="!empty($hotopay_config->hotopay_license_key)">{$isValid ? '<span style="color: green">PRO 플랜 사용중</span>' : '<span style="color: red">유효하지 않은 라이선스입니다.</span>'}</p>
+				<p cond="empty($hotopay_config->hotopay_license_key)"><span style="color: orange">무료 플랜 사용중</span></p>
+			</div>
+		</div>
+		<div class="x_control-group" cond="$isValid">
+			<label class="x_control-label" for="license_duration">유효 기간</label>
+			<div class="x_controls">
+				<p>{$license_info[1]} ({round((strtotime($license_info[1]) - time())/86400)}일 남음)</p>
+			</div>
+		</div>
+		<div class="x_control-group" cond="$isValid">
+			<label class="x_control-label" for="license_domain">유효 도메인</label>
+			<div class="x_controls">
+				<p>{$license_info[2]}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="hotopay_license_key">Pro 라이선스 키</label>
+			<div class="x_controls">
+				<textarea name="hotopay_license_key" id="hotopay_license_key" rows="7" style="width: 400px;" placeholder="라이선스 키를 입력해주세요.">{$hotopay_config->hotopay_license_key}</textarea>
+				<p class="x_help-block">Hotopay Pro 기능 사용을 위한 라이선스키를 입력해주세요.</p>
+			</div>
+		</div>
+	</section>
 	
 	<section class="section">
 		<h1>게시판 설정</h1>

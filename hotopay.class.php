@@ -109,6 +109,8 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->associate_group_srl)) self::$_config_cache->associate_group_srl = 2; // 준회원 그룹 srl
 			if(!isset(self::$_config_cache->regular_group_srl)) self::$_config_cache->regular_group_srl = 3; // 정회원 그룹 srl
 
+			if(!isset(self::$_config_cache->hotopay_license_key)) self::$_config_cache->hotopay_license_key = ''; // Hotopay 라이선스 키
+
 			if(!isset(self::$_config_cache->hotopay_billingkey_encryption)) self::$_config_cache->hotopay_billingkey_encryption = 'none'; // 빌링키 암호화 수단 (none/awskms)
 			if(!isset(self::$_config_cache->hotopay_aws_kms_arn)) self::$_config_cache->hotopay_aws_kms_arn = ''; // AWS KMS ARN
 			
