@@ -120,7 +120,7 @@
 		<div class="x_control-group" cond="$isValid">
 			<label class="x_control-label" for="license_duration">유효 기간</label>
 			<div class="x_controls">
-				<p>{$license_info[1]} ({round((strtotime($license_info[1]) - time())/86400)}일 남음)</p>
+				<p>{$license_info[1]} ({number_format(round((strtotime($license_info[1]) - time())/86400))}일 남음)</p>
 			</div>
 		</div>
 		<div class="x_control-group" cond="$isValid">
@@ -132,7 +132,7 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="hotopay_license_key">Pro 라이선스 키</label>
 			<div class="x_controls">
-				<textarea name="hotopay_license_key" id="hotopay_license_key" rows="7" style="width: 400px;" placeholder="라이선스 키를 입력해주세요.">{$hotopay_config->hotopay_license_key}</textarea>
+				<textarea name="hotopay_license_key" id="hotopay_license_key" rows="7" style="max-width: 400px; width: 100%" placeholder="라이선스 키를 입력해주세요.">{$hotopay_config->hotopay_license_key}</textarea>
 				<p class="x_help-block">Hotopay Pro 기능을 사용하기 위해 라이선스키를 입력해주세요.</p>
 			</div>
 		</div>
