@@ -62,6 +62,7 @@ class HotopayAdminController extends Hotopay
 		$config->toss_payments_install_month = $vars->toss_payments_install_month;
 		$config->toss_payments_max_install_month = $vars->toss_payments_max_install_month;
 		$config->toss_payments_widget_enabled = empty($vars->toss_payments_widget_enabled) ? 'N' : 'Y';
+		$config->toss_payments_billing_enabled = empty($vars->toss_payments_billing_enabled) ? 'N' : 'Y';
 
 		$config->paypal_enabled = empty($vars->paypal_enabled) ? 'N' : 'Y';
 		$config->paypal_client_key = $vars->paypal_client_key;
@@ -90,6 +91,8 @@ class HotopayAdminController extends Hotopay
 		$config->payple_refund_key = $vars->payple_refund_key;
 		$config->payple_referer_domain = preg_replace('#^[^:/.]*[:/]+#i', '', $vars->payple_referer_domain);
 		$config->payple_purchase_type = $vars->payple_purchase_type;
+		$config->payple_billing_enabled = empty($vars->payple_billing_enabled) ? 'N' : 'Y';
+		$config->payple_billing_payments_list = $vars->payple_billing_payments_list;
 
 		$config->n_account_enabled = empty($vars->n_account_enabled) ? 'N' : 'Y';
 		$config->n_account_string = $vars->n_account_string;

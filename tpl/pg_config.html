@@ -86,7 +86,15 @@
 			<label class="x_control-label" for="toss_payments_widget_enabled">Toss 결제위젯 사용</label>
 			<div class="x_controls">
 				<label><input type="checkbox" name="toss_payments_widget_enabled" id="toss_payments_widget_enabled" checked="checked"|cond="$hotopay_config->toss_payments_widget_enabled == 'Y'">&nbsp;Toss 결제위젯을 사용합니다.</label>
-				<p class="x_help-block">(BETA) Hotopay 결제수단 선택 대신 Toss 결제 위젯을 사용합니다. 단, Hotopay에서 타 결제수단을 활용할 수 없습니다.</p>
+				<p class="x_help-block">Hotopay 결제수단 선택 대신 Toss 결제 위젯을 사용합니다. 단, Hotopay에서 타 결제수단을 활용할 수 없습니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="toss_payments_billing_enabled">Toss 정기 결제(빌링) 사용</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="toss_payments_billing_enabled" id="toss_payments_billing_enabled" checked="checked"|cond="$hotopay_config->toss_payments_billing_enabled == 'Y'" disabled="disabled"|cond="!$isLicenseValid">&nbsp;정기결제 기능을 사용합니다.</label>
+				<p class="x_help-block">Toss 정기결제 기능을 사용합니다. Pro 전용 기능입니다.</p>
 			</div>
 		</div>
 
@@ -310,9 +318,26 @@
 				<select name="payple_purchase_type" id="payple_purchase_type">
 					<option value="none" selected="selected"|cond="$hotopay_config->payple_purchase_type == 'none'">단일 결제</option>
 					<option value="password" selected="selected"|cond="$hotopay_config->payple_purchase_type == 'password'">비밀번호 간편결제</option>
-					<option value="billing" selected="selected"|cond="$hotopay_config->payple_purchase_type == 'billing'" disabled>정기 결제 (지원 별도 문의)</option>
 				</select>
 				<p class="x_help-block">결제 데이터 저장 방식을 설정합니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="payple_billing_enabled">Payple 정기 결제(빌링) 사용</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="payple_billing_enabled" id="payple_billing_enabled" checked="checked"|cond="$hotopay_config->payple_billing_enabled == 'Y'" disabled="disabled"|cond="!$isLicenseValid">&nbsp;정기결제 기능을 사용합니다.</label>
+				<p class="x_help-block">Payple 정기결제 기능을 사용합니다. Pro 전용 기능입니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label">정기 결제 허용 수단</label>
+			<div class="x_controls">
+				<label class="no-block"><input type="checkbox" name="payple_billing_payments_list[]" id="payple_billing_payments_list_card" value="card" checked="checked"|cond="in_array('card', $hotopay_config->payple_billing_payments_list)"> 카드</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="no-block"><input type="checkbox" name="payple_billing_payments_list[]" id="payple_billing_payments_list_trans" value="trans" checked="checked"|cond="in_array('trans', $hotopay_config->payple_billing_payments_list)"> 계좌</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <br>
+				<p class="x_help-block">정기 결제 허용 수단입니다.</p>
 			</div>
 		</div>
 

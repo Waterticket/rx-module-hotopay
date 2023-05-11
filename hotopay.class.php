@@ -128,6 +128,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->toss_payments_install_month)) self::$_config_cache->toss_payments_install_month = -1; // 토스 할부 개월 수 (고정)
 			if(!isset(self::$_config_cache->toss_payments_max_install_month)) self::$_config_cache->toss_payments_max_install_month = 0; // 토스 선택 가능한 최대 할부 개월 수
 			if(!isset(self::$_config_cache->toss_payments_widget_enabled)) self::$_config_cache->toss_payments_widget_enabled = 'N'; // 토스 결제 위젯 활성화
+			if(!isset(self::$_config_cache->toss_payments_billing_enabled)) self::$_config_cache->toss_payments_billing_enabled = 'N'; // 토스 정기결제 (빌링) 활성화
 
 			if(!isset(self::$_config_cache->paypal_client_key)) self::$_config_cache->paypal_client_key = ''; // 페이팔 클라이언트 키
 			if(!isset(self::$_config_cache->paypal_secret_key)) self::$_config_cache->paypal_secret_key = ''; // 페이팔 시크릿 키
@@ -150,6 +151,8 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->payple_refund_key)) self::$_config_cache->payple_refund_key = ''; // 페이플 환불키 (PCD_REFUND_KEY)
 			if(!isset(self::$_config_cache->payple_referer_domain)) self::$_config_cache->payple_referer_domain = ''; // 페이플 도메인 검증용 referer 도메인 (https:// 제외)
 			if(!isset(self::$_config_cache->payple_purchase_type)) self::$_config_cache->payple_purchase_type = 'none'; // 페이플 결제 데이터 저장 타입 (none, password, billing)
+			if(!isset(self::$_config_cache->payple_billing_enabled)) self::$_config_cache->payple_billing_enabled = 'N'; // 페이플 정기결제 (빌링) 활성화
+			if(!isset(self::$_config_cache->payple_billing_payments_list)) self::$_config_cache->payple_billing_payments_list = array(); // 페이플 정기결제 수단 목록
 
 			if(!isset(self::$_config_cache->n_account_string)) self::$_config_cache->n_account_string = ''; // 무통장 입금 계좌
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
