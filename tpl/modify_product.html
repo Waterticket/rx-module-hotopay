@@ -208,6 +208,7 @@
             <!--@foreach($groups as $group)-->
             <label><input type="radio" name="product_buyer_group" value="{$group->group_srl}" checked="checked"|cond="$product->product_buyer_group == $group->group_srl">&nbsp;{$group->title}</label>
             <!--@endforeach-->
+            <p class="x_help-block">구매시 부여할 그룹을 선택합니다. 정기결제 상품은 구매 후 다음 만료일 전까지 해당 그룹이 유효하며 기한 만료 혹은 결재 실패시 회수됩니다.</p>
         </div>
     </div>
 	
