@@ -15,6 +15,12 @@
     endif;
 }
 
+<style>
+.billing-option {
+    display: none;
+}
+</style>
+
 <form class="x_form-horizontal" action="./" method="post" id="hotopay" enctype="multipart/form-data">
 	<input type="hidden" name="module" value="hotopay" />
 	<input type="hidden" name="act" value="procHotopayAdminModifyProduct" />
@@ -90,6 +96,18 @@
         </div>
     </div>
 
+    {@
+        $validator = new HotopayLicenseValidator();
+        $isValid = $validator->validate($hotopay_config->hotopay_license_key);
+    }
+    <div class="x_control-group">
+        <label class="x_control-label" for="is_billing">정기 결제 여부</label>
+        <div class="x_controls">
+            <label><input type="checkbox" id="is_billing" name="is_billing" value="Y" disabled="disabled"|cond="!$isValid" checked="checked"|cond="$product->is_billing == 'Y'">&nbsp;정기결제 상품입니다. (PRO 전용)</label>
+            <p class="x_help-block">정기 결제가 필요한 상품인 경우 체크하세요.</p>
+        </div>
+    </div>
+
 	<div class="x_control-group">
         <label class="x_control-label">상품 판매 옵션</label>
         <div class="x_controls">
@@ -100,6 +118,7 @@
                     <th scope="col">옵션 설명</th>
                     <th scope="col">판매 가격</th>
                     <th scope="col">판매 재고</th>
+                    <th scope="col" class="billing-option">정기결제 주기</th>
                     <th scope="col">관리</th>
                 </tr>
                 </thead>
@@ -115,6 +134,7 @@
                     <td><input type="number" name="sale_option[{$i}][price]" placeholder="판매 가격" value="{$item->price}" required></td>
                     <td><input type="number" name="sale_option[{$i}][stock]" placeholder="재고 수량" value="{($item->stock > 0) ? $item->stock : 0}" required readonly|cond="$item->infinity_stock == 'Y'"><br>
                         <label><input type="checkbox" name="sale_option[{$i}][infinity_stock]" value="Y" onclick="trigger_stock(this)" checked|cond="$item->infinity_stock == 'Y'">&nbsp;무제한</label></td>
+                    <td class="billing-option"><input type="number" name="sale_option[{$i}][billing_period_date]" placeholder="일" value="{$item->billing_period_date}"></td>
                     <td><a href="javascript:void(0)" onclick="remove_option(this)">제거</a></td>
                 </tr>
                 {@ $i++; }
@@ -134,6 +154,7 @@
                     html += '<td><input type="number" name="sale_option['+option_count+'][price]" placeholder="판매 가격" required></td>';
                     html += '<td><input type="number" name="sale_option['+option_count+'][stock]" placeholder="재고 수량" required><br>';
                     html += '<label><input type="checkbox" name="sale_option['+option_count+'][infinity_stock]" value="Y" onclick="trigger_stock(this)">&nbsp;무제한</label></td>';
+                    html += '<td class="billing-option"><input type="number" name="sale_option['+option_count+'][billing_period_date]" placeholder="일"></td>';
                     html += '<td><a href="javascript:void(0)" onclick="remove_option(this)">제거</a></td>';
                     html += '</tr>';
 
@@ -159,6 +180,23 @@
                         $(e).parent().parent().parent().find('input[name*=stock]').attr('readonly', false);
                     }
                 }
+
+                // show billing period when is_billing is checked
+                jQuery(function($) {
+                    if ($('input[name=is_billing]').is(':checked')) {
+                        $('.billing-option').show();
+                    } else {
+                        $('.billing-option').hide();
+                    }
+                    
+                    $('input[name=is_billing]').click(function() {
+                        if ($(this).is(':checked')) {
+                            $('.billing-option').show();
+                        } else {
+                            $('.billing-option').hide();
+                        }
+                    });
+                });
             </script>
         </div>
     </div>

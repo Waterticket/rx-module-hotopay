@@ -16,6 +16,7 @@
         <column name="document_srl" var="document_srl" />
         <column name="tax_rate" var="tax_rate" />
         <column name="is_adult" var="is_adult" />
+        <column name="is_billing" var="is_billing" />
         <column name="regdate" var="regdate" />
 	</columns>
 	<conditions>
