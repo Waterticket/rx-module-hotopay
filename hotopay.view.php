@@ -85,6 +85,9 @@ class HotopayView extends Hotopay
 		Context::set('payple_enabled', $config->payple_enabled == 'Y' && $payple_enabled);
 		Context::set('n_account_enabled', $config->n_account_enabled == 'Y' && !empty($config->n_account_string));
 
+		Context::set('toss_billing_enabled', $config->toss_payments_billing_enabled == 'Y');
+		Context::set('payple_billing_enabled', $config->payple_billing_enabled == 'Y');
+
 		$oHotopayModel = getModel('hotopay');
 		$product_list = $oHotopayModel->getProducts($vars->product_id);
 		Context::set('product_list', $product_list);
