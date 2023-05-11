@@ -63,7 +63,6 @@ class HotopayView extends Hotopay
 
 		$billing_keys = $oHotopayModel->getBillingKeys($member_srl);
 		Context::set('billing_keys', $billing_keys);
-		debugPrint($billing_keys);
 
 		// 스킨 파일명 지정
 		$this->setTemplateFile('cart_checkout');
@@ -89,6 +88,36 @@ class HotopayView extends Hotopay
 		$oHotopayModel = getModel('hotopay');
 		$product_list = $oHotopayModel->getProducts($vars->product_id);
 		Context::set('product_list', $product_list);
+
+		$is_non_billing_product_exist = false;
+		$is_billing_product_exist = false;
+		foreach ($product_list as $product)
+		{
+			if ($product->is_billing == 'Y')
+			{
+				$is_billing_product_exist = true;
+			}
+			else
+			{
+				$is_non_billing_product_exist = true;
+			}
+		}
+
+		if ($is_billing_product_exist && $is_non_billing_product_exist)
+		{
+			throw new \Rhymix\Framework\Exception('정기결제 상품과 일반결제 상품을 동시에 구매할 수 없습니다.');
+		}
+
+		if ($is_billing_product_exist)
+		{
+			$billing_keys = $oHotopayModel->getBillingKeys($this->user->member_srl);
+			Context::set('billing_keys', $billing_keys);
+			Context::set('purchase_type', 'billing');
+		}
+		else
+		{
+			Context::set('purchase_type', 'normal');
+		}
 
 		$logged_info = Context::get('logged_info');
 		$oPointModel = getModel('point');
