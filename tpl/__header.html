@@ -1,8 +1,15 @@
 <load target="css/config.css" />
 <load target="js/config.js" />
 
+{@
+	$is_rhymix2 = (defined('RX_VERSION') && version_compare(RX_VERSION, '2.0.0', '>='));
+
+	$validator = new HotopayLicenseValidator();
+	$isLicenseValid = $validator->validate($hotopay_config->hotopay_license_key);
+}
+
 <div class="x_page-header">
-	<h1>{$lang->cmd_hotopay}</h1>
+	<h1>{$lang->cmd_hotopay} <!--@if($isLicenseValid)--><span style="color: rgb(247, 188, 38)">Pro</span><!--@endif--></h1>
 </div>
 
 <div class="message update" cond="$update_needed">
@@ -21,7 +28,3 @@
 	<li class="x_active"|cond="$act == 'dispHotopayAdminProductList' || $act == 'dispHotopayAdminInsertProduct'"><a href="{getUrl('', 'module', 'admin', 'act', 'dispHotopayAdminProductList')}">상품 목록</a></li>
 	<li class="x_active"|cond="$act == 'dispHotopayAdminPurchaseList' || $act == 'dispHotopayAdminInsertPurchase'"><a href="{getUrl('', 'module', 'admin', 'act', 'dispHotopayAdminPurchaseList')}">결제 목록</a></li>
 </ul>
-
-{@
-	$is_rhymix2 = (defined('RX_VERSION') && version_compare(RX_VERSION, '2.0.0', '>='));
-}
