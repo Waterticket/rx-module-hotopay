@@ -10,6 +10,7 @@
 	<column name="pay_data" type="varchar" size="5000" default="" />
 	<column name="iamport_uid" type="varchar" size="20" default="" />
 	<column name="receipt_url" type="varchar" size="1000" default="" />
+    <column name="is_billing" type="char" size="1" default="N" />
 	<column name="extra_vars" type="text" />
 	<column name="regdate" type="number" size="10" notnull="notnull" index="idx_regdate" />
 </table>

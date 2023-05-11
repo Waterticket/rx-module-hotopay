@@ -12,6 +12,7 @@
 	<column name="product_original_price" var="product_original_price" />
 	<column name="pay_status" var="pay_status" />
 	<column name="pay_data" var="pay_data" />
+	<column name="is_billing" var="is_billing" />
 	<column name="extra_vars" var="extra_vars" />
 	<column name="regdate" var="regdate" notnull="notnull" />
 	</columns>
