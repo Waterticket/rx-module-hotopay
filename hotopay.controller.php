@@ -55,6 +55,25 @@ class HotopayController extends Hotopay
 
 		$product_info = $oHotopayModel->getProducts($product_srl_list);
 
+		$is_non_billing_product_exist = false;
+		$is_billing_product_exist = false;
+		foreach ($product_info as $product)
+		{
+			if ($product->is_billing == 'Y')
+			{
+				$is_billing_product_exist = true;
+			}
+			else
+			{
+				$is_non_billing_product_exist = true;
+			}
+		}
+
+		if ($is_billing_product_exist && $is_non_billing_product_exist)
+		{
+			return $this->createObject(-1, '정기결제 상품과 일반결제 상품을 동시에 구매할 수 없습니다.');
+		}
+
 		foreach ($product_list as $product)
 		{
 			foreach ($product_info as $info)
