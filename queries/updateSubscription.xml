@@ -1,0 +1,19 @@
+<query id="updateSubscription" action="update">
+    <tables>
+        <table name="hotopay_subscription" />
+    </tables>
+    <columns>
+            <column name="member_srl" var="member_srl" />
+            <column name="product_srl" var="product_srl" />
+            <column name="option_srl" var="option_srl" />
+            <column name="quantity" var="quantity" />
+            <column name="price" var="price" />
+            <column name="billing_key_idx" var="billing_key_idx" />
+            <column name="period" var="period" />
+            <column name="register_date" var="register_date" />
+            <column name="last_billing_date" var="last_billing_date" />
+    </columns>
+    <conditions>
+            <condition operation="equal" column="subscription_srl" var="subscription_srl" filter="number" notnull="notnull" />
+    </conditions>
+</query>

@@ -1,0 +1,12 @@
+<table name="hotopay_subscription">
+    <column name="subscription_srl" type="bigint" primary_key="primary_key" />
+    <column name="member_srl" type="bigint" index="idx_member_srl" notnull="notnull" />
+    <column name="product_srl" type="bigint" index="idx_product_srl" notnull="notnull" />
+    <column name="option_srl" type="bigint" index="idx_option_srl" notnull="notnull" />
+    <column name="quantity" type="bigint" index="idx_quantity" notnull="notnull" />
+    <column name="price" type="bigint" index="idx_price" notnull="notnull" />
+    <column name="billing_key_idx" type="bigint" index="idx_billing_key_idx" notnull="notnull" />
+    <column name="period" type="bigint" notnull="notnull" />
+    <column name="register_date" type="datetime" index="idx_register_date" notnull="notnull" />
+    <column name="last_billing_date" type="datetime" index="idx_last_billing_date" notnull="notnull" />
+</table>

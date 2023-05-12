@@ -139,7 +139,7 @@ function _purchaseSubmit(form){return checkCheckbox();}
             <!--@endif-->
             <!--@if($payple_enabled && $payple_billing_enabled)-->
                 <!--@if(in_array('card', $hotopay_config->payple_billing_payments_list))--><input type="radio" name="pay_method" id="pm_paypl_card" value="paypl_card" checked="checked" required="required"><label for="pm_paypl_card"> 카드</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('transfer', $hotopay_config->payple_billing_payments_list))--><input type="radio" name="pay_method" id="pm_paypl_transfer" value="paypl_transfer" checked="checked" required="required"><label for="pm_paypl_transfer"> 계좌</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('transfer', $hotopay_config->payple_billing_payments_list))--><input type="radio" name="pay_method" id="pm_paypl_transfer" value="paypl_transfer" required="required"><label for="pm_paypl_transfer"> 계좌</label>&nbsp;<!--@endif-->
             <!--@endif-->
         </section>
         <!--@endif-->

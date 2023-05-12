@@ -699,6 +699,133 @@ class HotopayModel extends Hotopay
         return new BaseObject();
     }
 
+    /**
+     * hotopay_subscription 테이블에 Subscription 하나를 추가한다.
+     * 
+     * @param object $obj
+     */
+    public static function insertSubscription(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.insertSubscription', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_subscription 테이블에서 Subscription를 가져온다.
+     * 
+     * @param int $subscription_srl
+     */
+    public static function getSubscription(int $subscription_srl): object
+    {
+        $args = new \stdClass();
+        $args->subscription_srl = $subscription_srl;
+
+        $output = executeQuery('hotopay.getSubscription', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: new \stdClass();
+    }
+
+    /**
+     * hotopay_subscription 테이블에서 SubscriptionsByMemberSrl를 가져온다.
+     * 
+     * @param int $member_srl
+     */
+    public static function getSubscriptionsByMemberSrl(int $member_srl): array
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+
+        $output = executeQueryArray('hotopay.getSubscriptionsByMemberSrl', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: new \stdClass();
+    }
+
+    /**
+     * hotopay_subscription 테이블에서 Subscription를 리스트 형식으로 가져온다.
+     * 
+     * @param object $obj
+     */
+    public static function getSubscriptionList(object $obj): object
+    {
+        $obj->sort_index = $obj->sort_index ?? 'subscription_srl';
+        $obj->order_type = $obj->order_type ?? 'desc';
+        $obj->list_count = $obj->list_count ?? 20;
+        $obj->page_count = $obj->page_count ?? 10;
+        $obj->page = $obj->page ?? 1;
+
+        $output = executeQueryArray('hotopay.getSubscriptionList', $obj);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * hotopay_subscription 테이블에서 Subscription를 업데이트한다.
+     * 
+     * @param object $obj
+     */
+    public static function updateSubscription(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.updateSubscription', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_subscription 테이블에서 Subscription를 삭제한다.
+     * 
+     * @param int $subscription_srl
+     */
+    public static function deleteSubscription(int $subscription_srl): object
+    {
+        $args = new \stdClass();
+        $args->subscription_srl = $subscription_srl;
+
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.deleteSubscription', $args);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
     public function encryptKey(string $key): string
     {
         $config = $this->getConfig();

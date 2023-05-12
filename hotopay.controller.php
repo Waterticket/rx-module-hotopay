@@ -31,12 +31,12 @@ class HotopayController extends Hotopay
 			return $this->createObject(-1, "현재 결제 기능 점검중입니다. 잠시 뒤에 다시 시도 해주세요.");
 		}
 
-		$oHotopayModel = getModel('hotopay');
-		$order_id = getNextSequence();
+		if (empty($vars->pay_method))
+		{
+			return $this->createObject(-1, "결제 수단을 선택해주세요.");
+		}
 
-		$args = new stdClass();
-		$args->purchase_srl = $order_id;
-		$args->member_srl = $logged_info->member_srl;
+		$oHotopayModel = getModel('hotopay');
 
 		$product_srl_list = [];
 		$product_list = [];
@@ -74,6 +74,26 @@ class HotopayController extends Hotopay
 			return $this->createObject(-1, '정기결제 상품과 일반결제 상품을 동시에 구매할 수 없습니다.');
 		}
 
+		if ($is_billing_product_exist)
+		{
+			$validator = new HotopayLicenseValidator();
+			$isLicenseValid = $validator->validate($config->hotopay_license_key);
+			if (!$isLicenseValid)
+			{
+				return $this->createObject(-1, '결제를 진행할 수 없습니다. 관리자에게 문의해주세요.');
+			}
+
+			if ($vars->use_point > 0)
+			{
+				return $this->createObject(-1, '정기결제 상품은 포인트로 결제할 수 없습니다.');
+			}
+		}
+
+		$order_id = getNextSequence();
+
+		$args = new stdClass();
+		$args->purchase_srl = $order_id;
+		$args->member_srl = $logged_info->member_srl;
 		$args->is_billing = $is_billing_product_exist ? 'Y' : 'N';
 
 		foreach ($product_list as $product)
@@ -422,6 +442,16 @@ class HotopayController extends Hotopay
 			if($purchase->data->pay_status === "DONE")
 			{
 				return $this->createObject(-1, "이미 결제가 완료되었습니다.");
+			}
+
+			if ($purchase->data->is_billing == 'Y')
+			{
+				$validator = new HotopayLicenseValidator();
+				$isLicenseValid = $validator->validate($config->hotopay_license_key);
+				if (!$isLicenseValid)
+				{
+					return $this->createObject(-1, '결제를 진행할 수 없습니다. 관리자에게 문의해주세요.');
+				}
 			}
 
 			if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
@@ -776,12 +806,15 @@ class HotopayController extends Hotopay
 						$receipt_args->receipt_url = $result->PCD_PAY_CARDRECEIPT ?? "";
 						executeQuery('hotopay.updatePurchaseReceiptUrl', $receipt_args);
 
-						if ($config->payple_purchase_type == 'password')
+						$key_idx = 0;
+						if ($config->payple_purchase_type == 'password' || $purchase->data->is_billing == 'Y')
 						{
 							if (isset($_SESSION['hotopay_billing_key']))
 							{
 								$before_idx = $_SESSION['hotopay_billing_key']->key_idx;
 								unset($_SESSION['hotopay_billing_key']);
+
+								$key_idx = $before_idx;
 
 								$key = $oHotopayModel->getBillingKey($before_idx);
 								$calculated_key_hash = strtoupper(hash('sha256', $this->user->member_srl . $result->PCD_PAYER_ID));
@@ -826,6 +859,11 @@ class HotopayController extends Hotopay
 									$billing_key_obj->key_hash = $key_hash;
 									$billing_key_obj->regdate = time();
 
+									if ($purchase->data->is_billing == 'Y')
+									{
+										$billing_key_obj->type = 'billing';
+									}
+
 									switch ($result->PCD_PAY_TYPE)
 									{
 										case 'transfer':
@@ -843,8 +881,43 @@ class HotopayController extends Hotopay
 									}
 
 									$oHotopayModel->insertBillingKey($billing_key_obj);
+									$key_idx = $billing_key_obj->key_idx;
 								}
 							}
+						}
+
+						if ($purchase->data->is_billing == 'Y')
+						{
+							$subscription = new stdClass();
+							$subscription->member_srl = $this->user->member_srl;
+							$subscription->billing_key_idx = $key_idx;
+							$subscription->register_date = date('Y-m-d H:i:s');
+							$subscription->last_billing_date = date('Y-m-d H:i:s');
+
+							$items = $oHotopayModel->getPurchaseItems($purchase_srl);
+							$_options = $oHotopayModel->getOptionsByPurchaseSrl($purchase_srl);
+							foreach ($items as $item)
+							{
+								$subscription->subscription_srl = getNextSequence();
+								$subscription->product_srl = $item->product_srl;
+								$subscription->option_srl = $item->option_srl;
+								$subscription->quantity = $item->quantity;
+								$subscription->price = $item->purchase_price;
+								$subscription->period = -1;
+
+								foreach ($_options as $_option)
+								{
+									if ($_option->option_srl == $item->option_srl)
+									{
+										$subscription->period = $_option->billing_period_date;
+										break;
+									}
+								}
+
+								$oHotopayModel->insertSubscription($subscription);
+							}
+
+							// 결제 로직 추가
 						}
 					}
 				}

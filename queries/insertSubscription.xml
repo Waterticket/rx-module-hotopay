@@ -1,0 +1,17 @@
+<query id="insertSubscription" action="insert">
+    <tables>
+        <table name="hotopay_subscription" />
+    </tables>
+    <columns>
+        <column name="subscription_srl" var="subscription_srl" notnull="notnull" />
+        <column name="member_srl" var="member_srl" />
+        <column name="product_srl" var="product_srl" />
+        <column name="option_srl" var="option_srl" />
+        <column name="quantity" var="quantity" />
+        <column name="price" var="price" />
+        <column name="billing_key_idx" var="billing_key_idx" />
+        <column name="period" var="period" />
+        <column name="register_date" var="register_date" default="curdate()" />
+        <column name="last_billing_date" var="last_billing_date" />
+    </columns>
+</query>
