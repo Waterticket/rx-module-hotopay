@@ -12,7 +12,7 @@ class Payple extends Hotopay {
         }
     }
 
-    public function getPartnerAuth($PCD_PAYCANCEL_FLAG = false)
+    public function getPartnerAuth($PCD_PAYCANCEL_FLAG = false, $PCD_PAY_TYPE = '')
     {
         $config = $this->getConfig();
         $http_host = getenv('HTTP_HOST');
@@ -41,6 +41,12 @@ class Payple extends Hotopay {
         if ($PCD_PAYCANCEL_FLAG)
         {
             $post_data['PCD_PAYCANCEL_FLAG'] = 'Y';
+        }
+
+        if (!empty($PCD_PAY_TYPE))
+        {
+            $post_data['PCD_PAY_TYPE'] = $PCD_PAY_TYPE;
+            $post_data['PCD_SIMPLE_FLAG'] = 'Y';
         }
 
         $post_field_string = json_encode($post_data);
@@ -217,5 +223,20 @@ class Payple extends Hotopay {
         $cancel_obj->data = $output;
 
         return $cancel_obj;
+    }
+
+    public function billingOrder($payment)
+    {
+        $auth_data = $this->getPartnerAuth(false, $payment);
+        if ($auth_data->error != 0)
+        {
+            return new BaseObject(-1, $auth_data->message);
+        }
+
+        $auth_data = $auth_data->data;
+        $cst_id = $auth_data->cst_id;
+        $custKey = $auth_data->custKey;
+        $AuthKey = $auth_data->AuthKey;
+        $PCD_PAY_URL = $auth_data->PCD_PAY_URL;
     }
 }

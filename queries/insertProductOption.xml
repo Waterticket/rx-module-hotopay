@@ -10,6 +10,7 @@
         <column name="price" var="price" notnull="notnull" />
         <column name="stock" var="stock" default="-1" />
         <column name="infinity_stock" var="infinity_stock" default="N" />
+        <column name="billing_infinity_stock" var="billing_infinity_stock" default="N" />
         <column name="billing_period_date" var="billing_period_date" />
         <column name="status" var="status" default="visible" />
         <column name="extra_vars" var="extra_vars" default="" />

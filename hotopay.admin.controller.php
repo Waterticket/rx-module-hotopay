@@ -220,6 +220,7 @@ class HotopayAdminController extends Hotopay
 			$obj->price = $item->price;
 			$obj->stock = $item->stock ?: 0;
 			$obj->infinity_stock = $item->infinity_stock ?? "N";
+			$obj->billing_infinity_stock = $item->infinity_stock ?? "N";
 			$obj->billing_period_date = $item->billing_period_date ?: 30;
 			$obj->status = 'visible';
 			$obj->extra_vars = $item->extra_vars ? serialize((object) $item->extra_vars) : serialize(new stdClass());
@@ -425,6 +426,7 @@ class HotopayAdminController extends Hotopay
 			$obj->price = $item->price;
 			$obj->stock = $item->stock ?: 0;
 			$obj->infinity_stock = $item->infinity_stock ?? "N";
+			$obj->billing_infinity_stock = $item->infinity_stock ?? "N";
 			$obj->billing_period_date = $item->billing_period_date ?: 30;
 			$obj->status = 'visible';
 			$obj->extra_vars = $item->extra_vars ? serialize((object) $item->extra_vars) : serialize(new stdClass());

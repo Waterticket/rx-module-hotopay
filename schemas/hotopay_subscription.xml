@@ -9,4 +9,5 @@
     <column name="period" type="bigint" notnull="notnull" />
     <column name="register_date" type="datetime" index="idx_register_date" notnull="notnull" />
     <column name="last_billing_date" type="datetime" index="idx_last_billing_date" notnull="notnull" />
+    <column name="status" type="varchar" size="20" default="ACTIVE" index="idx_status" />
 </table>
