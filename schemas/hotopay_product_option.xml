@@ -6,6 +6,7 @@
 	<column name="price" type="number" size="10" notnull="notnull" default="0" />
 	<column name="stock" type="number" size="10" notnull="notnull" default="-1" />
 	<column name="infinity_stock" type="varchar" size="3" default="N" />
+    <column name="billing_infinity_stock" type="char" size="1" default="N" />
 	<column name="billing_period_date" type="number" default="0" />
 	<column name="status" type="varchar" size="50" />
 	<column name="extra_vars" type="text" />
