@@ -13,6 +13,7 @@
             <column name="register_date" var="register_date" />
             <column name="last_billing_date" var="last_billing_date" />
             <column name="esti_billing_date" var="esti_billing_date" />
+            <column name="status" var="status" />
     </columns>
     <conditions>
             <condition operation="equal" column="subscription_srl" var="subscription_srl" filter="number" notnull="notnull" />

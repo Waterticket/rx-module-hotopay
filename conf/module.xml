@@ -24,6 +24,14 @@
 		<action name="procHotopayAdminPurchaseStatusChange" type="controller" method="GET|POST" />
 		<action name="procHotopayAdminDeleteProduct" type="controller" method="GET|POST" />
 
+		<action name="dispHotopayAdminSubscriptionIndex" type="view" />
+		<action name="dispHotopayAdminInsertSubscription" type="view" />
+		<action name="procHotopayAdminInsertSubscription" type="controller" />
+		<action name="dispHotopayAdminUpdateSubscription" type="view" />
+		<action name="procHotopayAdminUpdateSubscription" type="controller" />
+		<action name="dispHotopayAdminDeleteSubscription" type="view" />
+		<action name="procHotopayAdminDeleteSubscription" type="controller" />
+
 		<!-- 인덱스 페이지 -->
 		<action name="dispHotopayIndex" type="view" index="true" />
 

@@ -1,0 +1,115 @@
+<include target="__header.html" />
+<h1>Subscription Delete</h1>
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<form class="x_form-horizontal" action="./" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="procHotopayAdminDeleteSubscription" />
+
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+    <div class="x_control-group">
+        <label class="x_control-label" for="subscription_srl">{$lang->subscription_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="subscription_srl" id="subscription_srl" value="{$subscription->subscription_srl}">
+            <p>{$subscription->subscription_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="member_srl">{$lang->member_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="member_srl" id="member_srl" value="{$subscription->member_srl}">
+            <p>{$subscription->member_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="product_srl">{$lang->product_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="product_srl" id="product_srl" value="{$subscription->product_srl}">
+            <p>{$subscription->product_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="option_srl">{$lang->option_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="option_srl" id="option_srl" value="{$subscription->option_srl}">
+            <p>{$subscription->option_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="quantity">{$lang->quantity}</label>
+        <div class="x_controls">
+            <input type="hidden" name="quantity" id="quantity" value="{$subscription->quantity}">
+            <p>{$subscription->quantity}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="price">{$lang->price}</label>
+        <div class="x_controls">
+            <input type="hidden" name="price" id="price" value="{$subscription->price}">
+            <p>{$subscription->price}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="billing_key_idx">{$lang->billing_key_idx}</label>
+        <div class="x_controls">
+            <input type="hidden" name="billing_key_idx" id="billing_key_idx" value="{$subscription->billing_key_idx}">
+            <p>{$subscription->billing_key_idx}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="period">{$lang->period}</label>
+        <div class="x_controls">
+            <input type="hidden" name="period" id="period" value="{$subscription->period}">
+            <p>{$subscription->period}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="register_date">{$lang->register_date}</label>
+        <div class="x_controls">
+            <input type="hidden" name="register_date" id="register_date" value="{$subscription->register_date}">
+            <p>{$subscription->register_date}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="last_billing_date">{$lang->last_billing_date}</label>
+        <div class="x_controls">
+            <input type="hidden" name="last_billing_date" id="last_billing_date" value="{$subscription->last_billing_date}">
+            <p>{$subscription->last_billing_date}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="esti_billing_date">{$lang->esti_billing_date}</label>
+        <div class="x_controls">
+            <input type="hidden" name="esti_billing_date" id="esti_billing_date" value="{$subscription->esti_billing_date}">
+            <p>{$subscription->esti_billing_date}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="status">{$lang->status}</label>
+        <div class="x_controls">
+            <input type="hidden" name="status" id="status" value="{$subscription->status}">
+            <p>{$subscription->status}</p>
+        </div>
+    </div>
+
+
+    <div class="btnArea x_clearfix">
+        <button type="submit" class="x_btn x_btn-primary x_pull-right">삭제</button>
+    </div>
+</form>

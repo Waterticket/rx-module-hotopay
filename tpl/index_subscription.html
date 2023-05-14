@@ -1,0 +1,106 @@
+<include target="__header.html" />
+
+<h1>정기결제 목록</h1>
+
+{@
+    $oMemberModel = getModel('member');
+}
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<table id="subscriptionList" class="x_table x_table-striped x_table-hover">
+    <caption>
+        <strong>Total: {number_format($total_count)}, Page: {number_format($page)}/{number_format($total_page)}</strong>
+    </caption>
+    <thead>
+        <tr>
+            <th scope="col">{$lang->subscription_srl}</th>
+            <th scope="col">{$lang->member_srl}</th>
+            <th scope="col">{$lang->product_srl}</th>
+            <th scope="col">{$lang->option_srl}</th>
+            <th scope="col">{$lang->quantity}</th>
+            <th scope="col">{$lang->price}</th>
+            <th scope="col">{$lang->period}</th>
+            <th scope="col">{$lang->register_date}</th>
+            <th scope="col">{$lang->last_billing_date}</th>
+            <th scope="col">{$lang->esti_billing_date}</th>
+            <th scope="col">{$lang->status}</th>
+            <th scope="col">{$lang->cmd_setup}</th>
+            <th scope="col">{$lang->cmd_delete}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr loop="$subscription_list => $no,$val">
+            {@
+                $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
+            }
+            <td class="nowr">{$val->subscription_srl}</td>
+            <td class="nowr"><a href="#popup_menu_area" class="member_{$val->member_srl}">{$member_data->nick_name}</a> ({$val->member_srl})</td>
+            <td class="nowr">{$val->product_srl}</td>
+            <td class="nowr">{$val->option_srl}</td>
+            <td class="nowr">{$val->quantity}</td>
+            <td class="nowr">{number_format($val->price)}</td>
+            <td class="nowr">{$val->period}</td>
+            <td class="nowr">{(($val->register_date > 0) ? date("Y-m-d H:i:s", strtotime($val->register_date)) : "-")}</td>
+            <td class="nowr">{(($val->last_billing_date > 0) ? date("Y-m-d H:i:s", strtotime($val->last_billing_date)) : "-")}</td>
+            <td class="nowr">{(($val->esti_billing_date > 0) ? date("Y-m-d H:i:s", strtotime($val->esti_billing_date)) : "-")}</td>
+            <td class="nowr">{$val->status}</td>
+            <td class="nowr"><a href="{getUrl('act','dispHotopayAdminUpdateSubscription','subscription_srl',$val->subscription_srl)}" title="{$lang->cmd_setup}">{$lang->cmd_setup}</a></td>
+            <td class="nowr"><a href="{getUrl('act','dispHotopayAdminDeleteSubscription','subscription_srl',$val->subscription_srl)}" title="{$lang->cmd_delete}">{$lang->cmd_delete}</a></td>
+        </tr>
+        <tr cond="!$subscription_list">
+            <td>{$lang->msg_not_exist_data}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="x_clearfix">
+    <form cond="$page_navigation" action="./" class="x_pagination x_pull-left" no-error-return-url="true" style="margin-top:0">
+        <input loop="$param => $key, $val" cond="!in_array($key, array('mid', 'vid', 'act'))" type="hidden" name="{$key}" value="{$val}" />
+        <ul>
+            <li class="x_disabled"|cond="!$page || $page == 1"><a href="{getUrl('page', '')}">&laquo; {$lang->first_page}</a></li>
+            <block cond="$page_navigation->first_page != 1 && $page_navigation->first_page + $page_navigation->page_count > $page_navigation->last_page - 1 && $page_navigation->page_count != $page_navigation->total_page">
+            {@$isGoTo = true}
+            <li>
+                <a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+                <span cond="$isGoTo" id="goTo" class="x_input-append">
+                    <input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+                    <button type="submit" class="x_add-on">Go</button>
+                </span>
+            </li>
+            </block>
+            <!--@while($page_no = $page_navigation->getNextPage())-->
+            {@$last_page = $page_no}
+            <li class="x_active"|cond="$page_no == $page"><a  href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+            <!--@end-->
+            <block cond="$last_page != $page_navigation->last_page && $last_page + 1 != $page_navigation->last_page">
+            {@$isGoTo = true}
+            <li>
+                <a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+                <span cond="$isGoTo" id="goTo" class="x_input-append">
+                    <input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+                    <button type="submit" class="x_add-on">Go</button>
+                </span>
+            </li>
+            </block>
+            <li class="x_disabled"|cond="$page == $page_navigation->last_page"><a href="{getUrl('page', $page_navigation->last_page)}" title="{$page_navigation->last_page}">{$lang->last_page} &raquo;</a></li>
+        </ul>
+    </form>
+    <a class="x_pull-right x_btn x_btn-inverse" href="{getUrl('','module','admin','act','dispHotopayAdminInsertSubscription')}">{$lang->cmd_make}</a>
+</div>
+<form action="./" method="get" class="search center x_input-append" no-error-return-url="true">
+    <input type="hidden" name="module" value="{$module}" />
+    <select name="search_target" title="{$lang->search_target}" style="margin-right:4px">
+        <option value="subscription_srl" selected="selected"|cond="$search_target=='subscription_srl'">구독 번호</option>
+        <option value="member_srl" selected="selected"|cond="$search_target=='member_srl'">회원 번호</option>
+        <option value="product_srl" selected="selected"|cond="$search_target=='product_srl'">상품 번호</option>
+        <option value="option_srl" selected="selected"|cond="$search_target=='option_srl'">상품 옵션</option>
+        <option value="status" selected="selected"|cond="$search_target=='status'">상태</option>
+        <option value="billing_key_idx" selected="selected"|cond="$search_target=='billing_key_idx'">빌링 키 번호</option>
+    </select>
+    <input type="search" required name="search_keyword" value="{htmlspecialchars($search_keyword)}" />
+    <button class="x_btn x_btn-inverse" type="submit">{$lang->cmd_search}</button>
+    <a class="x_btn" href="{getUrl('', 'module', $module, 'act', $act)}">{$lang->cmd_cancel}</a>
+</form>

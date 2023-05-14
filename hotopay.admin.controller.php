@@ -539,4 +539,91 @@ class HotopayAdminController extends Hotopay
 		$this->setMessage('success_registed');
 		$this->setRedirectUrl(Context::get('success_return_url'));
 	}
+
+    public function dispHotopayAdminSubscriptionIndex() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+
+        $vars = Context::getRequestVars();
+        $args = new \stdClass();
+        $args->page = $vars->page ? $vars->page : 1;
+        $args->search_target = $vars->search_target ? $vars->search_target : '';
+        $args->search_keyword = $vars->search_keyword ? $vars->search_keyword : '';
+
+        $output = HotopayModel::getSubscriptionList($args);
+        Context::set('subscription_list', $output->data);
+        Context::set('total_count', $output->total_count);
+        Context::set('total_page', $output->total_page);
+        Context::set('page', $output->page);
+        Context::set('page_navigation', $output->page_navigation);
+        
+        // 스킨 파일 지정
+        $this->setTemplateFile('index_subscription');
+    }
+
+    public function procHotopayAdminInsertSubscription() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        $args = new stdClass();
+        if(!empty($vars->subscription_srl) || ($vars->subscription_srl === 0)) $args->subscription_srl = $vars->subscription_srl;
+        if(!empty($vars->member_srl) || ($vars->member_srl === 0)) $args->member_srl = $vars->member_srl;
+        if(!empty($vars->product_srl) || ($vars->product_srl === 0)) $args->product_srl = $vars->product_srl;
+        if(!empty($vars->option_srl) || ($vars->option_srl === 0)) $args->option_srl = $vars->option_srl;
+        if(!empty($vars->quantity) || ($vars->quantity === 0)) $args->quantity = $vars->quantity;
+        if(!empty($vars->price) || ($vars->price === 0)) $args->price = $vars->price;
+        if(!empty($vars->billing_key_idx) || ($vars->billing_key_idx === 0)) $args->billing_key_idx = $vars->billing_key_idx;
+        if(!empty($vars->period) || ($vars->period === 0)) $args->period = $vars->period;
+        if(!empty($vars->register_date) || ($vars->register_date === 0)) $args->register_date = $vars->register_date;
+        if(!empty($vars->last_billing_date) || ($vars->last_billing_date === 0)) $args->last_billing_date = $vars->last_billing_date;
+        if(!empty($vars->esti_billing_date) || ($vars->esti_billing_date === 0)) $args->esti_billing_date = $vars->esti_billing_date;
+        if(!empty($vars->status) || ($vars->status === 0)) $args->status = $vars->status;
+        HotopayModel::insertSubscription($args);
+
+        $this->setMessage('success_registed');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminSubscriptionIndex'));
+    }
+
+    public function procHotopayAdminUpdateSubscription() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        $args = new stdClass();
+        $args->subscription_srl = $vars->subscription_srl;
+        $args->member_srl = $vars->member_srl;
+        $args->product_srl = $vars->product_srl;
+        $args->option_srl = $vars->option_srl;
+        $args->quantity = $vars->quantity;
+        $args->price = $vars->price;
+        $args->billing_key_idx = $vars->billing_key_idx;
+        $args->period = $vars->period;
+        $args->register_date = $vars->register_date;
+        $args->last_billing_date = $vars->last_billing_date;
+        $args->esti_billing_date = $vars->esti_billing_date;
+        $args->status = $vars->status;
+        HotopayModel::updateSubscription($args);
+
+        $this->setMessage('success_updated');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminSubscriptionIndex'));
+    }
+
+    public function procHotopayAdminDeleteSubscription() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        HotopayModel::deleteSubscription($vars->subscription_srl);
+
+        $this->setMessage('success_deleted');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminSubscriptionIndex'));
+    }
 }

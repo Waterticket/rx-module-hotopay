@@ -285,4 +285,75 @@ class HotopayAdminView extends Hotopay
 		Context::setBrowserTitle('알림 설정 - Hotopay');
 		$this->setTemplateFile('notify_config');
 	}
+
+    public function dispHotopayAdminSubscriptionIndex() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+
+        $vars = Context::getRequestVars();
+        $args = new \stdClass();
+        $args->page = $vars->page ? $vars->page : 1;
+        $args->search_target = $vars->search_target ? $vars->search_target : '';
+        $args->search_keyword = $vars->search_keyword ? $vars->search_keyword : '';
+
+        $output = HotopayModel::getSubscriptionList($args);
+        Context::set('subscription_list', $output->data);
+        Context::set('total_count', $output->total_count);
+        Context::set('total_page', $output->total_page);
+        Context::set('page', $output->page);
+        Context::set('page_navigation', $output->page_navigation);
+        
+        // 스킨 파일 지정
+		Context::setBrowserTitle('정기결제 목록 - Hotopay');
+        $this->setTemplateFile('index_subscription');
+    }
+
+    public function dispHotopayAdminInsertSubscription() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+        
+        // 스킨 파일 지정
+		Context::setBrowserTitle('정기결제 추가 - Hotopay');
+        $this->setTemplateFile('insert_subscription');
+    }
+
+    public function dispHotopayAdminUpdateSubscription() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+        $output = HotopayModel::getSubscription($vars->subscription_srl);
+        Context::set('subscription', $output);
+        
+        // 스킨 파일 지정
+		Context::setBrowserTitle('정기결제 수정 - Hotopay');
+        $this->setTemplateFile('update_subscription');
+    }
+
+    public function dispHotopayAdminDeleteSubscription() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+        $output = HotopayModel::getSubscription($vars->subscription_srl);
+        Context::set('subscription', $output);
+        
+        // 스킨 파일 지정
+		Context::setBrowserTitle('정기결제 삭제 - Hotopay');
+        $this->setTemplateFile('delete_subscription');
+    }
 }
