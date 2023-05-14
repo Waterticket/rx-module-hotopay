@@ -2,8 +2,9 @@
 
 // Check Security
 require "../../common/scripts/common.php";
+set_time_limit(0);
 
-class HotopayCronJob extends Hotopay{
+class HotopayCronJob extends Hotopay {
     private $config;
     private $oDB;
 
