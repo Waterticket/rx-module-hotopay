@@ -3,11 +3,6 @@
 // Check Security
 require "../../common/scripts/common.php";
 
-$oDB = DB::getInstance();
-$stmt = $oDB->query('SELECT domain FROM domains WHERE is_default_domain = "Y" LIMIT 1');
-$domain = $stmt->fetchAll();
-$_SERVER['HTTP_HOST'] = $domain[0]->domain;
-
 class HotopayCronJob extends Hotopay{
     private $config;
     private $oDB;
@@ -17,6 +12,10 @@ class HotopayCronJob extends Hotopay{
         parent::__construct();
         $this->config = $this->getConfig();
         $this->oDB = DB::getInstance();
+
+        $stmt = $this->oDB->query('SELECT domain FROM domains WHERE is_default_domain = "Y" LIMIT 1');
+        $domain = $stmt->fetchAll();
+        $_SERVER['HTTP_HOST'] = $domain[0]->domain;
     }
 
     public function run()
@@ -115,6 +114,8 @@ class HotopayCronJob extends Hotopay{
 
             $this->printLog("Renewing Subscription...");
             $output = $this->requestBilling($subscription);
+            $subscription->pay_data = $output->data;
+            $subscription->receipt_url = $output->data->receipt_url;
             if ($output->error != 0 )
             {
                 $this->printLog("Error: Failed to renew subscription; " . $output->message);
@@ -123,10 +124,16 @@ class HotopayCronJob extends Hotopay{
 
                 $purchase_srl = $this->addPurchase('FAILED_RENEW', $subscription);
                 $this->printLog("Add Purchase: #" . $purchase_srl);
+
+                $removeGroup = $this->removeMemberGroup($subscription->member_srl, $subscription->buyer_group);
+                if (!$removeGroup->toBool())
+                {
+                    $this->printLog("Error: Failed to remove member group; " . $removeGroup->message);
+                }
+                $this->printLog("Remove Member Group: " . $subscription->buyer_group);
                 continue;
             }
 
-            $subscription->pay_data = $output->data;
             $this->printLog("Successfully renewed");
             $this->minusOptionStock($subscription, 1);
             $this->addPurchase('DONE', $subscription, $output->data->purchase_srl);
@@ -156,8 +163,8 @@ class HotopayCronJob extends Hotopay{
         $extra_vars = serialize($subscription->extra_vars ?? new stdClass());
         $pay_data = json_encode($subscription->pay_data ?? new stdClass());
 
-        $stmt = $this->oDB->prepare("INSERT INTO hotopay_purchase (purchase_srl, member_srl, title, products, pay_method, product_purchase_price, product_original_price, pay_status, pay_data, is_billing, extra_vars, regdate)
-                 VALUES (:purchase_srl, :member_srl, :title, :products, :pay_method, :product_purchase_price, :product_original_price, :pay_status, :pay_data, :is_billing, :extra_vars, :regdate)");
+        $stmt = $this->oDB->prepare("INSERT INTO hotopay_purchase (purchase_srl, member_srl, title, products, pay_method, product_purchase_price, product_original_price, pay_status, pay_data, is_billing, receipt_url, extra_vars, regdate)
+                 VALUES (:purchase_srl, :member_srl, :title, :products, :pay_method, :product_purchase_price, :product_original_price, :pay_status, :pay_data, :is_billing, :receipt_url, :extra_vars, :regdate)");
         $stmt->bindValue(":purchase_srl", $purchase_srl);
         $stmt->bindValue(":member_srl", $subscription->member_srl);
         $stmt->bindValue(":title", $subscription->item_name);
@@ -167,6 +174,7 @@ class HotopayCronJob extends Hotopay{
         $stmt->bindValue(":product_original_price", $subscription->original_price);
         $stmt->bindValue(":pay_status", $status);
         $stmt->bindValue(":pay_data", $pay_data);
+        $stmt->bindValue(":receipt_url", $subscription->receipt_url ?? '');
         $stmt->bindValue(":is_billing", 'Y');
         $stmt->bindValue(":extra_vars", $extra_vars);
         $stmt->bindValue(":regdate", time());
@@ -232,11 +240,13 @@ class HotopayCronJob extends Hotopay{
             case "toss":
                 $oToss = new Toss();
                 $output = $oToss->requestBilling($subscription);
+                $output->data->receipt_url = $output->data->receipt->url ?? "";
                 break;
 
             case "payple":
                 $oPayple = new Payple();
                 $output = $oPayple->requestBilling($subscription);
+                $output->data->receipt_url = $output->data->PCD_PAY_CARDRECEIPT ?? "";
                 break;
         }
         return $output;
@@ -255,6 +265,16 @@ class HotopayCronJob extends Hotopay{
         $this->printLog("Update Esti billing date: %s -> %s", $subscription->esti_billing_date, $esti_billing_date);
 
         return new BaseObject();
+    }
+
+    private function removeMemberGroup(int $member_srl, int $group_srl): BaseObject
+    {
+        $args = new stdClass();
+        $args->member_srl = $member_srl;
+        $args->group_srl = $group_srl;
+        $output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
+
+        return $output;
     }
 }
 
