@@ -108,4 +108,9 @@ class Toss extends Hotopay {
 
         return $response;
     }
+
+    public function requestBilling(object $subscription): BaseObject
+    {
+        return $this->createObject(-1, "Toss는 정기결제를 지원하지 않습니다.");
+    }
 }

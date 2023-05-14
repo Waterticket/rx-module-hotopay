@@ -13,5 +13,6 @@
         <column name="period" var="period" />
         <column name="register_date" var="register_date" default="curdate()" />
         <column name="last_billing_date" var="last_billing_date" />
+        <column name="esti_billing_date" var="esti_billing_date" />
     </columns>
 </query>

@@ -25,21 +25,21 @@ class HotopayCronJob extends Hotopay{
         $this->printLog("Start Time: " . date("Y-m-d H:i:s"));
         $this->printLog("Shop Name: " . $this->config->shop_name);
         $this->printLog("Domain: " . $_SERVER['HTTP_HOST']);
-        $start_time = microtime();
+        $start_time = microtime(true);
 
         $this->cancelExpiredPurchases();
         $this->renewSubscriptions();
 
-        $end_time = microtime();
+        $end_time = microtime(true);
         $this->printLog("Cron job finished");
         $this->printLog("End Time: " . date("Y-m-d H:i:s"));
-        $this->printLog("Execute Duration: " . ($end_time - $start_time) . "s");
+        $this->printLog("Execute Duration: " . round($end_time - $start_time, 3) . "s");
         echo "==========================" . PHP_EOL . PHP_EOL;
     }
 
-    private function printLog($message)
+    private function printLog(string $message, ...$args)
     {
-        echo "[".date("Y-m-d H:i:s")."] " . $message . PHP_EOL;
+        echo sprintf("[".date("Y-m-d H:i:s")."] " . $message, ...$args) . PHP_EOL;
     }
 
     private function cancelExpiredPurchases()
@@ -61,12 +61,13 @@ class HotopayCronJob extends Hotopay{
             "SELECT subscription.*, billing_key.pg AS pg, billing_key.key AS billing_key, billing_key.payment_type AS payment_type,
                     product.product_name AS product_name, product.product_status AS product_status, product.product_buyer_group AS buyer_group,
                     option.title AS option_name, option.stock AS option_stock, option.billing_infinity_stock AS option_billing_infinity_stock, option.price * subscription.quantity AS original_price,
-                    subscription.last_billing_date + INTERVAL subscription.period day AS next_billing_date
+                    member.nick_name AS nick_name, member.email_address AS email_address, member.phone_number AS phone_number
              FROM hotopay_subscription AS subscription
              LEFT JOIN hotopay_billing_key AS billing_key ON subscription.billing_key_idx = billing_key.key_idx
              LEFT JOIN hotopay_product AS product ON subscription.product_srl = product.product_srl
              LEFT JOIN hotopay_product_option AS option ON subscription.option_srl = option.option_srl
-             WHERE subscription.last_billing_date + INTERVAL subscription.period day <= CURRENT_TIMESTAMP AND subscription.status = 'ACTIVE'"
+             LEFT JOIN member AS member ON subscription.member_srl = member.member_srl
+             WHERE subscription.esti_billing_date <= CURRENT_TIMESTAMP AND subscription.status = 'ACTIVE'"
         );
         $subscriptions = $stmt->fetchAll();
         
@@ -94,10 +95,11 @@ class HotopayCronJob extends Hotopay{
             }
 
             echo PHP_EOL;
+            $this->printLog("Start renewing subscription");
             $this->printLog("Billing Subscription: #" . $subscription->subscription_srl);
             $this->printLog("MemberSrl: #" . $subscription->member_srl);
             $this->printLog("Title: " . $subscription->item_name);
-            $this->printLog("Renewal Date: " . $subscription->next_billing_date);
+            $this->printLog("Estimate Renewal Date: " . $subscription->esti_billing_date);
 
             $optionValid = $this->checkOptionStock($subscription);
             if (!$optionValid)
@@ -111,8 +113,27 @@ class HotopayCronJob extends Hotopay{
                 continue;
             }
 
-            echo "Renewing Subscription..." . PHP_EOL;
+            $this->printLog("Renewing Subscription...");
+            $output = $this->requestBilling($subscription);
+            if ($output->error != 0 )
+            {
+                $this->printLog("Error: Failed to renew subscription; " . $output->message);
+                $this->printLog("Update Subscription Status: FAILED_RENEW");
+                $this->changeSubscriptionStatus($subscription->subscription_srl, 'FAILED_RENEW');
+
+                $purchase_srl = $this->addPurchase('FAILED_RENEW', $subscription);
+                $this->printLog("Add Purchase: #" . $purchase_srl);
+                continue;
+            }
+
+            $subscription->pay_data = $output->data;
+            $this->printLog("Successfully renewed");
             $this->minusOptionStock($subscription, 1);
+            $this->addPurchase('DONE', $subscription, $output->data->purchase_srl);
+            $this->printLog("Add Purchase: #" . $output->data->purchase_srl);
+
+            $this->updateSubscriptionEstiBillingDate($subscription);
+            $this->printLog("End renewing subscription");
         }
     }
 
@@ -124,14 +145,19 @@ class HotopayCronJob extends Hotopay{
         $stmt->execute();
     }
 
-    private function addPurchase($status, $subscription): int
+    private function addPurchase($status, $subscription, $purchase_srl = -1): int
     {
         $this->oDB->begin();
-        $purchase_srl = getNextSequence();
-        $extra_vars = serialize(new stdClass());
+        if ($purchase_srl < 0)
+        {
+            $purchase_srl = getNextSequence();
+        }
 
-        $stmt = $this->oDB->prepare("INSERT INTO hotopay_purchase (purchase_srl, member_srl, title, products, pay_method, product_purchase_price, product_original_price, pay_status, is_billing, extra_vars, regdate)
-                 VALUES (:purchase_srl, :member_srl, :title, :products, :pay_method, :product_purchase_price, :product_original_price, :pay_status, :is_billing, :extra_vars, :regdate)");
+        $extra_vars = serialize($subscription->extra_vars ?? new stdClass());
+        $pay_data = json_encode($subscription->pay_data ?? new stdClass());
+
+        $stmt = $this->oDB->prepare("INSERT INTO hotopay_purchase (purchase_srl, member_srl, title, products, pay_method, product_purchase_price, product_original_price, pay_status, pay_data, is_billing, extra_vars, regdate)
+                 VALUES (:purchase_srl, :member_srl, :title, :products, :pay_method, :product_purchase_price, :product_original_price, :pay_status, :pay_data, :is_billing, :extra_vars, :regdate)");
         $stmt->bindValue(":purchase_srl", $purchase_srl);
         $stmt->bindValue(":member_srl", $subscription->member_srl);
         $stmt->bindValue(":title", $subscription->item_name);
@@ -140,6 +166,7 @@ class HotopayCronJob extends Hotopay{
         $stmt->bindValue(":product_purchase_price", $subscription->price);
         $stmt->bindValue(":product_original_price", $subscription->original_price);
         $stmt->bindValue(":pay_status", $status);
+        $stmt->bindValue(":pay_data", $pay_data);
         $stmt->bindValue(":is_billing", 'Y');
         $stmt->bindValue(":extra_vars", $extra_vars);
         $stmt->bindValue(":regdate", time());
@@ -187,30 +214,49 @@ class HotopayCronJob extends Hotopay{
             $stmt->bindValue(":quantity", $quantity);
             $stmt->bindValue(":option_srl", $subscription->option_srl);
             $stmt->execute();
+
+            $this->printLog("Minus Option Stock quantity: " . $quantity);
+        }
+        else
+        {
+            $this->printLog("Skip Minus Option Stock quantity due to infinity stock");
         }
 
         return true;
+    }
+
+    private function requestBilling(object $subscription): object
+    {
+        switch($subscription->pg)
+        {
+            case "toss":
+                $oToss = new Toss();
+                $output = $oToss->requestBilling($subscription);
+                break;
+
+            case "payple":
+                $oPayple = new Payple();
+                $output = $oPayple->requestBilling($subscription);
+                break;
+        }
+        return $output;
+    }
+
+    private function updateSubscriptionEstiBillingDate(object $subscription): object
+    {
+        $esti_billing_date = date("Y-m-d H:i:s", strtotime("+" . $subscription->period . " days", strtotime($subscription->esti_billing_date)));
+        $last_billing_date = date("Y-m-d H:i:s");
+        $stmt = $this->oDB->prepare("UPDATE hotopay_subscription AS subscription SET subscription.esti_billing_date = :esti_billing_date, subscription.last_billing_date = :last_billing_date WHERE subscription.subscription_srl = :subscription_srl");
+        $stmt->bindValue(":subscription_srl", $subscription->subscription_srl);
+        $stmt->bindValue(":esti_billing_date", $esti_billing_date);
+        $stmt->bindValue(":last_billing_date", $last_billing_date);
+        $stmt->execute();
+
+        $this->printLog("Update Esti billing date: %s -> %s", $subscription->esti_billing_date, $esti_billing_date);
+
+        return new BaseObject();
     }
 }
 
 $oHotopayCronjob = new HotopayCronJob();
 $oHotopayCronjob->run();
-
-
-// foreach ($result as $row)
-// {
-//     $stmt = $oDB->prepare("UPDATE hotopay_subscription SET last_billing_date = CURRENT_TIMESTAMP WHERE id = :id");
-//     $stmt->bindValue(":id", $row['id']);
-//     $stmt->execute();
-
-//     $stmt = $oDB->prepare("INSERT INTO hotopay_purchase (product_id, member_srl, payment_method, payment_amount, payment_status, payment_date, payment_ipaddress, payment_extra_vars) VALUES (:product_id, :member_srl, :payment_method, :payment_amount, :payment_status, :payment_date, :payment_ipaddress, :payment_extra_vars)");
-//     $stmt->bindValue(":product_id", $row['product_id']);
-//     $stmt->bindValue(":member_srl", $row['member_srl']);
-//     $stmt->bindValue(":payment_method", $row['payment_method']);
-//     $stmt->bindValue(":payment_amount", $row['payment_amount']);
-//     $stmt->bindValue(":payment_status", "paid");
-//     $stmt->bindValue(":payment_date", date("Y-m-d H:i:s"));
-//     $stmt->bindValue(":payment_ipaddress", $row['payment_ipaddress']);
-//     $stmt->bindValue(":payment_extra_vars", $row['payment_extra_vars']);
-//     $stmt->execute();
-// }

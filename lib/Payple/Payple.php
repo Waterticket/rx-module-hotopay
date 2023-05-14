@@ -15,7 +15,7 @@ class Payple extends Hotopay {
     public function getPartnerAuth($PCD_PAYCANCEL_FLAG = false, $PCD_PAY_TYPE = '')
     {
         $config = $this->getConfig();
-        $http_host = getenv('HTTP_HOST');
+        $http_host = $_SERVER['HTTP_HOST'];
 
         if (empty($config->payple_referer_domain))
         {
@@ -77,7 +77,7 @@ class Payple extends Hotopay {
     public function confirmPaywork($vars, $purchase)
     {
         $config = $this->getConfig();
-        $http_host = getenv('HTTP_HOST');
+        $http_host = $_SERVER['HTTP_HOST'];
 
         if (empty($config->payple_referer_domain))
         {
@@ -147,7 +147,7 @@ class Payple extends Hotopay {
     public function cancelOrder($purchase_srl, $cancel_reason, $cancel_amount = -1)
     {
         $config = $this->getConfig();
-        $http_host = getenv('HTTP_HOST');
+        $http_host = $_SERVER['HTTP_HOST'];
         $order_id = 'HT'.str_pad($purchase_srl, 4, "0", STR_PAD_LEFT);
 
         if (empty($config->payple_referer_domain))
@@ -225,18 +225,73 @@ class Payple extends Hotopay {
         return $cancel_obj;
     }
 
-    public function billingOrder($payment)
+    public function requestBilling(object $subscription): object
     {
-        $auth_data = $this->getPartnerAuth(false, $payment);
+        $config = $this->getConfig();
+        $auth_data = $this->getPartnerAuth(false, $subscription->payment_type);
         if ($auth_data->error != 0)
         {
             return new BaseObject(-1, $auth_data->message);
         }
 
+        $oHotopayModel = HotopayModel::getInstance();
         $auth_data = $auth_data->data;
         $cst_id = $auth_data->cst_id;
         $custKey = $auth_data->custKey;
         $AuthKey = $auth_data->AuthKey;
         $PCD_PAY_URL = $auth_data->PCD_PAY_URL;
+        $purchase_srl = getNextSequence();
+
+        $url = self::$PAYPLE_URL.$PCD_PAY_URL;
+        $headers = array(
+            'Content-Type: application/json;charset=utf-8',
+            'Cache-Control: no-cache',
+            'Referer: https://'.$config->payple_referer_domain,
+        );
+        $post_data = array(
+            "PCD_CST_ID" => $cst_id,
+            "PCD_CUST_KEY" => $custKey,
+            "PCD_AUTH_KEY" => $AuthKey,
+            "PCD_PAY_TYPE" => $subscription->payment_type,
+            "PCD_PAYER_ID" => $oHotopayModel->decryptKey($subscription->billing_key), // 빌링키
+            "PCD_PAY_GOODS" => $subscription->item_name,
+            "PCD_SIMPLE_FLAG" => 'Y',
+            "PCD_PAY_TOTAL" => $subscription->price,
+            "PCD_PAY_OID" => "HT".$purchase_srl,
+            "PCD_PAYER_NO" => $subscription->member_srl,
+            "PCD_PAYER_NAME" => $subscription->nick_name,
+            "PCD_PAYER_HP" => $subscription->phone_number,
+            "PCD_PAYER_EMAIL" => $subscription->email_address,
+        );
+
+        $post_field_string = json_encode($post_data);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
+        curl_setopt($ch, CURLOPT_POST, true);
+        $response_json = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close ($ch);
+
+        $output = json_decode($response_json);
+        $is_success = $output->PCD_PAY_RST == "success" && str_contains($output->PCD_PAY_CODE, "0000");
+        if(!$is_success)
+        {
+            return new BaseObject(-1, $output->PCD_PAY_MSG);
+        }
+
+        $output->purchase_srl = $purchase_srl;
+
+        $billing_obj = new stdClass();
+        $billing_obj->error = $is_success ? 0 : -1;
+        $billing_obj->message = $output->PCD_PAY_MSG;
+        $billing_obj->data = $output;
+
+        return $billing_obj;
     }
 }

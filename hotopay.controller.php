@@ -914,6 +914,12 @@ class HotopayController extends Hotopay
 									}
 								}
 
+								if ($subscription->period < 0)
+								{
+									return new BaseObject(-1, "INVALID_PERIOD 관리자에게 문의하세요");
+								}
+
+								$subscription->esti_billing_date = date('Y-m-d H:i:s', strtotime('+'.$subscription->period.' days'));
 								$oHotopayModel->insertSubscription($subscription);
 							}
 
