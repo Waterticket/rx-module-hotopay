@@ -182,6 +182,7 @@ class Toss extends Hotopay {
         curl_close ($ch);
 
         $output = json_decode($response);
+        $output->purchase_srl = $purchase_srl;
 
         $response = new BaseObject();
         $response->error = ($http_code == 200) ? 0 : -1;

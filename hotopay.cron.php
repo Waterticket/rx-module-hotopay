@@ -17,6 +17,7 @@ class HotopayCronJob extends Hotopay {
         $stmt = $this->oDB->query('SELECT domain FROM domains WHERE is_default_domain = "Y" LIMIT 1');
         $domain = $stmt->fetchAll();
         $_SERVER['HTTP_HOST'] = $domain[0]->domain;
+        define("RX_BASEURL", "https://".$_SERVER['HTTP_HOST']);
     }
 
     public function run()
