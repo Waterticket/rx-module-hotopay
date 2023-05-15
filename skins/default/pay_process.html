@@ -27,6 +27,8 @@ function openPay()
 {
   tossPayments.requestPayment('{$purchase->pay_method_korean}', {
     customerKey: 'HTMEMBER{$logged_info->member_srl}',
+    customerName: '{$logged_info->user_name}',
+    customerEmail: '{$logged_info->email_address}',
     successUrl: window.location.origin + '/hotopay/payStatus/toss/success/HT{$vars->order_id}',
     failUrl: window.location.origin + '/hotopay/payStatus/toss/fail/HT{$vars->order_id}',
   }).catch(function (error) {
