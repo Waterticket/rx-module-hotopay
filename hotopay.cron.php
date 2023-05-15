@@ -115,6 +115,7 @@ class HotopayCronJob extends Hotopay {
 
             $this->printLog("Renewing Subscription...");
             $output = $this->requestBilling($subscription);
+            if (isset($output->data->PCD_PAYER_ID)) $output->data->PCD_PAYER_ID = '*** secret ***';
             $subscription->pay_data = $output->data;
             $subscription->receipt_url = $output->data->receipt_url;
             if ($output->error != 0 )
