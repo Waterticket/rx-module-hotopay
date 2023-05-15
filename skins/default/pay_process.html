@@ -25,7 +25,7 @@
 <script>
 function openPay()
 {
-  tossPayments.requestPayment('{$purchase->pay_method_korean}', {
+  tossPayments.requestBillingAuth('{$purchase->pay_method_korean}', {
     customerKey: 'HTMEMBER{$logged_info->member_srl}',
     customerName: '{$logged_info->user_name}',
     customerEmail: '{$logged_info->email_address}',

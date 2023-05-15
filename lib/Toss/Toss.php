@@ -109,7 +109,7 @@ class Toss extends Hotopay {
         return $response;
     }
 
-    public function requestBillingKey(string $authKey, string $customerKey): BaseObject
+    public function requestBillingKey(string $customerKey, string $authKey): BaseObject
     {
         $url = self::$TOSS_URL."/v1/billing/authorizations/issue";
         $headers = array(
@@ -147,7 +147,8 @@ class Toss extends Hotopay {
     public function requestBilling(object $subscription): BaseObject
     {
         $oHotopayModel = HotopayModel::getInstance();
-        $billingKey = $oHotopayModel->decryptKey($subscription->billing_key);
+        $billingKeyObject = HotopayModel::getBillingKey($subscription->billing_key_idx);
+        $billingKey = $oHotopayModel->decryptKey($billingKeyObject->key);
         $customerKey = "HTMEMBER".$subscription->member_srl;
         $purchase_srl = getNextSequence();
         $orderId = "HT".str_pad($purchase_srl, 4, "0", STR_PAD_LEFT);
