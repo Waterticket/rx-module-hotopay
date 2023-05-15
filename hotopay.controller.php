@@ -775,6 +775,7 @@ class HotopayController extends Hotopay
 					return $this->createObject(-1, "결제 실패. (code: 1010)");
 				}
 
+				if (isset($vars->PCD_PAYER_ID)) $vars->PCD_PAYER_ID = '*** secret ***';
 				$args->pay_data = json_encode($vars);
 				if ($vars->PCD_PAY_RST == 'success' && str_contains($vars->PCD_PAY_CODE, '0000'))
 				{
@@ -922,10 +923,10 @@ class HotopayController extends Hotopay
 								$subscription->esti_billing_date = date('Y-m-d H:i:s', strtotime('+'.$subscription->period.' days'));
 								$oHotopayModel->insertSubscription($subscription);
 							}
-
-							// 결제 로직 추가
 						}
 					}
+
+
 				}
 
 				if($args->pay_status == "FAILED")
