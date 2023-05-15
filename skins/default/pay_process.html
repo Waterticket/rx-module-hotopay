@@ -18,9 +18,30 @@
 <!--@if($purchase->pay_pg == 'toss')-->
 <script src="https://js.tosspayments.com/v1"></script>
 <script>
-var clientKey = '{$hotopay_config->toss_payments_client_key}';
-var tossPayments = TossPayments(clientKey);
-
+  var clientKey = '{$hotopay_config->toss_payments_client_key}';
+  var tossPayments = TossPayments(clientKey);
+</script>
+<!--@if($purchase->is_billing == 'Y')-->
+<script>
+function openPay()
+{
+  tossPayments.requestPayment('{$purchase->pay_method_korean}', {
+    customerKey: 'HTMEMBER{$logged_info->member_srl}',
+    successUrl: window.location.origin + '/hotopay/payStatus/toss/success/HT{$vars->order_id}',
+    failUrl: window.location.origin + '/hotopay/payStatus/toss/fail/HT{$vars->order_id}',
+  }).catch(function (error) {
+    if (error.code === 'USER_CANCEL') {
+      console.log('USER CANCEL');
+      // 취소 이벤트 처리
+    }else if (error.code === 'INVALID_CARD_COMPANY') {
+      console.log('INVALID_CARD_COMPANY');
+      // 유효하지 않은 카드 코드에 대한 에러 처리
+    }
+  });
+}
+</script>
+<!--@else-->
+<script>
 function openPay()
 {
   tossPayments.requestPayment('{$purchase->pay_method_korean}', {
@@ -45,7 +66,7 @@ function openPay()
   });
 }
 </script>
-
+<!--@endif-->
 <!--@elseif($purchase->pay_pg == 'paypal')-->
 <script>
 function openPay()
