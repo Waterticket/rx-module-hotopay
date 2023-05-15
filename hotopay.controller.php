@@ -454,7 +454,164 @@ class HotopayController extends Hotopay
 				}
 			}
 
-			if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
+			if(strcmp($vars->pay_pg, "tossbill") === 0) // Toss 정기결제 키 등록 처리
+			{
+				if($purchase->data->is_billing != 'Y')
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1012)");
+				}
+
+				if (empty($vars->customerKey) || empty($vars->authKey))
+				{
+					return $this->createObject(-1, "결제 실패. (code: 1013)");
+				}
+
+				$tossController = new Toss();
+				$output = $tossController->requestBillingKey($vars->customerKey, $vars->authKey);
+				if (!$output->toBool())
+				{
+					return $this->createObject(-1, "결제 실패. ".($output->data->message ?? '')." (code: 1014)");
+				}
+
+				$billingKeyObject = $output->data;
+				$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->billingKey));
+				$key = $oHotopayModel->getBillingKeyByKeyHash($purchase->data->member_srl, $key_hash);
+				$key_idx = $key->key_idx ?? 0;
+				if ($key_idx <= 0)
+				{
+					$key = new stdClass();
+					$key->key_idx = getNextSequence();
+					$key->member_srl = $purchase->data->member_srl;
+					$key->pg = 'toss';
+					$key->type = 'billing';
+					$key->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
+					$key->key_hash = $key_hash;
+					$key->regdate = time();
+
+					switch ($purchase->data->pay_method)
+					{
+						case 'card':
+							$key->payment_type = 'card';
+							$key->alias = ($billingKeyObject->card->ownerType . $billingKeyObject->card->cardType) ?: 'CARD';
+							$key->number = $billingKeyObject->card->number ?? '0000********0000';
+							break;
+
+						default:
+							return $this->createObject(-1, "결제 실패. (code: 1015)");
+					}
+
+					$oHotopayModel->insertBillingKey($key);
+					$key_idx = $key->key_idx;
+				}
+
+				$subscription = new stdClass();
+				$subscription->member_srl = $this->user->member_srl;
+				$subscription->billing_key_idx = $key_idx;
+				$subscription->register_date = date('Y-m-d H:i:s');
+				$subscription->last_billing_date = '0000-00-00 00:00:00';
+
+				$items = $oHotopayModel->getPurchaseItems($purchase_srl);
+				$_options = $oHotopayModel->getOptionsByPurchaseSrl($purchase_srl);
+				$print_esti_billing_date = '';
+				$billingTotal = [];
+				foreach ($items as $item)
+				{
+					$subscription->subscription_srl = getNextSequence();
+					$subscription->product_srl = $item->product_srl;
+					$subscription->option_srl = $item->option_srl;
+					$subscription->quantity = $item->quantity;
+					$subscription->price = $item->purchase_price;
+					$subscription->period = -1;
+					$subscription->item_name = sprintf("%s #%d", $purchase->data->title, $subscription->subscription_srl);
+
+					foreach ($_options as $_option)
+					{
+						if ($_option->option_srl == $item->option_srl)
+						{
+							$subscription->period = $_option->billing_period_date;
+							break;
+						}
+					}
+
+					if ($subscription->period < 0)
+					{
+						return new BaseObject(-1, "INVALID_PERIOD 관리자에게 문의하세요");
+					}
+
+					$subscription->esti_billing_date = date('Y-m-d H:i:s');
+					$oHotopayModel->insertSubscription($subscription);
+
+					$billingStatus = $tossController->requestBilling($subscription);
+					if (!$billingStatus->toBool())
+					{
+						$_SESSION['hotopay_'.$vars->order_id] = array(
+							"p_status" => "failed",
+							"orderId" => $vars->order_id,
+							"code" => $billingStatus->data->message ?? 'TOSS_BILLING_FAILED',
+							"message" => "결제를 실패하였습니다. (code: 1016)"
+						);
+	
+						$oHotopayModel->rollbackOptionStock($purchase_srl);
+
+						$args->pay_data = json_encode($billingStatus->data);
+						$args->pay_status = "FAILED";
+						executeQuery('hotopay.updatePurchaseStatus', $args);
+						executeQuery('hotopay.updatePurchaseData', $args);
+	
+						$trigger_obj = new stdClass();
+						$trigger_obj->purchase_srl = $purchase_srl;
+						$trigger_obj->pay_status = "FAILED";
+						$trigger_obj->pay_data = $billingStatus->data;
+						$trigger_obj->pay_pg = "inicis";
+						$trigger_obj->amount = $item->purchase_price;
+						ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+	
+						$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+						return;
+					}
+
+					$oDB = DB::getInstance();
+					$esti_billing_date = date("Y-m-d H:i:s", strtotime("+" . $subscription->period . " days"));
+					$last_billing_date = date("Y-m-d H:i:s");
+					$stmt = $oDB->prepare("UPDATE hotopay_subscription AS subscription SET subscription.esti_billing_date = :esti_billing_date, subscription.last_billing_date = :last_billing_date WHERE subscription.subscription_srl = :subscription_srl");
+					$stmt->bindValue(":subscription_srl", $subscription->subscription_srl);
+					$stmt->bindValue(":esti_billing_date", $esti_billing_date);
+					$stmt->bindValue(":last_billing_date", $last_billing_date);
+					$stmt->execute();
+
+					$print_esti_billing_date = date("Y-m-d", strtotime("+" . $subscription->period . " days"));
+					$billingTotal[] = $billingStatus->data;
+				}
+
+				$args->pay_data = json_encode($billingTotal);
+				$args->pay_status = "DONE";
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				executeQuery('hotopay.updatePurchaseData', $args);
+				$this->_ActivePurchase($purchase_srl);
+
+				$trigger_obj = new stdClass();
+				$trigger_obj->purchase_srl = $purchase_srl;
+				$trigger_obj->pay_status = $args->pay_status;
+				$trigger_obj->pay_data = $billingTotal;
+				$trigger_obj->pay_pg = "tossbill";
+				$trigger_obj->amount = $purchase->data->product_purchase_price;
+				ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
+				$response_json = new stdClass();
+				$response_json->method = 'tossbill';
+				$response_json->p_status = "success";
+				$response_json->product_title = $purchase->data->title;
+				$response_json->orderId = $vars->order_id;
+				$response_json->pay_status = $args->pay_status;
+				$response_json->pay_data = $billingTotal;
+				$response_json->amount = $purchase->data->product_purchase_price;
+				$response_json->payment = $key->alias;
+				$response_json->esti_billing_date = $print_esti_billing_date;
+				$_SESSION['hotopay_'.$vars->order_id] = $response_json;
+				$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
+				return;
+			}
+			else if(strcmp($vars->pay_pg, "toss") === 0) // Toss 처리
 			{
 				if(strcmp($vars->order_id, $vars->orderId) !== 0)
 				{

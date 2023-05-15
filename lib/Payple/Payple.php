@@ -257,7 +257,7 @@ class Payple extends Hotopay {
             "PCD_PAY_GOODS" => $subscription->item_name,
             "PCD_SIMPLE_FLAG" => 'Y',
             "PCD_PAY_TOTAL" => $subscription->price,
-            "PCD_PAY_OID" => "HT".$purchase_srl,
+            "PCD_PAY_OID" => "HT".str_pad($purchase_srl, 4, "0", STR_PAD_LEFT),
             "PCD_PAYER_NO" => $subscription->member_srl,
             "PCD_PAYER_NAME" => $subscription->nick_name,
             "PCD_PAYER_HP" => $subscription->phone_number,

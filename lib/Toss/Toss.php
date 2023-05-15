@@ -109,8 +109,85 @@ class Toss extends Hotopay {
         return $response;
     }
 
+    public function requestBillingKey(string $authKey, string $customerKey): BaseObject
+    {
+        $url = self::$TOSS_URL."/v1/billing/authorizations/issue";
+        $headers = array(
+            'Content-Type: application/json',
+            'Authorization: Basic '.$this->getAccessToken()
+        );
+        $post_field_string = json_encode(array(
+            'authKey' => $authKey,
+            'customerKey' => $customerKey
+        ));
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
+        curl_setopt($ch, CURLOPT_POST, true);
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close ($ch);
+
+        $output = json_decode($response);
+
+        $response = new BaseObject();
+        $response->error = ($http_code == 200) ? 0 : -1;
+        $response->message = ($output->message) ?? 'success';
+        $response->http_code = $http_code;
+        $response->data = $output;
+
+        return $response;
+    }
+
     public function requestBilling(object $subscription): BaseObject
     {
-        return $this->createObject(-1, "Toss는 정기결제를 지원하지 않습니다.");
+        $oHotopayModel = HotopayModel::getInstance();
+        $billingKey = $oHotopayModel->decryptKey($subscription->billing_key);
+        $customerKey = "HTMEMBER".$subscription->member_srl;
+        $purchase_srl = getNextSequence();
+        $orderId = "HT".str_pad($purchase_srl, 4, "0", STR_PAD_LEFT);
+        $member = MemberModel::getMemberInfoByMemberSrl($subscription->member_srl);
+
+        $url = self::$TOSS_URL."/v1/billing/".$billingKey;
+        $headers = array(
+            'Content-Type: application/json',
+            'Authorization: Basic '.$this->getAccessToken()
+        );
+        $post_field_string = json_encode(array(
+            'customerKey' => $customerKey,
+            'amount' => $subscription->price,
+            'orderId' => $orderId,
+            'orderName' => $subscription->item_name,
+            'customerEmail' => $member->email,
+            'customerName' => $member->user_name,
+            'taxFreeAmount' => 0,
+        ));
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
+        curl_setopt($ch, CURLOPT_POST, true);
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close ($ch);
+
+        $output = json_decode($response);
+
+        $response = new BaseObject();
+        $response->error = ($http_code == 200) ? 0 : -1;
+        $response->message = ($output->message) ?? 'success';
+        $response->http_code = $http_code;
+        $response->data = $output;
+
+        return $response;
     }
 }
