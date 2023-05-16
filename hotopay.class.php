@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 3;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 4;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -768,6 +768,12 @@ class Hotopay extends ModuleObject
 
 							$stmt->execute([$title, $purchase_srl]);
 						}
+						break;
+
+					case 4: // billing_infinity_stock 기본값 infinity_stock으로 설정
+						$oDB = DB::getInstance();
+						$stmt = $oDB->prepare('UPDATE hotopay_product_option SET `billing_infinity_stock` = "Y" WHERE `infinity_stock` = "Y"');
+						$stmt->execute();
 						break;
 				}
 
