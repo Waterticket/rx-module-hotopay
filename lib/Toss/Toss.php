@@ -55,7 +55,7 @@ class Toss extends Hotopay {
         $purchase = $oHotopayModel->getPurchase($purchase_srl);
         $pay_data_list = json_decode($purchase->pay_data);
 
-        if ($purchase->is_billing != 'Y')
+        if ($purchase->is_billing != 'Y' || $pay_data_list instanceof stdClass)
         {
             $pay_data_list = array($pay_data_list);
         }

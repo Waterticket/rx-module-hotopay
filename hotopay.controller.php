@@ -1795,6 +1795,11 @@ class HotopayController extends Hotopay
 			return;
 		}
 
+		if ($purchase->is_billing == 'Y' && $status == 'DONE' && !in_array('BILLING_DONE', $config->admin_mailing_status))
+		{
+			return;
+		}
+
 		$member_srl = $purchase->member_srl;
 		$oMemberModel = getModel('member');
 		$oHotopayModel = getModel('hotopay');
