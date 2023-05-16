@@ -475,6 +475,10 @@ class HotopayController extends Hotopay
 
 				$billingKeyObject = $output->data;
 				$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->billingKey));
+				if ($purchase->data->pay_method == 'card')
+				{
+					$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->card->number));
+				}
 				$key = $oHotopayModel->getBillingKeyByKeyHash($purchase->data->member_srl, $key_hash);
 				$key_idx = $key->key_idx ?? 0;
 				if ($key_idx <= 0)
