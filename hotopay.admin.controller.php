@@ -213,7 +213,7 @@ class HotopayAdminController extends Hotopay
 		{
 			$item = (object) $item;
 			$obj = new stdClass();
-			$obj->option_srl = ($item->option_srl != 0) ? $item->option_srl : getNextSequence();
+			$obj->option_srl = (!empty($item->option_srl)) ? $item->option_srl : getNextSequence();
 			$obj->product_srl = $product_srl;
 			$obj->title = $item->title;
 			$obj->description = $item->description ?? "";
