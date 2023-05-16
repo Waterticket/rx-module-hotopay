@@ -4,6 +4,7 @@
 
 {@
     $oMemberModel = getModel('member');
+    $oHotopayModel = HotopayModel::getInstance();
 }
 
 <div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
@@ -36,11 +37,13 @@
         <tr loop="$subscription_list => $no,$val">
             {@
                 $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
+                $product_data = $oHotopayModel->getProduct($val->product_srl);
+                $option_data = $oHotopayModel->getOption($val->option_srl);
             }
             <td class="nowr">{$val->subscription_srl}</td>
             <td class="nowr"><a href="#popup_menu_area" class="member_{$val->member_srl}">{$member_data->nick_name}</a> ({$val->member_srl})</td>
-            <td class="nowr">{$val->product_srl}</td>
-            <td class="nowr">{$val->option_srl}</td>
+            <td class="nowr"><a href="{getUrl('act','dispHotopayAdminModifyProduct','product_srl',$val->product_srl)}" target="_blank">{$product_data->product_name}</a></td>
+            <td class="nowr">{$option_data->title} (#{$val->option_srl})</td>
             <td class="nowr">{$val->quantity}</td>
             <td class="nowr">{number_format($val->price)}</td>
             <td class="nowr">{$val->period}</td>
