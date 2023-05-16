@@ -53,19 +53,16 @@ class Toss extends Hotopay {
     {
         $oHotopayModel = getModel('hotopay');
         $purchase = $oHotopayModel->getPurchase($purchase_srl);
-        $pay_data = json_decode($purchase->pay_data);
-        $payment_key = $pay_data->paymentKey;
-        $amount = $purchase->product_purchase_price;
+        $pay_data_list = json_decode($purchase->pay_data);
+
+        if ($purchase->is_billing != 'Y')
+        {
+            $pay_data_list = array($pay_data_list);
+        }
 
         $post_field = array(
             "cancelReason" => $cancel_reason
         );
-
-        if($cancel_amount > 0 && $cancel_amount < $amount)
-        {
-            // 부분 환불
-            $post_field["cancelAmount"] = $cancel_amount;
-        }
 
         if($purchase->pay_method == 'v_account')
         {
@@ -79,33 +76,56 @@ class Toss extends Hotopay {
             );
         }
 
-        $url = self::$TOSS_URL."/v1/payments/{$payment_key}/cancel";
         $headers = array(
             'Content-Type: application/json',
             'Authorization: Basic '.$this->getAccessToken()
         );
-        $post_field_string = json_encode($post_field);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
-        curl_setopt($ch, CURLOPT_POST, true);
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close ($ch);
+        $outputList = array();
+        $http_code = 0;
+        $output = new stdClass();
+        foreach ($pay_data_list as $pay_data)
+        {
+            $payment_key = $pay_data->paymentKey;
+            $amount = $purchase->product_purchase_price;
 
-        $output = json_decode($response);
+            if($cancel_amount > 0 && $cancel_amount < $amount)
+            {
+                // 부분 환불
+                $post_field["cancelAmount"] = $cancel_amount;
+            }
+
+            if ($purchase->is_billing == 'Y')
+            {
+                // 전체 취소
+                $post_field["cancelAmount"] = $pay_data->totalAmount;
+            }
+
+            $url = self::$TOSS_URL."/v1/payments/{$payment_key}/cancel";
+            $post_field_string = json_encode($post_field);
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
+            curl_setopt($ch, CURLOPT_POST, true);
+            $response = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close ($ch);
+
+            $output = json_decode($response);
+            $outputList[] = $output;
+        }
 
         $response = new stdClass();
         $response->error = ($http_code == 200) ? 0 : -1;
         $response->message = ($output->message) ?? 'success';
         $response->http_code = $http_code;
-        $response->data = $output;
-
+        $response->data = $outputList;
+        
         return $response;
     }
 
