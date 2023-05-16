@@ -363,7 +363,7 @@ class HotopayAdminView extends Hotopay
         $config = $this->getConfig();
         
         // Context에 세팅
-        Context::set('config', $config);
+        Context::set('hotopay_config', $config);
 
         $vars = Context::getRequestVars();
         $args = new \stdClass();
@@ -389,7 +389,7 @@ class HotopayAdminView extends Hotopay
         $config = $this->getConfig();
         
         // Context에 세팅
-        Context::set('config', $config);
+        Context::set('hotopay_config', $config);
         
         // 스킨 파일 지정
 		Context::setBrowserTitle('결제수단 추가 - Hotopay');
@@ -403,7 +403,7 @@ class HotopayAdminView extends Hotopay
         $vars = Context::getRequestVars();
         
         // Context에 세팅
-        Context::set('config', $config);
+        Context::set('hotopay_config', $config);
         $output = HotopayModel::getBillingKey($vars->key_idx);
         Context::set('billingkey', $output);
         
@@ -419,8 +419,8 @@ class HotopayAdminView extends Hotopay
         $vars = Context::getRequestVars();
         
         // Context에 세팅
-        Context::set('config', $config);
-                $output = HotopayModel::getBillingKey($vars->key_idx);
+        Context::set('hotopay_config', $config);
+		$output = HotopayModel::getBillingKey($vars->key_idx);
         Context::set('billingkey', $output);
         
         // 스킨 파일 지정
