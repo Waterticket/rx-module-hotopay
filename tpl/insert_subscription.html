@@ -92,7 +92,13 @@
     <div class="x_control-group">
         <label class="x_control-label" for="status">{$lang->status}</label>
         <div class="x_controls">
-            <input type="text" name="status" id="status">
+            <select id="status" name="status">
+                <option value="ACTIVE" selected="selected">활성 (ACTIVE)</option>
+                <option value="CANCELED">정기결제 취소 (CANCELED)</option>
+                <option value="FAILED_RENEW">결제수단 이슈로 인한 정기결제 실패 (FAILED_RENEW)</option>
+                <option value="OUT_OF_STOCK">재고 없음으로 인한 정기결제 실패 (OUT_OF_STOCK)</option>
+            </select>
+            <p class="x_help-block">정기결제 상태입니다. 상태 값과 상관없이 권한은 회수되거나 추가되지 않으니 직접 작업해주셔야합니다.</p>
         </div>
     </div>
 
