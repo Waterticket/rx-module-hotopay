@@ -16,3 +16,12 @@ $lang->last_billing_date = '최종 결제일';
 $lang->esti_billing_date = '다음 결제 예정일';
 $lang->status = '상태';
 $lang->billing_key_idx = '빌링 키';
+
+$lang->key_idx = '키 번호';
+$lang->pg = 'PG사';
+$lang->type = '키 타입';
+$lang->payment_type = '결제수단';
+$lang->alias = '별칭';
+$lang->number = '결제수단 번호';
+$lang->key = '결제 키 (암호화)';
+$lang->key_hash = '결제 키 해시';

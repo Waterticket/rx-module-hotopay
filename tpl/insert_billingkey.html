@@ -1,0 +1,90 @@
+<include target="__header.html" />
+
+<h1>BillingKey Insert</h1>
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<form class="x_form-horizontal" action="./" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="procHotopayAdminInsertBillingKey" />
+
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+    <div class="x_control-group">
+        <label class="x_control-label" for="key_idx">{$lang->key_idx}</label>
+        <div class="x_controls">
+            <input type="text" name="key_idx" id="key_idx">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="member_srl">{$lang->member_srl}</label>
+        <div class="x_controls">
+            <input type="text" name="member_srl" id="member_srl">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="pg">{$lang->pg}</label>
+        <div class="x_controls">
+            <input type="text" name="pg" id="pg">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="type">{$lang->type}</label>
+        <div class="x_controls">
+            <input type="text" name="type" id="type">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="key">{$lang->key}</label>
+        <div class="x_controls">
+            <input type="text" name="key" id="key">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="key_hash">{$lang->key_hash}</label>
+        <div class="x_controls">
+            <input type="text" name="key_hash" id="key_hash">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="payment_type">{$lang->payment_type}</label>
+        <div class="x_controls">
+            <input type="text" name="payment_type" id="payment_type">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="alias">{$lang->alias}</label>
+        <div class="x_controls">
+            <input type="text" name="alias" id="alias">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="number">{$lang->number}</label>
+        <div class="x_controls">
+            <input type="text" name="number" id="number">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="regdate">{$lang->regdate}</label>
+        <div class="x_controls">
+            <input type="text" name="regdate" id="regdate">
+        </div>
+    </div>
+
+
+    <div class="btnArea x_clearfix">
+        <button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
+    </div>
+</form>

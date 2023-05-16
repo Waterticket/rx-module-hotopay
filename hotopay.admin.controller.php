@@ -626,4 +626,62 @@ class HotopayAdminController extends Hotopay
         $this->setMessage('success_deleted');
         $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminSubscriptionIndex'));
     }
+
+    public function procHotopayAdminInsertBillingKey() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        $args = new stdClass();
+        if(!empty($vars->key_idx) || ($vars->key_idx === 0)) $args->key_idx = $vars->key_idx;
+        if(!empty($vars->member_srl) || ($vars->member_srl === 0)) $args->member_srl = $vars->member_srl;
+        if(!empty($vars->pg) || ($vars->pg === 0)) $args->pg = $vars->pg;
+        if(!empty($vars->type) || ($vars->type === 0)) $args->type = $vars->type;
+        if(!empty($vars->key) || ($vars->key === 0)) $args->key = $vars->key;
+        if(!empty($vars->key_hash) || ($vars->key_hash === 0)) $args->key_hash = $vars->key_hash;
+        if(!empty($vars->payment_type) || ($vars->payment_type === 0)) $args->payment_type = $vars->payment_type;
+        if(!empty($vars->alias) || ($vars->alias === 0)) $args->alias = $vars->alias;
+        if(!empty($vars->number) || ($vars->number === 0)) $args->number = $vars->number;
+        if(!empty($vars->regdate) || ($vars->regdate === 0)) $args->regdate = $vars->regdate;
+        HotopayModel::insertBillingKey($args);
+
+        $this->setMessage('success_registed');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminBillingKeyIndex'));
+    }
+
+    public function procHotopayAdminUpdateBillingKey() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        $args = new stdClass();
+        if(!empty($vars->key_idx) || ($vars->key_idx === 0)) $args->key_idx = $vars->key_idx;
+        if(!empty($vars->member_srl) || ($vars->member_srl === 0)) $args->member_srl = $vars->member_srl;
+        if(!empty($vars->pg) || ($vars->pg === 0)) $args->pg = $vars->pg;
+        if(!empty($vars->type) || ($vars->type === 0)) $args->type = $vars->type;
+        if(!empty($vars->key) || ($vars->key === 0)) $args->key = $vars->key;
+        if(!empty($vars->key_hash) || ($vars->key_hash === 0)) $args->key_hash = $vars->key_hash;
+        if(!empty($vars->payment_type) || ($vars->payment_type === 0)) $args->payment_type = $vars->payment_type;
+        if(!empty($vars->alias) || ($vars->alias === 0)) $args->alias = $vars->alias;
+        if(!empty($vars->number) || ($vars->number === 0)) $args->number = $vars->number;
+        if(!empty($vars->regdate) || ($vars->regdate === 0)) $args->regdate = $vars->regdate;
+        HotopayModel::updateBillingKey($args);
+
+        $this->setMessage('success_updated');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminBillingKeyIndex'));
+    }
+
+    public function procHotopayAdminDeleteBillingKey() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        HotopayModel::deleteBillingKey($vars->key_idx);
+
+        $this->setMessage('success_deleted');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminBillingKeyIndex'));
+    }
 }

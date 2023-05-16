@@ -1,0 +1,100 @@
+<include target="__header.html" />
+
+<h1>BillingKey Delete</h1>
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<form class="x_form-horizontal" action="./" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="procHotopayAdminDeleteBillingKey" />
+
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+    <div class="x_control-group">
+        <label class="x_control-label" for="key_idx">{$lang->key_idx}</label>
+        <div class="x_controls">
+            <input type="hidden" name="key_idx" id="key_idx" value="{$billingkey->key_idx}">
+            <p>{$billingkey->key_idx}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="member_srl">{$lang->member_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="member_srl" id="member_srl" value="{$billingkey->member_srl}">
+            <p>{$billingkey->member_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="pg">{$lang->pg}</label>
+        <div class="x_controls">
+            <input type="hidden" name="pg" id="pg" value="{$billingkey->pg}">
+            <p>{$billingkey->pg}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="type">{$lang->type}</label>
+        <div class="x_controls">
+            <input type="hidden" name="type" id="type" value="{$billingkey->type}">
+            <p>{$billingkey->type}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="key">{$lang->key}</label>
+        <div class="x_controls">
+            <input type="hidden" name="key" id="key" value="{$billingkey->key}">
+            <p>{$billingkey->key}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="key_hash">{$lang->key_hash}</label>
+        <div class="x_controls">
+            <input type="hidden" name="key_hash" id="key_hash" value="{$billingkey->key_hash}">
+            <p>{$billingkey->key_hash}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="payment_type">{$lang->payment_type}</label>
+        <div class="x_controls">
+            <input type="hidden" name="payment_type" id="payment_type" value="{$billingkey->payment_type}">
+            <p>{$billingkey->payment_type}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="alias">{$lang->alias}</label>
+        <div class="x_controls">
+            <input type="hidden" name="alias" id="alias" value="{$billingkey->alias}">
+            <p>{$billingkey->alias}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="number">{$lang->number}</label>
+        <div class="x_controls">
+            <input type="hidden" name="number" id="number" value="{$billingkey->number}">
+            <p>{$billingkey->number}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="regdate">{$lang->regdate}</label>
+        <div class="x_controls">
+            <input type="hidden" name="regdate" id="regdate" value="{$billingkey->regdate}">
+            <p>{$billingkey->regdate}</p>
+        </div>
+    </div>
+
+
+    <div class="btnArea x_clearfix">
+        <button type="submit" class="x_btn x_btn-primary x_pull-right">삭제</button>
+    </div>
+</form>

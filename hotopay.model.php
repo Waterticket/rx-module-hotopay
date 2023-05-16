@@ -635,6 +635,28 @@ class HotopayModel extends Hotopay
     }
 
     /**
+     * hotopay_billing_key 테이블에서 BillingKey를 리스트 형식으로 가져온다.
+     * 
+     * @param object $obj
+     */
+    public static function getBillingKeyList(object $obj): object
+    {
+        $obj->sort_index = $obj->sort_index ?? 'key_idx';
+        $obj->order_type = $obj->order_type ?? 'desc';
+        $obj->list_count = $obj->list_count ?? 20;
+        $obj->page_count = $obj->page_count ?? 10;
+        $obj->page = $obj->page ?? 1;
+
+        $output = executeQueryArray('hotopay.getBillingKeyList', $obj);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output;
+    }
+
+    /**
      * hotopay_billing_key 테이블에서 BillingKey를 업데이트한다.
      *
      * @param object $obj
