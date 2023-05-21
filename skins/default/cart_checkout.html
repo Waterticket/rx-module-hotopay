@@ -168,7 +168,7 @@ function _purchaseSubmit(form){return checkCheckbox();}
             <section id="result">
                 <p>상품 금액 : <span id="product_price">{number_format($purchase_price)}</span> 원</p>
                 <!--@if($hotopay_config->point_discount == 'Y')-->
-                <p>할인 금액 : <span id="discount_price">{number_format($purchase_price)}</span> 원</p>
+                <p>할인 금액 : <span id="discount_price">0</span> 원</p>
                 <!--@endif-->
                 <p>총 결제 금액: <span id="purchase_price">{number_format($purchase_price)}</span> 원</p>
             </section>
@@ -183,6 +183,38 @@ function _purchaseSubmit(form){return checkCheckbox();}
 </section>
 
 <script>
+$(document).ready(function() {
+    optionChange();
+});
+
+const user_point = {$point};
+var max_point = 0;
+
+function optionChange()
+{
+    var t_price = {$purchase_price};
+
+    if (user_point > t_price) {
+        max_point = t_price;
+    } else {
+        max_point = user_point;
+    }
+
+    $('#use_point').attr('max', max_point);
+    var use_point = parseInt($('#use_point').val() ?? 0);
+
+    if (use_point > max_point) {
+        $('#use_point').val(max_point);
+        use_point = max_point;
+    }
+
+    t_price -= use_point;
+
+    updatePrice(t_price);
+    $('#discount_price').html(use_point.toLocaleString('ko-KR'));
+    $('#purchase_price').html(t_price.toLocaleString('ko-KR'));
+}
+
 function checkCheckbox()
 {
 	var purchase_checkbox = $('#purchase_checkbox');
