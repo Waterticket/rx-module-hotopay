@@ -9,7 +9,7 @@
  */
 class HotopayModel extends Hotopay
 {
-    public function getProduct($product_srl)
+    public function getProduct(int $product_srl)
     {
 		$cache_key = 'hotopay:product:' . $product_srl;
 		$product = Rhymix\Framework\Cache::get($cache_key);
@@ -31,7 +31,7 @@ class HotopayModel extends Hotopay
         return $output->data;
     }
 
-    public function getProducts($product_srls)
+    public function getProducts(array $product_srls)
     {
         $args = new stdClass();
         $args->product_srl = $product_srls;

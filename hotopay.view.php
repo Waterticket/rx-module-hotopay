@@ -88,6 +88,11 @@ class HotopayView extends Hotopay
 		Context::set('toss_billing_enabled', $config->toss_payments_billing_enabled == 'Y');
 		Context::set('payple_billing_enabled', $config->payple_billing_enabled == 'Y');
 
+		if (empty($vars->product_id))
+		{
+			throw new \Rhymix\Framework\Exception('결제할 상품을 선택해주세요.');
+		}
+
 		$oHotopayModel = getModel('hotopay');
 		$product_list = $oHotopayModel->getProducts($vars->product_id);
 		Context::set('product_list', $product_list);
