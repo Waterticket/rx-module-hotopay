@@ -47,8 +47,14 @@ class HotopayCronJob extends Hotopay {
     private function checkLicenseRenewalDate()
     {
         $validator = new HotopayLicenseValidator();
-        $license_info = $validator->validate($this->config->hotopay_license_key, true);
+        $isLicenseValid = $validator->validate($this->config->hotopay_license_key);
+        if (!$isLicenseValid)
+        {
+            $this->printLog("Warning: Your Hotopay license is invalid");
+            return;
+        }
 
+        $license_info = $validator->validate($this->config->hotopay_license_key, true);
         $expiry_date = round((strtotime($license_info[1]) - time())/86400);
 
         if ($expiry_date <= 30)
