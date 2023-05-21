@@ -46,18 +46,6 @@ $oHotopayAdminModel = getAdminModel('hotopay');
 </style>
 <h1>대시보드</h1>
 
-<!--@if($isLicenseValid)-->
-{@
-    $license_info = $validator->validate($hotopay_config->hotopay_license_key, true);
-    $license_expire_date = round((strtotime($license_info[1]) - time())/86400);
-}
-<!--@if ($license_expire_date <= 30)-->
-<div class="message error">
-    <p>Pro 라이선스 만료가 {$license_expire_date}일 남았습니다. ({$license_info[1]} 까지)</p>
-</div>
-<!--@endif-->
-<!--@endif-->
-
 <div class="square_container">
     <div class="dash_square">
         <p class="title">오늘의 매출 ({date('Y-m-d', strtotime("today midnight"))})</p>
