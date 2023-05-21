@@ -28,6 +28,7 @@ class HotopayCronJob extends Hotopay {
         $this->printLog("Domain: " . $_SERVER['HTTP_HOST']);
         $start_time = microtime(true);
 
+        $this->checkLicenseRenewalDate();
         $this->cancelExpiredPurchases();
         $this->renewSubscriptions();
 
@@ -41,6 +42,44 @@ class HotopayCronJob extends Hotopay {
     private function printLog(string $message, ...$args)
     {
         echo sprintf("[".date("Y-m-d H:i:s")."] " . $message, ...$args) . PHP_EOL;
+    }
+
+    private function checkLicenseRenewalDate()
+    {
+        $validator = new HotopayLicenseValidator();
+        $license_info = $validator->validate($this->config->hotopay_license_key, true);
+
+        $expiry_date = round((strtotime($license_info[1]) - time())/86400);
+
+        if ($expiry_date <= 30)
+        {
+            $this->printLog("Warning: Your Hotopay license will expire in %d days", $expiry_date);
+        }
+        else
+        {
+            $this->printLog("Success: Your Hotopay license will expire in %d days", $expiry_date);
+            return;
+        }
+
+        if ($expiry_date <= 7)
+        {
+            if ($this->config->hotopay_last_license_expire_alert_date + (3600 * 24) <= time() + 10)
+            {
+                $this->config->hotopay_last_license_expire_alert_date = time();
+                $this->setConfig($this->config);
+                $this->printLog("Warning: Send license expire alert");
+                $this->sendLicenseExpireAlert($expiry_date);
+            }
+        }
+    }
+
+    private function sendLicenseExpireAlert(int $expiry_date)
+    {
+        $title = "Hotopay Pro {$expiry_date}일 후 만료 안내";
+        $body = "Hotopay Pro 라이선스가 {$expiry_date}일 후 만료됩니다. <br><br>만료 시 Pro 기능을 이용할 수 없게 되니 만료 전에 라이선스를 갱신해주세요. <br><br>갱신 방법은 <a href='https://potatosoft.kr/notice/11343' target='_blank'>홈페이지</a>에서 확인 가능합니다. <br>";
+
+        $oCommController = getController('communication');
+        $oCommController->sendMessage(4, 4, $title, $body);
     }
 
     private function cancelExpiredPurchases()
