@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 4;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 5;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -774,6 +774,12 @@ class Hotopay extends ModuleObject
 						$oDB = DB::getInstance();
 						$stmt = $oDB->prepare('UPDATE hotopay_product_option SET `billing_infinity_stock` = "Y" WHERE `infinity_stock` = "Y"');
 						$stmt->execute();
+						break;
+
+					case 5: // payple 결제 타입 none으로 변경 (password 기능 Pro 전환으로 인한 변경)
+						$config = $this->getConfig();
+						$config->payple_purchase_type = 'none';
+						$this->setConfig($config);
 						break;
 				}
 

@@ -971,6 +971,13 @@ class HotopayController extends Hotopay
 						$key_idx = 0;
 						if ($config->payple_purchase_type == 'password' || $purchase->data->is_billing == 'Y')
 						{
+							$validator = new HotopayLicenseValidator();
+							$isLicenseValid = $validator->validate($config->hotopay_license_key);
+							if (!$isLicenseValid)
+							{
+								return $this->createObject(-1, '결제를 진행할 수 없습니다. 관리자에게 문의해주세요.');
+							}
+
 							if (isset($_SESSION['hotopay_billing_key']))
 							{
 								$before_idx = $_SESSION['hotopay_billing_key']->key_idx;
