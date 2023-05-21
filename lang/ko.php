@@ -2,7 +2,7 @@
 
 $lang->cmd_hotopay = 'Hotopay';
 $lang->cmd_hotopay_general_config = '기본 설정';
-
+$lang->msg_not_exist_data = '데이터가 존재하지 않습니다.';
 
 $lang->subscription_srl = '구독 번호';
 $lang->member_srl = '회원';
