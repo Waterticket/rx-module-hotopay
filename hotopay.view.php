@@ -121,6 +121,11 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('결제할 상품을 선택해주세요.');
 		}
 
+		if (!is_array($vars->product_id))
+		{
+			$vars->product_id = array($vars->product_id);
+		}
+
 		$oHotopayModel = getModel('hotopay');
 		$product_list = $oHotopayModel->getProducts($vars->product_id);
 		Context::set('product_list', $product_list);
