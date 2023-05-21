@@ -46,13 +46,32 @@ class HotopayView extends Hotopay
 		$cart_items = $oHotopayModel->getCartItems($member_srl);
 		Context::set('cart_items', $cart_items);
 
-		if (!$cart_items)
+		if (empty($cart_items))
 		{
+			$this->setError(-1);
+			$this->setMessage('장바구니에 상품이 없습니다.');
 			$this->setRedirectUrl(getNotEncodedUrl('', 'mid', 'hotopay', 'act', 'dispHotopayCart'));
 			return;
 		}
 
-		$this->dispHotopayOrderPage();
+		$product_srls = array();
+		foreach ($cart_items as $cart_item)
+		{
+			$product_srls[] = $cart_item->product_srl;
+		}
+		Context::set('product_id', $product_srls, true);
+
+		try
+		{
+			$this->dispHotopayOrderPage();
+		}
+		catch(Exception $e)
+		{
+			$this->setError(-1);
+			$this->setMessage($e->getMessage());
+			$this->setRedirectUrl(getNotEncodedUrl('', 'mid', 'hotopay', 'act', 'dispHotopayCart'));
+			return;
+		}
 
 		$purchase_price = 0;
 		foreach ($cart_items as $item)
