@@ -111,8 +111,14 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="license_status">라이선스 상태</label>
 			<div class="x_controls">
-				<p cond="!empty($hotopay_config->hotopay_license_key)">{$isLicenseValid ? '<span style="color: green">PRO 플랜 사용중</span>' : '<span style="color: red">유효하지 않은 라이선스입니다.</span>'}</p>
-				<p cond="empty($hotopay_config->hotopay_license_key)"><span style="color: orange">무료 플랜 사용중</span></p>
+				<!--@if(empty($hotopay_config->hotopay_license_key))-->
+				<p>
+					<span style="color: orange">무료 플랜 사용중</span><br>
+					<a href="https://potatosoft.kr/store/11330" target="_blank">Pro 라이선스 구매</a>
+				</p>
+				<!--@else-->
+				<p>{$isLicenseValid ? '<span style="color: green">PRO 플랜 사용중</span>' : '<span style="color: red">유효하지 않은 라이선스입니다. 오타나 기한이 유효한지 확인해주세요.</span>'}</p>
+				<!--@endif-->
 			</div>
 		</div>
 		<div class="x_control-group" cond="$isLicenseValid">
