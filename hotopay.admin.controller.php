@@ -32,6 +32,9 @@ class HotopayAdminController extends Hotopay
 		$config->regular_group_srl = $vars->regular_group_srl;
 		$config->hotopay_license_key = $vars->hotopay_license_key;
 
+		$config->hotopay_currency_renew_api_type = $vars->hotopay_currency_renew_api_type;
+		$config->fixer_io_api_key = $vars->fixer_io_api_key;
+
 		$config->hotopay_billingkey_encryption = $vars->hotopay_billingkey_encryption;
 		$config->hotopay_aws_kms_arn = $vars->hotopay_aws_kms_arn;
 		

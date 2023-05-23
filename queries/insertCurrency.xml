@@ -1,0 +1,12 @@
+<query id="insertCurrency" action="insert" update-duplicate="true">
+    <tables>
+        <table name="hotopay_currency" />
+    </tables>
+    <columns>
+        <column name="base_currency" var="base_currency" notnull="notnull" />
+        <column name="base_value" var="base_value" notnull="notnull" />
+        <column name="target_currency" var="target_currency" notnull="notnull" />
+        <column name="target_value" var="target_value" notnull="notnull" />
+        <column name="update_time" var="update_time" notnull="notnull" />
+    </columns>
+</query>

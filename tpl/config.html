@@ -167,6 +167,39 @@
 	</section>
 
 	<section class="section">
+		<h1>환율 설정</h1>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="hotopay_currency_renew_api_type">환율 갱신 수단</label>
+			<div class="x_controls">
+				<select name="hotopay_currency_renew_api_type" id="hotopay_currency_renew_api_type">
+					<option value="none" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'none'">설정 안함</option>
+					<option value="fixerio" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'fixerio'">Fixer.io</option>
+				</select>
+				<script>
+					$(document).ready(function() {
+						$('#hotopay_currency_renew_api_type').change(function() {
+							if($(this).val() == 'none') {
+								$('.currency_fixer_io').hide();
+							} else {
+								$('.currency_fixer_io').show();
+							}
+						});
+					});
+				</script>
+			</div>
+		</div>
+
+		<div class="x_control-group" class="currency_fixer_io">
+			<label class="x_control-label" for="fixer_io_api_key">Fixer API Key</label>
+			<div class="x_controls">
+				<input type="text" name="fixer_io_api_key" id="fixer_io_api_key" value="{$hotopay_config->fixer_io_api_key}"><br>
+				<p class="x_help-block">매일 환율정보를 갱신하기 위한 Fixer key를 입력해주세요.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
 		<h1>보안 설정</h1>
 		<div class="x_control-group">
 			<label class="x_control-label" for="hotopay_billingkey_encryption">빌링키 암호화 수단</label>

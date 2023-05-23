@@ -7,12 +7,14 @@ set_time_limit(0);
 class HotopayCronJob extends Hotopay {
     private $config;
     private $oDB;
+    private $oHotopayModel;
 
     public function __construct()
     {
         parent::__construct();
         $this->config = $this->getConfig();
         $this->oDB = DB::getInstance();
+        $this->oHotopayModel = HotopayModel::getInstance();
 
         $stmt = $this->oDB->query('SELECT domain FROM domains WHERE is_default_domain = "Y" LIMIT 1');
         $domain = $stmt->fetchAll();
@@ -30,6 +32,7 @@ class HotopayCronJob extends Hotopay {
 
         $this->checkLicenseRenewalDate();
         $this->cancelExpiredPurchases();
+        $this->updateCurrency();
         $this->renewSubscriptions();
 
         $end_time = microtime(true);
@@ -98,6 +101,15 @@ class HotopayCronJob extends Hotopay {
         else
         {
             $this->printLog("Success: Change old purchases status to EXPIRED");
+        }
+    }
+
+    private function updateCurrency()
+    {
+        $output = $this->oHotopayModel->updateCurrency();
+        if ($output !== true)
+        {
+            $this->printLog("Warning: Failed to update currency; " . $output->message);
         }
     }
 

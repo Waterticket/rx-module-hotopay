@@ -347,6 +347,37 @@ class HotopayModel extends Hotopay
         }
     }
 
+    public function updateCurrency()
+    {
+        $config = $this->getConfig();
+        if ($config->hotopay_currency_renew_time + (3600 * 12) > time()) return new BaseObject(-1, 'Next renew is '.date('Y-m-d H:i:s', $config->hotopay_currency_renew_time + (3600 * 12)));
+
+        switch ($config->hotopay_currency_renew_api_type)
+        {
+            case 'fixerio':
+                $driver = new \HotopayLib\Currency\driver\Fixer($config->fixer_io_api_key);
+                $currency_data = $driver->getLatestCurrency();
+                break;
+
+            case 'none':
+            default:
+                $currency_data = [];
+                break;
+        }
+        
+
+        foreach ($currency_data as $currency)
+        {
+            $currency['update_time'] = date('Y-m-d H:i:s');
+            $output = executeQuery('hotopay.insertCurrency', $currency);
+            if (!$output->toBool()) return $output;
+        }
+        
+        $config->hotopay_currency_renew_time = time();
+        $this->setConfig($config);
+        return true;
+    }
+
     public function minusOptionStock(int $option_srl, int $quantity = 1)
     {
         $option = $this->getOption($option_srl);

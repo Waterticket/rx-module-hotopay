@@ -12,6 +12,7 @@ spl_autoload_register(function($className) {
         "KakaoPay" => "KakaoPay/KakaoPay.php",
         "Iamport" => "Iamport/Iamport.php",
         "Payple" => "Payple/Payple.php",
+        "HotopayLib\Currency\driver\Fixer" => "Currency/driver/Fixer.php",
     );
 
     if(array_key_exists($className, $target))
