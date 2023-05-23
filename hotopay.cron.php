@@ -107,9 +107,35 @@ class HotopayCronJob extends Hotopay {
     private function updateCurrency()
     {
         $output = $this->oHotopayModel->updateCurrency();
-        if ($output !== true)
+        if ($output === true)
+        {
+            $this->printLog("Success: Update currency");
+        }
+        else
         {
             $this->printLog("Warning: Failed to update currency; " . $output->message);
+        }
+
+        $one_usd_to_krw = $this->oHotopayModel->changeCurrency('USD', 'KRW', 1);
+        if ($one_usd_to_krw === false)
+        {
+            $this->printLog("Warning: Failed to change currency; 1 USD to KRW");
+            return;
+        }
+        else
+        {
+            $this->printLog("Test: 1 USD = %.2f KRW", $one_usd_to_krw);
+        }
+
+        $one_thousand_krw_to_usd = $this->oHotopayModel->changeCurrency('KRW', 'USD', 1000);
+        if ($one_thousand_krw_to_usd === false)
+        {
+            $this->printLog("Warning: Failed to change currency; 1,000 KRW to USD");
+            return;
+        }
+        else
+        {
+            $this->printLog("Test: 1,000 KRW = %.2f USD", $one_thousand_krw_to_usd);
         }
     }
 

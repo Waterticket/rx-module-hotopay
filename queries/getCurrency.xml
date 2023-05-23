@@ -1,0 +1,16 @@
+<query id="getCurrency" action="select">
+    <tables>
+        <table name="hotopay_currency" />
+    </tables>
+    <columns>
+        <column name="base_currency" />
+        <column name="base_value" />
+        <column name="target_currency" />
+        <column name="target_value" />
+        <column name="update_time" />
+    </columns>
+    <conditions>
+            <condition operation="equal" column="base_currency" var="base_currency" filter="char" />
+            <condition operation="equal" column="target_currency" var="target_currency" filter="char" pipe="and" />
+    </conditions>
+</query>

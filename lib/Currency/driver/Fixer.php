@@ -8,7 +8,7 @@ class Fixer {
         $this->api_key = $api_key;
     }
 
-    public function getLatestCurrency(string $base = 'USD', array $symbols = ['KRW','JPY','CNY','EUR'])
+    public function getLatestCurrency(string $base = 'USD', array $symbols = ['KRW','JPY','CNY','EUR','USD'])
     {
         $curl = curl_init();
 

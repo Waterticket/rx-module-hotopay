@@ -1,5 +1,4 @@
 <table name="hotopay_currency">
-    <column name="currency_idx" type="bigint" primary_key="primary_key" auto_increment="auto_increment" />
     <column name="base_currency" type="char" size="3" default="USD" notnull="notnull" />
     <column name="base_value" type="double" default="1" notnull="notnull" />
     <column name="target_currency" type="char" size="3" notnull="notnull" />

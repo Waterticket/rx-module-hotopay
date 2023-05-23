@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 5;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 6;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -114,6 +114,7 @@ class Hotopay extends ModuleObject
 
 			if(!isset(self::$_config_cache->hotopay_currency_renew_api_type)) self::$_config_cache->hotopay_currency_renew_api_type = 'none'; // 환율 갱신 API 타입 (none/fixerio)
 			if(!isset(self::$_config_cache->fixer_io_api_key)) self::$_config_cache->fixer_io_api_key = ''; // Fixer.io API Key
+			if(!isset(self::$_config_cache->hotopay_currency_renew_time)) self::$_config_cache->hotopay_currency_renew_time = 0; // 환율 갱신 API 마지막 시각
 
 			if(!isset(self::$_config_cache->hotopay_billingkey_encryption)) self::$_config_cache->hotopay_billingkey_encryption = 'none'; // 빌링키 암호화 수단 (none/awskms)
 			if(!isset(self::$_config_cache->hotopay_aws_kms_arn)) self::$_config_cache->hotopay_aws_kms_arn = ''; // AWS KMS ARN
@@ -784,6 +785,20 @@ class Hotopay extends ModuleObject
 						$config = $this->getConfig();
 						$config->payple_purchase_type = 'none';
 						$this->setConfig($config);
+						break;
+
+					case 6: // 기본 환율 정보 추가
+						$oDB = DB::getInstance();
+						$stmt = $oDB->prepare("
+							INSERT INTO `rx_hotopay_currency` (`base_currency`, `base_value`, `target_currency`, `target_value`, `update_time`)
+							VALUES
+								('USD', 1, 'USD', 1, '2023-05-23 22:07:45'),
+								('USD', 1, 'CNY', 7.054802, '2023-05-23 22:07:45'),
+								('USD', 1, 'EUR', 0.92904, '2023-05-23 22:07:45'),
+								('USD', 1, 'JPY', 138.761975, '2023-05-23 22:07:45'),
+								('USD', 1, 'KRW', 1320.830239, '2023-05-23 22:07:45');
+						");
+						$stmt->execute();
 						break;
 				}
 

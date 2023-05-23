@@ -324,27 +324,36 @@ class HotopayModel extends Hotopay
         return $string;
     }
 
-    public function changeCurrency($original_currency, $change_currency, $amount)
+    public function changeCurrency(string $original_currency, string $change_currency, $amount, int $round = 2)
     {
-        if($original_currency == 'KRW')
+        if ($round > 5) $round = 5;
+
+        $original_to_change_query = executeQuery('hotopay.getCurrency', ['base_currency' => $original_currency, 'target_currency' => $change_currency]);
+        if (!empty($original_to_change_query->data->base_currency))
         {
-            switch($change_currency)
-            {
-                case 'USD':
-                    return round($amount/1250, 2);
-                    break;
-            }
+            $base = $original_to_change_query->data->base_value;
+            $target = $original_to_change_query->data->target_value;
+
+            return round(($amount / $base) * $target, $round);
         }
 
-        if($original_currency == 'USD')
+        $usd_to_original = executeQuery('hotopay.getCurrency', ['base_currency' => 'USD', 'target_currency' => $original_currency]);
+        $usd_to_change = executeQuery('hotopay.getCurrency', ['base_currency' => 'USD', 'target_currency' => $change_currency]);
+
+        if (!empty($usd_to_original->data->base_currency) && !empty($usd_to_change->data->base_currency))
         {
-            switch($change_currency)
-            {
-                case 'KRW':
-                    return $amount*1250;
-                    break;
-            }
+            $usd_base_in_original = $usd_to_original->data->base_value;
+            $target_base_in_original = $usd_to_original->data->target_value;
+
+            $original_amount_in_usd = ($amount / $target_base_in_original) * $usd_base_in_original;
+
+            $base = $usd_to_change->data->base_value;
+            $target = $usd_to_change->data->target_value;
+
+            return round(($original_amount_in_usd / $base) * $target, $round);
         }
+
+        return false;
     }
 
     public function updateCurrency()
