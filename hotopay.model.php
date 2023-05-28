@@ -361,11 +361,19 @@ class HotopayModel extends Hotopay
         $config = $this->getConfig();
         if ($config->hotopay_currency_renew_time + (3600 * 12) > time()) return new BaseObject(-1, 'Next renew is '.date('Y-m-d H:i:s', $config->hotopay_currency_renew_time + (3600 * 12)));
 
+        $from = 'USD';
+        $to = ['KRW','JPY','CNY','EUR','USD'];
+
         switch ($config->hotopay_currency_renew_api_type)
         {
             case 'fixerio':
                 $driver = new \HotopayLib\Currency\driver\Fixer($config->fixer_io_api_key);
-                $currency_data = $driver->getLatestCurrency();
+                $currency_data = $driver->getLatestCurrency($from, $to);
+                break;
+
+            case 'exchangeratehost':
+                $driver = new \HotopayLib\Currency\driver\ExchangeRateHost();
+                $currency_data = $driver->getLatestCurrency($from, $to);
                 break;
 
             case 'none':

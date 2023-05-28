@@ -13,6 +13,7 @@ spl_autoload_register(function($className) {
         "Iamport" => "Iamport/Iamport.php",
         "Payple" => "Payple/Payple.php",
         "HotopayLib\Currency\driver\Fixer" => "Currency/driver/Fixer.php",
+        "HotopayLib\Currency\driver\Exchangeratehost" => "Currency/driver/Exchangeratehost.php",
     );
 
     if(array_key_exists($className, $target))

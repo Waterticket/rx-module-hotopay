@@ -174,7 +174,8 @@
 			<div class="x_controls">
 				<select name="hotopay_currency_renew_api_type" id="hotopay_currency_renew_api_type">
 					<option value="none" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'none'">설정 안함</option>
-					<option value="fixerio" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'fixerio'">Fixer.io</option>
+					<option value="fixerio" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'fixerio'">Fixer.io (API키 필요)</option>
+					<option value="exchangeratehost" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'exchangeratehost'">Exchangerate.host (무료)</option>
 				</select>
 				<p class="x_help-block">환율 정보 갱신은 Cron이 설정되어있어야 합니다.</p>
 				<script>
