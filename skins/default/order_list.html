@@ -56,6 +56,20 @@ $daily = array('일','월','화','수','목','금','토');
                 <!--@endif-->
             </tbody>
         </table>
+
+        <!--// pagenation -->
+        <!--@if ($list_count)-->
+        <br>
+        <div style="text-align: center; font-size: 1.3em">
+            {@
+                $start = intval($page/10) * 10;
+                $end = min($start + 10, ($total_size / $query_count) + 1);
+            }
+            <!--@for($i = $start + 1; $i <= $end; $i++)-->
+            <a href="{getUrl('page', $i)}" style="font-weight:bold"|cond="$i == $page">{$i}</a>&nbsp;
+            <!--@endfor-->
+        </div>
+        <!--@endif-->
     </div>
     </div>
 </section>

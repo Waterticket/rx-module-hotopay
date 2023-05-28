@@ -238,7 +238,7 @@ class HotopayView extends Hotopay
 
 		$member_srl = $logged_info->member_srl;
 
-		$page = 1;
+		$page = $vars->page ?: 1;
 		$size = 20;
 		$offset = ($page - 1) * $size;
 
@@ -345,6 +345,11 @@ class HotopayView extends Hotopay
 		$obj->purchase_list = $purchase_list;
 		ModuleHandler::triggerCall('hotopay.displayOrderList', 'before', $obj);
 
+		Context::set('page', $page);
+		Context::set('size', $size);
+		Context::set('total_size', $total_size);
+		Context::set('query_count', $size);
+		Context::set('list_count', count($purchase_list));
 		Context::set('purchase_list', $purchase_list);
 
 		$this->setTemplateFile('order_list');
