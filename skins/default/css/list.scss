@@ -1,0 +1,309 @@
+div#r_content {
+  text-align: left;
+  max-width: 100% !important;
+  padding: 15px;
+
+  h1 {
+    font-size: 22px;
+    margin: 0;
+  }
+
+  ul {
+    padding-left: 0;
+    list-style: none;
+
+    li {
+      padding: 15px;
+      border-bottom: 1px solid #868e96;
+      list-style: none;
+
+      img {
+        width: 200px;
+        height: 200px;
+      }
+
+      &::after {
+        content: "";
+        display: block;
+        clear: both;
+      }
+    }
+  }
+
+  div {
+    &.thumb {
+      float: left;
+      width: 200px;
+    }
+
+    &.gdsInfo {
+      float: right;
+      width: calc(100% - 270px);
+      font-size: 15px;
+      line-height: 2;
+
+      span {
+        display: inline-block;
+        width: 100px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      .delete {
+        text-align: right;
+
+        button {
+          font-size: 22px;
+          padding: 5px 10px;
+          border: 1px solid #eee;
+          background: #eee;
+        }
+      }
+
+      select {
+        min-width: 200px;
+        width: 60%;
+        max-width: 400px;
+        background: transparent;
+        padding: 5px;
+        border: 2px solid #868e96;
+        border-radius: 5px;
+      }
+    }
+  }
+}
+
+body.color_scheme_dark div#r_content div.gdsInfo option {
+  background-color: #262b30;
+}
+
+div#r_content hr {
+  color: #868e96;
+}
+
+section#result p {
+  max-width: 100%;
+  padding: 20px;
+  background-color: #eee;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+body.color_scheme_dark section#result p {
+  background-color: #30373d;
+}
+
+section#pay_method {
+  text-align: center;
+  font-size: 15px;
+  margin: 20px;
+  margin-top: 0;
+
+  input[type="radio"] {
+    &:checked {
+      border-width: 5px;
+      border-color: #ff4757;
+
+      + label {
+        color: #ff4757;
+        border-color: #ff4757;
+      }
+    }
+
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    margin: -4px 0 0 0;
+    padding: 0 !important;
+    vertical-align: middle;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border-radius: 50% !important;
+    border: 1px solid #868e96;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: 0.2s ease;
+
+    + label {
+      cursor: pointer;
+      color: #868e96;
+      padding-left: 0.25rem;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+#purchase_price {
+  font-weight: bold;
+}
+
+div#r_content {
+  h1 {
+    font-weight: bold;
+  }
+
+  input {
+    &[type=text], &[type=number] {
+      background: transparent;
+      padding: 5px;
+      border: 2px solid #868e96;
+      border-radius: 5px;
+    }
+
+    &[type=text] {
+      min-width: 200px;
+      width: 60%;
+      max-width: 400px;
+    }
+
+    &[type=number] {
+      min-width: 100px;
+      width: 20%;
+      max-width: 200px;
+    }
+  }
+}
+
+section {
+  &#depositor, &#point_discount {
+    border-top: 1px solid #868e96;
+    border-bottom: 1px solid #868e96;
+    margin-bottom: 20px;
+
+    /* background-color: rgb(250, 250, 250); */
+    padding: 20px;
+  }
+
+  &#depositor p, &#point_discount p {
+    padding-bottom: 8px;
+  }
+
+  &#depositor span#required {
+    color: #ff4757;
+  }
+}
+
+.ht-table {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 15px;
+
+  tbody tr td, thead tr th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+.ht-order-status {
+  &[data-status="DONE"] {
+    border-color: #00a754;
+    color: #00a754;
+  }
+
+  &[data-status="CANCELED"], &[data-status="FAILED"], &[data-status="REFUNDED"] {
+    border-color: #eb331c;
+    color: #eb331c;
+  }
+}
+
+.ht-tag {
+  display: inline-block;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  padding: 2px 6px;
+  border: #636363 1px solid;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #636363;
+}
+
+.ht-table thead tr {
+  td, th {
+    padding-bottom: 8px;
+    border-bottom: #868e96 1px solid;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 400;
+    color: #555;
+  }
+}
+
+.ht-order .ht-order-id {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.ht-order-thumbnail img {
+  width: 80px;
+  height: 80px;
+}
+
+.ht-order.invalid {
+  opacity: 0.7;
+
+  .ht-order-first-item > span {
+    text-decoration: line-through;
+  }
+}
+
+section {
+  &#result p {
+    margin: 10px 0;
+
+    &.orange {
+      background-color: #FF6F3B;
+      color: white;
+    }
+  }
+
+  &#purchase_check {
+    margin: 15px 5px 5px;
+  }
+}
+
+@media (max-width: 600px) {
+  div#r_content {
+    div.thumb {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    ul li img {
+      width: 100%;
+      height: 100%;
+      max-width: 200px;
+    }
+
+    div.gdsInfo {
+      display: block;
+      float: none;
+      width: 100%;
+
+      span {
+        margin-top: 10px;
+        display: block;
+      }
+    }
+  }
+}
+
+#purchase {
+  text-align: center;
+}
+
+#purchase_btn {
+  width: 100%;
+  height: 50px;
+  background-color: rgb(59, 59, 59);
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
