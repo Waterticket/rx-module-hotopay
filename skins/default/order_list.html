@@ -25,24 +25,22 @@ $daily = array('일','월','화','수','목','금','토');
             </thead>
             <tbody>
                 <!--@foreach($purchase_list as $purchase)-->
-                {@
-                    $products = $oHotopayModel->getProductsByPurchaseSrl($purchase->purchase_srl);
-                    $options = $oHotopayModel->getOptionsByPurchaseSrl($purchase->purchase_srl);
-                }
-                <!--@foreach($products as $product)-->
+                <!--@foreach($purchase->items as $idx => $item)-->
                 <tr class="ht-order">
-                    <td>
+                    <!--@if($idx == 0)-->
+                    <td rowspan="{count($purchase->items)}" style="vertical-align:top;padding-top: 20px">
                         <span class="ht-order-id">HT{str_pad($purchase->purchase_srl, 4, "0", STR_PAD_LEFT)}</span>
                         <span class="ht-tag ht-order-status" data-status="{$purchase->pay_status}">{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}</span>
                     </td>
+                    <!--@endif-->
                     <td>
-                        <span class="ht-order-thumbnail"><img src="{$product->product_pic_src}"></span>
+                        <span class="ht-order-thumbnail"><img src="{$item->product_pic_src}"></span>
                     </td>
                     <td>
-                        <span class="ht-order-first-item">{$product->product_name}<br>({$options[$product->product_srl]->title}){$product->title}</span>
+                        <span class="ht-order-first-item"><a href="{getUrl('','document_srl',$item->document_srl)}" target="_blank">{$item->product_name}<br>({$item->option_name})</a></span>
                     </td>
                     <td>
-                        <span class="ht-order-total">₩{number_format($purchase->product_purchase_price)}</span>
+                        <span class="ht-order-total">₩{number_format($item->purchase_price)}</span>
                     </td>
                     <td>
                         <span class="ht-order-created-at">{date("Y년 m월 d일 ",$purchase->regdate).$daily[date('w',$purchase->regdate)].'요일'}<br>{date("H시 i분",$purchase->regdate)}<!--@if(!empty($purchase->receipt_url))-->&nbsp;<a href="{$purchase->receipt_url}" target="_blank">(영수증)</a><!--@endif--></span>

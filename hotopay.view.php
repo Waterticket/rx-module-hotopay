@@ -236,20 +236,113 @@ class HotopayView extends Hotopay
 			return $this->createObject(-1, "로그인이 필요합니다.");
 		}
 
-		$args = new stdClass();
-		$args->member_srl = $logged_info->member_srl;
-		$output = executeQueryArray('hotopay.getPurchases', $args);
+		$member_srl = $logged_info->member_srl;
 
-		if(!$output->toBool())
+		$page = 1;
+		$size = 20;
+		$offset = ($page - 1) * $size;
+
+		$oDB = DB::getInstance();
+		$total_size_query = $oDB->query("SELECT COUNT(*) AS count FROM `hotopay_purchase` WHERE `member_srl` = ?", [$member_srl]);
+		[$total_size_object] = $total_size_query->fetchAll();
+		$total_size = (int) $total_size_object->count;
+
+		if ($total_size > 0)
 		{
-			return $this->createObject(-1, "Query Error (code: 1001)");
+			$stmt = $oDB->prepare("SELECT 
+				`purchase`.`purchase_srl`,
+				`purchase`.`member_srl`,
+				`purchase`.`title`,
+				`purchase`.`pay_method`,
+				`purchase`.`product_purchase_price`,
+				`purchase`.`product_original_price`,
+				`purchase`.`pay_status`,
+				`purchase`.`receipt_url`,
+				`purchase`.`is_billing`,
+				`purchase`.`regdate`,
+
+				`item`.`item_srl`,
+				`item`.`option_srl`     AS `item_option_srl`,
+				`item`.`option_name`    AS `item_option_name`,
+				`item`.`purchase_price` AS `item_purchase_price`,
+				`item`.`quantity`       AS `item_quantity`,
+				`product`.`product_name`,
+				`product`.`product_pic_src`,
+				`product`.`market_srl`,
+				`product`.`member_srl`  AS `seller_member_srl`,
+				`product`.`document_srl`
+
+				FROM `hotopay_purchase` AS `purchase` 
+				INNER JOIN (
+					SELECT purchase_srl FROM `hotopay_purchase` AS `purchase_inner`
+						WHERE `purchase_inner`.`member_srl` = :member_srl
+						ORDER BY `purchase_inner`.`purchase_srl` DESC
+						LIMIT :offset, :size
+				) AS purchase_inner	ON `purchase_inner`.`purchase_srl` = `purchase`.`purchase_srl`
+
+				LEFT JOIN `hotopay_purchase_item` AS `item`
+					ON `purchase`.`purchase_srl` = `item`.`purchase_srl`
+				LEFT JOIN `hotopay_product` AS `product`
+					ON `item`.`product_srl` = `product`.`product_srl`");
+
+			$stmt->bindValue(':member_srl', $member_srl, PDO::PARAM_INT);
+			$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+			$stmt->bindValue(':size', $size, PDO::PARAM_INT);
+
+			try {
+				$stmt->execute();
+			} catch (Exception $ignore) {
+				return $this->createObject(-1, "Query Error (code: 1001)");
+			}
+			$purchase_list_before = $stmt->fetchAll();
+			$purchase_list_by_idx = array();
+
+			foreach ($purchase_list_before as $purchase_item)
+			{
+				if (!isset($purchase_list_by_idx[$purchase_item->purchase_srl]))
+				{
+					$purchase_list_by_idx[$purchase_item->purchase_srl] = (object) array(
+						'purchase_srl' => $purchase_item->purchase_srl,
+						'member_srl' => $purchase_item->member_srl,
+						'title' => $purchase_item->title,
+						'pay_method' => $purchase_item->pay_method,
+						'product_purchase_price' => $purchase_item->product_purchase_price,
+						'product_original_price' => $purchase_item->product_original_price,
+						'pay_status' => $purchase_item->pay_status,
+						'receipt_url' => $purchase_item->receipt_url,
+						'is_billing' => $purchase_item->is_billing,
+						'regdate' => $purchase_item->regdate,
+						'items' => array(),
+					);
+				}
+
+				$purchase_list_by_idx[$purchase_item->purchase_srl]->items[] = (object) array(
+					'item_srl' => $purchase_item->item_srl,
+					'option_srl' => $purchase_item->item_option_srl,
+					'option_name' => $purchase_item->item_option_name,
+					'purchase_price' => $purchase_item->item_purchase_price,
+					'quantity' => $purchase_item->item_quantity,
+					'product_name' => $purchase_item->product_name,
+					'product_pic_src' => $purchase_item->product_pic_src,
+					'market_srl' => $purchase_item->market_srl,
+					'seller_member_srl' => $purchase_item->seller_member_srl,
+					'document_srl' => $purchase_item->document_srl,
+				);
+			}
+
+			$purchase_list = array_values($purchase_list_by_idx);
+		}
+		else
+		{
+			$purchase_list = array();
 		}
 
-		$purchase_list = array_reverse($output->data);
-
-
 		$obj = new stdClass();
-		$obj->purchase_list = &$purchase_list;
+		$obj->member_srl = $member_srl;
+		$obj->page = $page;
+		$obj->size = $size;
+		$obj->total_size = $total_size;
+		$obj->purchase_list = $purchase_list;
 		ModuleHandler::triggerCall('hotopay.displayOrderList', 'before', $obj);
 
 		Context::set('purchase_list', $purchase_list);

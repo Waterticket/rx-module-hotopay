@@ -64,7 +64,7 @@
 		<!-- 일반 액션 -->
 		<action name="dispHotopayOrderList" type="view">
 			<route route="orderList" />
-			<route route="orderList/$target_member_srl:int" />
+			<route route="orderList/$page:int" />
 		</action>
 
 		<!-- 카트 액션 -->
