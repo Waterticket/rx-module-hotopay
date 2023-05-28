@@ -51,8 +51,9 @@ function _purchaseSubmit(form){return checkCheckbox();}
     <div id="p_content">
     <div id="r_content">
         <h1>주문서</h1>
-        <hr>
         <br>
+        <br>
+        <hr>
         <ul>
             <!--@foreach($product_list as $no => $product)-->
             <input type="hidden" name="purchase_info[{$no}][product_srl]" value="{$product->product_srl}" />

@@ -81,14 +81,14 @@ function _purchaseSubmit(form){return checkCheckbox();}
                     <!--@endforeach-->
                 </tbody>
             </table>
+            <hr>
 
             <!--@if($purchase_type == 'normal')-->
             <!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y')-->
-            <section id="pay_method" style="margin:50px 0 0 0;">
+            <section id="pay_method" style="margin:40px 0 0 0;">
             <!--@else-->
-            <section id="pay_method" style="margin-top:50px">
+            <section id="pay_method" style="margin-top:40px">
             <!--@endif-->
-                <hr>
                 <br>
                 <!--@if(count($billing_keys) >= 1)-->
                 <h2>기존 결제수단</h2>
