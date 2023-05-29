@@ -372,7 +372,7 @@ class HotopayModel extends Hotopay
                 break;
 
             case 'exchangeratehost':
-                $driver = new \HotopayLib\Currency\driver\ExchangeRateHost();
+                $driver = new \HotopayLib\Currency\driver\Exchangeratehost();
                 $currency_data = $driver->getLatestCurrency($from, $to);
                 break;
 
