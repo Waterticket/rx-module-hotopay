@@ -555,6 +555,11 @@ class HotopayController extends Hotopay
 							"message" => "결제를 실패하였습니다. (code: 1016)"
 						);
 	
+						$subscription_update_obj = new stdClass();
+						$subscription_update_obj->subscription_srl = $subscription->subscription_srl;
+						$subscription_update_obj->status = "CANCELED";
+						$oHotopayModel->updateSubscription($subscription_update_obj);
+
 						$oHotopayModel->rollbackOptionStock($purchase_srl);
 
 						$args->pay_data = json_encode($billingStatus->data);
