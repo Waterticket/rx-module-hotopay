@@ -106,6 +106,7 @@ function _purchaseSubmit(form){return checkCheckbox();}
                 <!--@if(in_array(2, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vacc" value="v_account" required="required"><label for="pm_vacc"> 가상계좌</label>&nbsp;<!--@endif-->
                 <!--@if(in_array(3, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_vouc" value="voucher" required="required"><label for="pm_vouc"> 상품권</label>&nbsp;<!--@endif-->
                 <!--@if(in_array(4, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_cphn" value="cellphone" required="required"><label for="pm_cphn"> 휴대폰</label>&nbsp;<!--@endif-->
+                <!--@if(in_array(7, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_tspp" value="toss_paypal" required="required"><label for="pm_tspp"> <img src="/modules/hotopay/skins/default/img/paypal_PP_logo_h_100x26.png" style="width: 53px; display: inline-block;" alt="PayPal" title="PayPal" /></label>&nbsp;<!--@endif-->
             <!--@endif-->
             <!--@if($n_account_enabled)-->
             <input type="radio" name="pay_method" id="pm_nacc" value="n_account" required="required"><label for="pm_nacc"> 무통장 입금</label>&nbsp;
@@ -117,13 +118,13 @@ function _purchaseSubmit(form){return checkCheckbox();}
             <input type="radio" name="pay_method" id="pm_kapy" value="kakaopay" required="required"><label for="pm_kapy"> <img src="/modules/hotopay/skins/default/img/kakao_payment_icon_yellow_small.png" style="width: 53px; display: inline;" alt="카카오페이" title="카카오페이" /></label>
             <!--@endif-->
             <!--@if($inicis_enabled)-->
-                <!--@if(in_array('card', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_card" value="inic_card" checked="checked" required="required"><label for="pm_inic_card"> 카드(이니시스)</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('trans', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_trans" value="inic_trans" checked="checked" required="required"><label for="pm_inic_trans"> 실시간계좌이체(이니시스)</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('vbank', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_vbank" value="inic_vbank" checked="checked" required="required"><label for="pm_inic_vbank"> 가상계좌(이니시스)</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('phone', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_phone" value="inic_phone" checked="checked" required="required"><label for="pm_inic_phone"> 휴대폰(이니시스)</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('cultureland', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_cultureland" value="inic_cultureland" checked="checked" required="required"><label for="pm_inic_cultureland"> 컬쳐랜드(이니시스)</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('smartculture', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_smartculture" value="inic_smartculture" checked="checked" required="required"><label for="pm_inic_smartculture"> 스마트문상(이니시스)</label>&nbsp;<!--@endif-->
-                <!--@if(in_array('happymoney', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_happymoney" value="inic_happymoney" checked="checked" required="required"><label for="pm_inic_happymoney"> 해피머니(이니시스)</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('card', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_card" value="inic_card" checked="checked" required="required"><label for="pm_inic_card"> 카드</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('trans', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_trans" value="inic_trans" checked="checked" required="required"><label for="pm_inic_trans"> 실시간계좌이체</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('vbank', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_vbank" value="inic_vbank" checked="checked" required="required"><label for="pm_inic_vbank"> 가상계좌</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('phone', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_phone" value="inic_phone" checked="checked" required="required"><label for="pm_inic_phone"> 휴대폰</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('cultureland', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_cultureland" value="inic_cultureland" checked="checked" required="required"><label for="pm_inic_cultureland"> 컬쳐랜드</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('smartculture', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_smartculture" value="inic_smartculture" checked="checked" required="required"><label for="pm_inic_smartculture"> 스마트문상</label>&nbsp;<!--@endif-->
+                <!--@if(in_array('happymoney', $hotopay_config->inicis_list))--><input type="radio" name="pay_method" id="pm_inic_happymoney" value="inic_happymoney" checked="checked" required="required"><label for="pm_inic_happymoney"> 해피머니</label>&nbsp;<!--@endif-->
             <!--@endif-->
             <!--@if($payple_enabled)-->
                 <!--@if(in_array('card', $hotopay_config->payple_list))--><input type="radio" name="pay_method" id="pm_paypl_card" value="paypl_card" checked="checked" required="required"><label for="pm_paypl_card"> 카드</label>&nbsp;<!--@endif-->
