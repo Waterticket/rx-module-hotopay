@@ -17,12 +17,11 @@
 
 <!--@if($purchase->pay_pg == 'toss')-->
 <script src="https://js.tosspayments.com/v1"></script>
-<script>
-  var clientKey = '{$hotopay_config->toss_payments_client_key}';
-  var tossPayments = TossPayments(clientKey);
-</script>
 <!--@if($purchase->is_billing == 'Y')-->
 <script>
+var clientKey = '{$hotopay_config->toss_payments_billing_client_key}';
+var tossPayments = TossPayments(clientKey);
+
 function openPay()
 {
   tossPayments.requestBillingAuth('{$purchase->pay_method_korean}', {
@@ -44,6 +43,9 @@ function openPay()
 </script>
 <!--@else-->
 <script>
+var clientKey = '{$hotopay_config->toss_payments_client_key}';
+var tossPayments = TossPayments(clientKey);
+
 function openPay()
 {
   tossPayments.requestPayment('{$purchase->pay_method_korean}', {
