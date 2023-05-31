@@ -390,6 +390,11 @@ class HotopayController extends Hotopay
 				$purchase_data->pay_pg = 'toss';
 				break;
 
+			case 'toss_paypal':
+				$purchase_data->pay_method_korean = '해외간편결제';
+				$purchase_data->pay_pg = 'toss';
+				break;
+
 			case 'point':
 				$purchase_data->pay_method_korean = '포인트 결제';
 				$purchase_data->pay_pg = 'point';

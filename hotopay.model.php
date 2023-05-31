@@ -244,6 +244,9 @@ class HotopayModel extends Hotopay
             case "toss":
                 return "토스앱";
 
+            case "toss_paypal":
+                return "토스해외간편결제(페이팔)";
+
             case "inic_card":
                 return "신용카드";
 
