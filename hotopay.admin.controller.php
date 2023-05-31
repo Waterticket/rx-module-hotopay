@@ -66,6 +66,8 @@ class HotopayAdminController extends Hotopay
 		$config->toss_payments_max_install_month = $vars->toss_payments_max_install_month;
 		$config->toss_payments_widget_enabled = empty($vars->toss_payments_widget_enabled) ? 'N' : 'Y';
 		$config->toss_payments_billing_enabled = empty($vars->toss_payments_billing_enabled) ? 'N' : 'Y';
+		$config->toss_payments_billing_client_key = $vars->toss_payments_billing_client_key;
+		$config->toss_payments_billing_secret_key = $vars->toss_payments_billing_secret_key;
 
 		$config->paypal_enabled = empty($vars->paypal_enabled) ? 'N' : 'Y';
 		$config->paypal_client_key = $vars->paypal_client_key;
