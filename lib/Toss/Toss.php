@@ -2,11 +2,24 @@
 
 class Toss extends Hotopay {
     public static $TOSS_URL = 'https://api.tosspayments.com';
+    private static $secret_key;
+
+    public function __construct($is_billing = false)
+    {
+        $config = $this->getConfig();
+        if ($is_billing)
+        {
+            self::$secret_key = $config->toss_payments_billing_secret_key;
+        }
+        else
+        {
+            self::$secret_key = $config->toss_payments_secret_key;
+        }
+    }
 
     public function getAccessToken()
     {
-        $config = $this->getConfig();
-        return base64_encode("$config->toss_payments_secret_key:");
+        return base64_encode(self::$secret_key.":");
     }
 
     public function acceptOrder($purchase_srl, $payment_key)

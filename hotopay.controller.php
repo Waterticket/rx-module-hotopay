@@ -466,7 +466,7 @@ class HotopayController extends Hotopay
 					return $this->createObject(-1, "결제 실패. (code: 1013)");
 				}
 
-				$tossController = new Toss();
+				$tossController = new Toss(true);
 				$output = $tossController->requestBillingKey($vars->customerKey, $vars->authKey);
 				if (!$output->toBool())
 				{
@@ -1588,12 +1588,28 @@ class HotopayController extends Hotopay
 			case 'voucher':
 			case 'cellphone':
 			case 'toss':
-				$tossController = new Toss();
+				if ($purchase->is_billing == 'Y')
+				{
+					$tossController = new Toss(true);
+				}
+				else
+				{
+					$tossController = new Toss();
+				}
+
 				$output = $tossController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount);
 				break;
 
 			case 'v_account':
-				$tossController = new Toss();
+				if ($purchase->is_billing == 'Y')
+				{
+					$tossController = new Toss(true);
+				}
+				else
+				{
+					$tossController = new Toss();
+				}
+
 				$output = $tossController->cancelOrder($purchase_srl, $cancel_reason, $cancel_amount, $bank_info);
 				break;
 
