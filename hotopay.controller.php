@@ -557,7 +557,7 @@ class HotopayController extends Hotopay
 	
 						$subscription_update_obj = new stdClass();
 						$subscription_update_obj->subscription_srl = $subscription->subscription_srl;
-						$subscription_update_obj->status = "CANCELED";
+						$subscription_update_obj->status = "FAILED_INITIAL";
 						$oHotopayModel->updateSubscription($subscription_update_obj);
 
 						$oHotopayModel->rollbackOptionStock($purchase_srl);

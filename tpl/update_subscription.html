@@ -96,6 +96,7 @@
                 <option value="ACTIVE" selected="selected"|cond="$subscription->status == 'ACTIVE'">활성 (ACTIVE)</option>
                 <option value="CANCELED" selected="selected"|cond="$subscription->status == 'CANCELED'">정기결제 취소 (CANCELED)</option>
                 <option value="FAILED_RENEW" selected="selected"|cond="$subscription->status == 'FAILED_RENEW'">결제수단 이슈로 인한 정기결제 실패 (FAILED_RENEW)</option>
+                <option value="FAILED_INITIAL" selected="selected"|cond="$subscription->status == 'FAILED_INITIAL'">결제수단 이슈로 인한 초기 결제 실패 (FAILED_INITIAL)</option>
                 <option value="OUT_OF_STOCK" selected="selected"|cond="$subscription->status == 'OUT_OF_STOCK'">재고 없음으로 인한 정기결제 실패 (OUT_OF_STOCK)</option>
             </select>
             <p class="x_help-block">정기결제 상태입니다. 상태를 변경해도 권한은 회수되거나 추가되지 않으니 직접 작업해주셔야합니다.</p>
