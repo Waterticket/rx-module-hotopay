@@ -1,7 +1,7 @@
 <include target="_header.html" />
 <load target="css/list.scss" />
 
-<!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y')-->
+<!--@if($toss_enabled && $hotopay_config->toss_payments_widget_enabled == 'Y' && $purchase_type == 'normal')-->
 {@ $logged_info = Context::get('logged_info'); }
 <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 <script>
