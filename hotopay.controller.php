@@ -71,7 +71,7 @@ class HotopayController extends Hotopay
 
 		if ($is_billing_product_exist && $is_non_billing_product_exist)
 		{
-			return $this->createObject(-1, '정기결제 상품과 일반결제 상품을 동시에 구매할 수 없습니다.');
+			return $this->createObject(-1, '정기결제 상품과 일반결제 상품은 별도로 결제해주세요.');
 		}
 
 		if ($is_billing_product_exist)
