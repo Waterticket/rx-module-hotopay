@@ -57,15 +57,22 @@ class HotopayController extends Hotopay
 
 		$is_non_billing_product_exist = false;
 		$is_billing_product_exist = false;
+		$point_discount_allow = ($config->point_discount == 'Y');
 		foreach ($product_info as $product)
 		{
 			if ($product->is_billing == 'Y')
 			{
 				$is_billing_product_exist = true;
+				$point_discount_allow = false;
 			}
 			else
 			{
 				$is_non_billing_product_exist = true;
+			}
+
+			if ($product->allow_use_point != 'Y')
+			{
+				$point_discount_allow = false;
 			}
 		}
 
@@ -168,11 +175,11 @@ class HotopayController extends Hotopay
 		$extra_vars = new stdClass(); // $vars->extra_vars ?? new stdClass();
 		$extra_vars->use_point = 0;
 
-		if ($config->point_discount == 'Y')
+		$input_point = intval($vars->use_point, 10) ?? 0;
+		if ($config->point_discount == 'Y' && $point_discount_allow)
 		{
 			$oPointModel = getModel('point');
 			$user_point = $oPointModel->getPoint($logged_info->member_srl, true);
-			$input_point = intval($vars->use_point, 10) ?? 0;
 
 			if ($input_point < 0) $input_point = 0;
 
@@ -193,6 +200,10 @@ class HotopayController extends Hotopay
 
 			$total_price -= $input_point;
 			$extra_vars->use_point = $input_point;
+		}
+		else if ($input_point > 0)
+		{
+			return $this->createObject(-1, "포인트 사용이 불가능합니다.");
 		}
 
 		if ($total_price <= 0) $vars->pay_method = 'point';

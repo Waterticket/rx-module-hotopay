@@ -132,17 +132,26 @@ class HotopayView extends Hotopay
 
 		$is_non_billing_product_exist = false;
 		$is_billing_product_exist = false;
+		$point_discount_allow = ($config->point_discount == 'Y');
 		foreach ($product_list as $product)
 		{
 			if ($product->is_billing == 'Y')
 			{
 				$is_billing_product_exist = true;
+				$point_discount_allow = false;
 			}
 			else
 			{
 				$is_non_billing_product_exist = true;
 			}
+
+			if ($product->allow_use_point != 'Y')
+			{
+				$point_discount_allow = false;
+			}
 		}
+
+		Context::set('point_discount_allow', $point_discount_allow);
 
 		if ($is_billing_product_exist && $is_non_billing_product_exist)
 		{
