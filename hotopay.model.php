@@ -926,4 +926,125 @@ class HotopayModel extends Hotopay
                 return \Rhymix\Modules\Keyenc\Models\AWSKMS::DecryptShort($config->hotopay_aws_kms_arn, $part[1]);
         }
     }
+
+    public static function insertProductExtraInfo(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.insertProductExtraInfo', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_product_extra_info 테이블에서 ProductExtraInfo를 업데이트한다.
+     * 
+     * @param object $obj
+     */
+    public static function updateProductExtraInfo(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.updateProductExtraInfo', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_product_extra_info 테이블에서 ProductExtraInfo를 삭제한다.
+     * 
+     * @param int $info_srl
+     */
+    public static function deleteProductExtraInfo(int $info_srl): object
+    {
+        $args = new \stdClass();
+        $args->info_srl = $info_srl;
+
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.deleteProductExtraInfo', $args);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
+
+    /**
+     * hotopay_product_extra_info 테이블에서 ProductExtraInfo를 가져온다.
+     * 
+     * @param int $product_srl
+     */
+    public static function getProductExtraInfo(int $product_srl): array
+    {
+        $args = new \stdClass();
+        $args->product_srl = $product_srl;
+
+        $output = executeQueryArray('hotopay.getProductExtraInfo', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: array();
+    }
+
+    /**
+     * hotopay_product_extra_info 테이블에서 ProductExtraInfoByKeyName를 가져온다.
+     * 
+     * @param string $key_name
+     */
+    public static function getProductExtraInfoByKeyName(string $key_name): object
+    {
+        $args = new \stdClass();
+        $args->key_name = $key_name;
+
+        $output = executeQuery('hotopay.getProductExtraInfoByKeyName', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: new \stdClass();
+    }
+
+    /**
+     * hotopay_product_extra_info 테이블에서 ProductExtraInfo를 리스트 형식으로 가져온다.
+     * 
+     * @param object $obj
+     */
+    public static function getProductExtraInfoList(object $obj): object
+    {
+        $obj->sort_index = $obj->sort_index ?? 'product_srl';
+        $obj->order_type = $obj->order_type ?? 'desc';
+        $obj->list_count = $obj->list_count ?? 20;
+        $obj->page_count = $obj->page_count ?? 10;
+        $obj->page = $obj->page ?? 1;
+
+        $output = executeQueryArray('hotopay.getProductExtraInfoList', $obj);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output;
+    }
 }

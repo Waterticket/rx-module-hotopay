@@ -286,6 +286,20 @@ class HotopayAdminView extends Hotopay
 		$this->setTemplateFile('notify_config');
 	}
 
+	public function dispHotopayAdminPurchaseExtraInfo()
+	{
+		// 현재 설정 상태 불러오기
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+
+		// Context에 세팅
+		Context::set('hotopay_config', $config);
+
+		// 스킨 파일 지정
+		Context::setBrowserTitle('추가정보 설정 - Hotopay');
+		$this->setTemplateFile('purchase_extra_info_config');
+	}
+
     public function dispHotopayAdminSubscriptionIndex() 
     {
         // 현재 설정 상태 불러오기

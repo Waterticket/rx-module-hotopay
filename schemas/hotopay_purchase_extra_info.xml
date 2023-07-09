@@ -1,0 +1,7 @@
+<table name="hotopay_purchase_extra_info">
+    <column name="info_srl" type="bigint" notnull="notnull" primary_key="primary_key" />
+    <column name="purchase_srl" type="bigint" notnull="notnull" index="idx_purchase_srl" />
+    <column name="key_name" type="varchar" size="30" notnull="notnull" index="idx_key_name" />
+    <column name="value" type="text" notnull="notnull" />
+    <column name="regdate" type="datetime" index="idx_regdate" />
+</table>

@@ -1,0 +1,13 @@
+<query id="insertProductExtraInfo" action="insert">
+    <tables>
+        <table name="hotopay_product_extra_info" />
+    </tables>
+    <columns>
+        <column name="info_srl" var="info_srl" notnull="notnull" />
+        <column name="product_srl" var="product_srl" notnull="notnull" />
+        <column name="key_name" var="key_name" notnull="notnull" />
+        <column name="title" var="title" notnull="notnull" />
+        <column name="description" var="description" notnull="notnull" />
+        <column name="regdate" var="regdate" default="curdate()" />
+    </columns>
+</query>
