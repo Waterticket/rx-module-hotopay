@@ -151,11 +151,6 @@ class HotopayController extends Hotopay
 			$obj->regdate = time();
 			executeQuery('hotopay.insertPurchaseItem', $obj);
 
-			if ($cart_item_srl)
-			{
-				$oHotopayModel->deleteCartItem($cart_item_srl, $logged_info->member_srl);
-			}
-
 			$total_price += $obj->purchase_price;
 			$original_price += $obj->original_price;
 
@@ -164,8 +159,6 @@ class HotopayController extends Hotopay
 				$oHotopayModel->minusOptionStock($option_srl, 1);
 			}
 		}
-
-		$this->deleteCache('cart_item_count_' . $logged_info->member_srl);
 
 		if($tc > 0)
 		{
@@ -1535,6 +1528,7 @@ class HotopayController extends Hotopay
 
 		$this->_MessageMailer("DONE", $purchase);
 		$this->_AdminMailer("DONE", $purchase);
+		$this->clearPurchasedCartItem($purchase);
 
 		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
 
@@ -1922,6 +1916,34 @@ class HotopayController extends Hotopay
 		$output = $oSmsHandler->send();
 
 		return $output;
+	}
+
+	public function clearPurchasedCartItem($purchase): object
+	{
+		$oHotopayModel = HotopayModel::getInstance();
+		$items = $oHotopayModel->getPurchaseItems($purchase->purchase_srl);
+		$member_srl = $purchase->member_srl;
+
+		$oDB = DB::getInstance();
+		$oDB->begin();
+		foreach ($items as $item)
+		{
+			$args = new stdClass();
+			$args->member_srl = $member_srl;
+			$args->product_srl = $item->product_srl;
+			$args->option_srl = $item->option_srl;
+			$args->quantity = $item->quantity;
+			$output = executeQuery('hotopay.deleteCartItemWithData', $args);
+			if(!$output->toBool())
+			{
+				$oDB->rollback();
+				throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+			}
+		}
+
+		$oDB->commit();
+		$this->deleteCache('cart_item_count_' . $member_srl);
+		return new BaseObject();
 	}
 
 	/**
