@@ -40,6 +40,14 @@
 		<action name="dispHotopayAdminDeleteBillingKey" type="view" />
 		<action name="procHotopayAdminDeleteBillingKey" type="controller" />
 
+		<action name="dispHotopayAdminProductExtraInfoIndex" type="view" />
+		<action name="dispHotopayAdminInsertProductExtraInfo" type="view" />
+		<action name="procHotopayAdminInsertProductExtraInfo" type="controller" />
+		<action name="dispHotopayAdminUpdateProductExtraInfo" type="view" />
+		<action name="procHotopayAdminUpdateProductExtraInfo" type="controller" />
+		<action name="dispHotopayAdminDeleteProductExtraInfo" type="view" />
+		<action name="procHotopayAdminDeleteProductExtraInfo" type="controller" />
+
 		<!-- 인덱스 페이지 -->
 		<action name="dispHotopayIndex" type="view" index="true" />
 

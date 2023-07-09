@@ -25,3 +25,10 @@ $lang->alias = '별칭';
 $lang->number = '결제수단 번호';
 $lang->key = '결제 키 (암호화)';
 $lang->key_hash = '결제 키 해시';
+
+$lang->info_srl = '입력폼 번호';
+$lang->key_name = '확장변수 ID';
+$lang->einfo_type = '형식';
+$lang->msg_already_exists_key = '이미 존재하는 확장변수 ID 입니다.';
+$lang->value = '기본값';
+$lang->placeholder = '힌트';

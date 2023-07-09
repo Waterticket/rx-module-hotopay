@@ -441,4 +441,71 @@ class HotopayAdminView extends Hotopay
 		Context::setBrowserTitle('결제수단 삭제 - Hotopay');
         $this->setTemplateFile('delete_billingkey');
     }
+
+	public function dispHotopayAdminProductExtraInfoIndex() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+
+        $vars = Context::getRequestVars();
+        $args = new \stdClass();
+        $args->page = $vars->page ? $vars->page : 1;
+        $args->search_target = $vars->search_target ? $vars->search_target : '';
+        $args->search_keyword = $vars->search_keyword ? $vars->search_keyword : '';
+
+        $output = HotopayModel::getProductExtraInfoList($args);
+        Context::set('productextrainfo_list', $output->data);
+        Context::set('total_count', $output->total_count);
+        Context::set('total_page', $output->total_page);
+        Context::set('page', $output->page);
+        Context::set('page_navigation', $output->page_navigation);
+        
+        // 스킨 파일 지정
+        $this->setTemplateFile('index_productextrainfo');
+    }
+
+    public function dispHotopayAdminInsertProductExtraInfo() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+        
+        // 스킨 파일 지정
+        $this->setTemplateFile('insert_productextrainfo');
+    }
+
+    public function dispHotopayAdminUpdateProductExtraInfo() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+        $output = HotopayModel::getProductExtraInfoByInfoSrl($vars->info_srl);
+        Context::set('productextrainfo', $output);
+        
+        // 스킨 파일 지정
+        $this->setTemplateFile('update_productextrainfo');
+    }
+
+    public function dispHotopayAdminDeleteProductExtraInfo() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        // Context에 세팅
+        Context::set('config', $config);
+        $output = HotopayModel::getProductExtraInfoByInfoSrl($vars->info_srl);
+        Context::set('productextrainfo', $output);
+        
+        // 스킨 파일 지정
+        $this->setTemplateFile('delete_productextrainfo');
+    }
 }

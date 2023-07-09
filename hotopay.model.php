@@ -1027,6 +1027,25 @@ class HotopayModel extends Hotopay
     }
 
     /**
+     * hotopay_product_extra_info 테이블에서 ProductExtraInfoByKeyName를 가져온다.
+     * 
+     * @param string $key_name
+     */
+    public static function getProductExtraInfoByInfoSrl(string $info_srl): object
+    {
+        $args = new \stdClass();
+        $args->info_srl = $info_srl;
+
+        $output = executeQuery('hotopay.getProductExtraInfoByInfoSrl', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: new \stdClass();
+    }
+
+    /**
      * hotopay_product_extra_info 테이블에서 ProductExtraInfo를 리스트 형식으로 가져온다.
      * 
      * @param object $obj

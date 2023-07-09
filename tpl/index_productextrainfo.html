@@ -1,0 +1,90 @@
+<include target="__header.html" />
+<h1>추가입력폼 목록</h1>
+
+{@
+    $oMemberModel = getModel('member');
+}
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<table id="productextrainfoList" class="x_table x_table-striped x_table-hover">
+    <caption>
+        <strong>Total: {number_format($total_count)}, Page: {number_format($page)}/{number_format($total_page)}</strong>
+    </caption>
+    <thead>
+        <tr>
+            <th scope="col">{$lang->no}</th>
+            <th scope="col">{$lang->info_srl}</th>
+            <th scope="col">{$lang->einfo_type}</th>
+            <th scope="col">{$lang->key_name}</th>
+            <th scope="col">{$lang->title}</th>
+            <th scope="col">{$lang->cmd_setup}</th>
+            <th scope="col">{$lang->cmd_delete}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr loop="$productextrainfo_list => $no,$val">
+            {@
+                $member_data = $oMemberModel->getMemberInfoByMemberSrl($val->member_srl);
+            }
+            <td class="nowr">{$no}</td>
+            <td class="nowr">{$val->info_srl}</td>
+            <td class="nowr">{$val->type}</td>
+            <td class="nowr">{$val->key_name}</td>
+            <td class="nowr">{$val->title}</td>
+            <td class="nowr"><a href="{getUrl('act','dispHotopayAdminUpdateProductExtraInfo','info_srl',$val->info_srl)}" title="{$lang->cmd_setup}">{$lang->cmd_setup}</a></td>
+            <td class="nowr"><a href="{getUrl('act','dispHotopayAdminDeleteProductExtraInfo','info_srl',$val->info_srl)}" title="{$lang->cmd_delete}">{$lang->cmd_delete}</a></td>
+        </tr>
+        <tr cond="!$productextrainfo_list">
+            <td>{$lang->msg_not_exist_data}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="x_clearfix">
+    <form cond="$page_navigation" action="./" class="x_pagination x_pull-left" no-error-return-url="true" style="margin-top:0">
+        <input loop="$param => $key, $val" cond="!in_array($key, array('mid', 'vid', 'act'))" type="hidden" name="{$key}" value="{$val}" />
+        <ul>
+            <li class="x_disabled"|cond="!$page || $page == 1"><a href="{getUrl('page', '')}">&laquo; {$lang->first_page}</a></li>
+            <block cond="$page_navigation->first_page != 1 && $page_navigation->first_page + $page_navigation->page_count > $page_navigation->last_page - 1 && $page_navigation->page_count != $page_navigation->total_page">
+            {@$isGoTo = true}
+            <li>
+                <a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+                <span cond="$isGoTo" id="goTo" class="x_input-append">
+                    <input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+                    <button type="submit" class="x_add-on">Go</button>
+                </span>
+            </li>
+            </block>
+            <!--@while($page_no = $page_navigation->getNextPage())-->
+            {@$last_page = $page_no}
+            <li class="x_active"|cond="$page_no == $page"><a  href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+            <!--@end-->
+            <block cond="$last_page != $page_navigation->last_page && $last_page + 1 != $page_navigation->last_page">
+            {@$isGoTo = true}
+            <li>
+                <a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+                <span cond="$isGoTo" id="goTo" class="x_input-append">
+                    <input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+                    <button type="submit" class="x_add-on">Go</button>
+                </span>
+            </li>
+            </block>
+            <li class="x_disabled"|cond="$page == $page_navigation->last_page"><a href="{getUrl('page', $page_navigation->last_page)}" title="{$page_navigation->last_page}">{$lang->last_page} &raquo;</a></li>
+        </ul>
+    </form>
+    <a class="x_pull-right x_btn x_btn-inverse" href="{getUrl('','module','admin','act','dispHotopayAdminInsertProductExtraInfo')}">{$lang->cmd_make}</a>
+</div>
+<form action="./" method="get" class="search center x_input-append" no-error-return-url="true">
+    <input type="hidden" name="module" value="{$module}" />
+    <select name="search_target" title="{$lang->search_target}" style="margin-right:4px">
+        <option value="key_name" selected="selected"|cond="$search_target=='key_name'">{$lang->key_name}</option>
+        <option value="product_srl" selected="selected"|cond="$search_target=='product_srl'">{$lang->product_srl}</option>
+        <option value="title" selected="selected"|cond="$search_target=='title'">{$lang->title}</option>
+    </select>
+    <input type="search" required name="search_keyword" value="{htmlspecialchars($search_keyword)}" />
+    <button class="x_btn x_btn-inverse" type="submit">{$lang->cmd_search}</button>
+    <a class="x_btn" href="{getUrl('', 'module', $module, 'act', $act)}">{$lang->cmd_cancel}</a>
+</form>

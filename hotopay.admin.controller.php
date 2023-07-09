@@ -691,4 +691,65 @@ class HotopayAdminController extends Hotopay
         $this->setMessage('success_deleted');
         $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminBillingKeyIndex'));
     }
+
+    public function procHotopayAdminInsertProductExtraInfo() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+
+		$key_name = $vars->key_name;
+		$data = HotopayModel::getProductExtraInfoByKeyName($key_name);
+		if(!empty($data->info_srl)) {
+			return new BaseObject(-1, 'msg_already_exists_key');
+		}
+        
+        $args = new stdClass();
+        $args->info_srl = getNextSequence();
+        $args->product_srl = $vars->product_srl;
+        $args->key_name = $vars->key_name;
+        $args->type = $vars->type;
+        $args->title = $vars->title;
+        $args->description = $vars->description ?? '';
+        $args->value = $vars->value ?? '';
+        $args->placeholder = $vars->placeholder ?? '';
+        $args->regdate = date('Y-m-d H:i:s');
+        HotopayModel::insertProductExtraInfo($args);
+
+        $this->setMessage('success_registed');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminProductExtraInfoIndex'));
+    }
+
+    public function procHotopayAdminUpdateProductExtraInfo() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        $args = new stdClass();
+        $args->info_srl = $vars->info_srl;
+        if(!empty($vars->product_srl) || ($vars->product_srl === 0)) $args->product_srl = $vars->product_srl;
+        if(!empty($vars->key_name) || ($vars->key_name === 0)) $args->key_name = $vars->key_name;
+        if(!empty($vars->type) || ($vars->type === 0)) $args->type = $vars->type;
+        if(!empty($vars->title) || ($vars->title === 0)) $args->title = $vars->title;
+        if(!empty($vars->description) || ($vars->description === 0)) $args->description = $vars->description;
+        if(!empty($vars->value) || ($vars->value === 0)) $args->value = $vars->value;
+        if(!empty($vars->placeholder) || ($vars->placeholder === 0)) $args->placeholder = $vars->placeholder;
+        HotopayModel::updateProductExtraInfo($args);
+
+        $this->setMessage('success_updated');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminProductExtraInfoIndex'));
+    }
+
+    public function procHotopayAdminDeleteProductExtraInfo() 
+    {
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        HotopayModel::deleteProductExtraInfo($vars->info_srl);
+
+        $this->setMessage('success_deleted');
+        $this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispHotopayAdminProductExtraInfoIndex'));
+    }
 }

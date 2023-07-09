@@ -1,0 +1,94 @@
+<include target="__header.html" />
+<h1>입력폼 수정</h1>
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<form class="x_form-horizontal" action="./" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="procHotopayAdminUpdateProductExtraInfo" />
+
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+    <div class="x_control-group">
+        <label class="x_control-label" for="info_srl">{$lang->info_srl}</label>
+        <div class="x_controls">
+            <input type="text" name="info_srl" id="info_srl" value="{$productextrainfo->info_srl}" readonly>
+        </div>
+    </div>
+
+    <div class="x_control-group" style="display: none;">
+        <label class="x_control-label" for="product_srl">{$lang->product_srl}</label>
+        <div class="x_controls">
+            <input type="text" name="product_srl" id="product_srl" value="0">
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="key_name">{$lang->key_name}</label>
+        <div class="x_controls">
+            <input type="text" name="key_name" id="key_name" value="{$productextrainfo->key_name}">
+            <p class="x_help-block">시스템 내에서 이 변수를 식별하기 위한 ID값입니다. (예: name, email, phone, address, etc...)<br>
+                영문, 숫자, _를 조합해서 사용할 수 있으며 첫 글자는 영문이어야 합니다. 중복되면 안됩니다.</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="type">{$lang->einfo_type}</label>
+        <div class="x_controls">
+            <select name="type" id="type">
+                <option value="text" selected="selected"|cond="$productextrainfo->type == 'text'">text</option>
+                <option value="textarea" selected="selected"|cond="$productextrainfo->type == 'textarea'">textarea</option>
+                <option value="select" selected="selected"|cond="$productextrainfo->type == 'select'">select</option>
+                <option value="radio" selected="selected"|cond="$productextrainfo->type == 'radio'">radio</option>
+                <option value="checkbox" selected="selected"|cond="$productextrainfo->type == 'checkbox'">checkbox</option>
+            </select>
+            <p class="x_help-block">입력형식입니다.</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="title">{$lang->title}</label>
+        <div class="x_controls">
+            <input type="text" name="title" id="title" value="{$productextrainfo->title}">
+            <p class="x_help-block">사용자에게 보여지는 입력 항목 이름입니다. 예: 학교</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="description">{$lang->description}</label>
+        <div class="x_controls">
+            <input type="text" name="description" id="description" value="{$productextrainfo->description}">
+            <p class="x_help-block">해당 항목에 대해 사용자에게 자세히 설명할 내용이 있다면 여기에 입력하십시오.</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="value">{$lang->value}</label>
+        <div class="x_controls">
+            <input type="text" name="value" id="value" value="{$productextrainfo->value}">
+            <p class="x_help-block">기본값입니다. select, radio, checkbox 항목은 쉼표(,)를 활용해서 선택할 값들을 넣어주세요.</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="placeholder">{$lang->placeholder}</label>
+        <div class="x_controls">
+            <input type="text" name="placeholder" id="placeholder" value="{$productextrainfo->placeholder}">
+            <p class="x_help-block">입력, 선택 전 기본값으로 표시되는 항목입니다.</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="regdate">{$lang->regdate}</label>
+        <div class="x_controls">
+            <span>{$productextrainfo->regdate}</span>
+        </div>
+    </div>
+
+    <div class="btnArea x_clearfix">
+        <button type="submit" class="x_btn x_btn-primary x_pull-right">{$lang->cmd_registration}</button>
+    </div>
+</form>

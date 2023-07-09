@@ -3,11 +3,13 @@
         <table name="hotopay_product_extra_info" />
     </tables>
     <columns>
-            <column name="info_srl" var="info_srl" />
             <column name="product_srl" var="product_srl" />
+            <column name="type" var="type" notnull="notnull" />
+            <column name="key_name" var="key_name" notnull="notnull" />
             <column name="title" var="title" />
             <column name="description" var="description" />
-            <column name="regdate" var="regdate" />
+            <column name="value" var="value" />
+            <column name="placeholder" var="placeholder" />
     </columns>
     <conditions>
             <condition operation="equal" column="info_srl" var="info_srl" filter="number" notnull="notnull" />

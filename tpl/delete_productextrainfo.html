@@ -1,0 +1,91 @@
+<include target="__header.html" />
+<h1>입력폼 삭제</h1>
+
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<form class="x_form-horizontal" action="./" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="procHotopayAdminDeleteProductExtraInfo" />
+
+	<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" cond="$XE_VALIDATOR_MESSAGE">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+    <div class="x_control-group">
+        <label class="x_control-label" for="info_srl">{$lang->info_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="info_srl" id="info_srl" value="{$productextrainfo->info_srl}">
+            <p>{$productextrainfo->info_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group" style="display: none;">
+        <label class="x_control-label" for="product_srl">{$lang->product_srl}</label>
+        <div class="x_controls">
+            <input type="hidden" name="product_srl" id="product_srl" value="{$productextrainfo->product_srl}">
+            <p>{$productextrainfo->product_srl}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="key_name">{$lang->key_name}</label>
+        <div class="x_controls">
+            <input type="hidden" name="key_name" id="key_name" value="{$productextrainfo->key_name}">
+            <p>{$productextrainfo->key_name}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="type">{$lang->einfo_type}</label>
+        <div class="x_controls">
+            <input type="hidden" name="type" id="type" value="{$productextrainfo->type}">
+            <p>{$productextrainfo->type}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="title">{$lang->title}</label>
+        <div class="x_controls">
+            <input type="hidden" name="title" id="title" value="{$productextrainfo->title}">
+            <p>{$productextrainfo->title}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="description">{$lang->description}</label>
+        <div class="x_controls">
+            <input type="hidden" name="description" id="description" value="{$productextrainfo->description}">
+            <p>{$productextrainfo->description}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="value">{$lang->value}</label>
+        <div class="x_controls">
+            <input type="hidden" name="value" id="value" value="{$productextrainfo->value}">
+            <p>{$productextrainfo->value}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="placeholder">{$lang->placeholder}</label>
+        <div class="x_controls">
+            <input type="hidden" name="placeholder" id="placeholder" value="{$productextrainfo->placeholder}">
+            <p>{$productextrainfo->placeholder}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
+        <label class="x_control-label" for="regdate">{$lang->regdate}</label>
+        <div class="x_controls">
+            <input type="hidden" name="regdate" id="regdate" value="{$productextrainfo->regdate}">
+            <p>{$productextrainfo->regdate}</p>
+        </div>
+    </div>
+
+
+    <div class="btnArea x_clearfix">
+        <button type="submit" class="x_btn x_btn-primary x_pull-right">삭제</button>
+    </div>
+</form>

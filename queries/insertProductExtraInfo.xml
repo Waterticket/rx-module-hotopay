@@ -6,8 +6,11 @@
         <column name="info_srl" var="info_srl" notnull="notnull" />
         <column name="product_srl" var="product_srl" notnull="notnull" />
         <column name="key_name" var="key_name" notnull="notnull" />
+        <column name="type" var="type" notnull="notnull" />
         <column name="title" var="title" notnull="notnull" />
         <column name="description" var="description" notnull="notnull" />
+        <column name="value" var="value" />
+        <column name="placeholder" var="placeholder" />
         <column name="regdate" var="regdate" default="curdate()" />
     </columns>
 </query>
