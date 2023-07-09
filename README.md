@@ -1,5 +1,5 @@
 # HotoPay
-[![PHP Lint](https://github.com/Waterticket/rx-module-hotopay/actions/workflows/php_lint.yml/badge.svg?branch=master)](https://github.com/Waterticket/rx-module-hotopay/actions/workflows/php_lint.yml)  
+[![PHP Lint](https://github.com/Waterticket/rx-module-hotopay/actions/workflows/php_lint.yml/badge.svg?branch=master)](https://github.com/Waterticket/rx-module-hotopay/actions/workflows/php_lint.yml) [![Github All Releases](https://img.shields.io/github/downloads/Waterticket/rx-module-hotopay/total.svg)]()  
 
 라이믹스용 결제모듈 HotoPay 입니다
 
