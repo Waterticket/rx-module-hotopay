@@ -459,6 +459,7 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product_option","billing_period_date")) return true;
 		if(!$oDB->isColumnExists("hotopay_purchase","is_billing")) return true;
 		if(!$oDB->isColumnExists("hotopay_product_option","billing_infinity_stock")) return true;
+		if(!$oDB->isColumnExists("hotopay_product","allow_use_point")) return true;
 
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
@@ -584,6 +585,11 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product_option","billing_infinity_stock"))
 		{
 			$oDB->addColumn('hotopay_product_option',"billing_infinity_stock","char",1,'N',false,"infinity_stock");
+		}
+
+		if(!$oDB->isColumnExists("hotopay_product","allow_use_point"))
+		{
+			$oDB->addColumn('hotopay_product',"allow_use_point","char",1,'Y',false,"is_billing");
 		}
 
 		$config = $this->getConfig();

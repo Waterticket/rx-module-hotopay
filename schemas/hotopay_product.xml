@@ -15,6 +15,7 @@
     <column name="tax_rate" type="double" default="0" />
     <column name="is_adult" type="char" size="1" default="N" />
     <column name="is_billing" type="char" size="1" default="N" />
+    <column name="allow_use_point" type="char" size="1" default="Y" />
 	<column name="extra_vars" type="text" />
 	<column name="regdate" type="number" size="10" notnull="notnull" index="idx_regdate" />
 </table>
