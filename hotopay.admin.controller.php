@@ -138,6 +138,7 @@ class HotopayAdminController extends Hotopay
 		$args->tax_rate = $vars->tax_rate ?: 0;
 		$args->is_adult = ($vars->is_adult == 'Y') ? 'Y' : 'N';
 		$args->is_billing = ($vars->is_billing == 'Y') ? 'Y' : 'N';
+		$args->allow_use_point = ($vars->allow_use_point == 'Y') ? 'Y' : 'N';
 		$args->market_srl = $vars->market_srl ?: 0;
 		$auto_calc_price = $vars->auto_calc_price ?: 'N';
 
@@ -349,6 +350,7 @@ class HotopayAdminController extends Hotopay
 		$args->tax_rate = $vars->tax_rate ?: 0;
 		$args->is_adult = ($vars->is_adult == 'Y') ? 'Y' : 'N';
 		$args->is_billing = ($vars->is_billing == 'Y') ? 'Y' : 'N';
+		$args->allow_use_point = ($vars->allow_use_point == 'Y') ? 'Y' : 'N';
 		$args->extra_vars = serialize($vars->extra_vars ?? new stdClass());
 		$auto_calc_price = $vars->auto_calc_price ?: 'N';
 

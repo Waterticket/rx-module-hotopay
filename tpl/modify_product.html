@@ -200,6 +200,14 @@
     </div>
 
     <div class="x_control-group">
+        <label class="x_control-label" for="allow_use_point">포인트 할인 적용 가능 여부</label>
+        <div class="x_controls">
+            <label><input type="checkbox" id="allow_use_point" name="allow_use_point" value="Y" checked="checked"|cond="$product->allow_use_point == 'Y'">&nbsp;포인트 할인을 적용할 수 있는 상품입니다.</label>
+            <p class="x_help-block">포인트 할인을 적용할 수 있는 상품인 경우 체크해주세요. 체크 해제시 이 상품을 구매할 때는 포인트 할인이 불가능합니다.</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
         <label class="x_control-label" for="product_buyer_group">구매시 부여할 그룹</label>
         <div class="x_controls">
             <label><input type="radio" name="product_buyer_group" value="0" checked="checked"|cond="$product->product_buyer_group == 0">&nbsp;부여 안함</label>
