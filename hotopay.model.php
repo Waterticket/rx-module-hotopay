@@ -1066,4 +1066,25 @@ class HotopayModel extends Hotopay
 
         return $output;
     }
+
+    /**
+     * hotopay_purchase_extra_info 테이블에 PurchaseExtraInfo 하나를 추가한다.
+     * 
+     * @param object $obj
+     */
+    public static function insertPurchaseExtraInfo(object $obj): object
+    {
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        $output = executeQuery('hotopay.insertPurchaseExtraInfo', $obj);
+        if(!$output->toBool())
+        {
+            $oDB->rollback();
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+        $oDB->commit();
+
+        return new BaseObject();
+    }
 }

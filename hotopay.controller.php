@@ -130,6 +130,36 @@ class HotopayController extends Hotopay
 			if($option->infinity_stock != 'Y' && $option->stock < 1) return $this->createObject(-1, "재고가 부족한 항목이 있습니다.");
 		}
 
+		$vars->hotopay_extra_info = (array) $vars->hotopay_extra_info;
+		$extra_info_list_obj = $oHotopayModel->getProductExtraInfo(array_merge($product_srl_list, array(0)));
+		$extra_info_list = [];
+		foreach ($extra_info_list_obj as $extra_info)
+		{
+			$extra_info_list[] = $extra_info->key_name;
+		}
+
+		foreach ($extra_info_list_obj as $extra_info)
+		{
+			if ($extra_info->required == 'Y' && empty($vars->hotopay_extra_info[$extra_info->key_name]))
+			{
+				return $this->createObject(-1, $extra_info->title . '을(를) 입력해주세요.');
+			}
+		}
+
+		foreach ($vars->hotopay_extra_info as $key => $extra_info)
+		{
+			if (!in_array($key, $extra_info_list)) continue;
+			if (is_array($extra_info)) $extra_info = implode(',', $extra_info);
+
+			$extra_info_args = new stdClass();
+			$extra_info_args->info_srl = getNextSequence();
+			$extra_info_args->purchase_srl = $order_id;
+			$extra_info_args->key_name = $key;
+			$extra_info_args->value = $extra_info;
+			$extra_info_args->regdate = date('Y-m-d H:i:s');
+			HotopayModel::insertPurchaseExtraInfo($extra_info_args);
+		}
+
 		foreach($product_list as $product_meta)
 		{
 			$option_srl = $product_meta->option_srl;
