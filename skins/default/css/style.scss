@@ -99,3 +99,18 @@ body.color_scheme_dark #p_content {
 .btn_nm {
   background-color: #b2bec3 !important;
 }
+
+.additional-info {
+  border-top: 1px solid #868e96;
+  border-bottom: 1px solid #868e96;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  width: 100%;
+
+  > div.additional-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+}

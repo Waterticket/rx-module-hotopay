@@ -151,10 +151,39 @@ function _purchaseSubmit(form){return checkCheckbox();}
             <input type="text" id="depositor_name" name="depositor_name" maxlength="5" placeholder="입금자 명을 입력해주세요.">
         </section>
 
+        <section class="additional-info">
+            <!--@foreach($extra_info_list as $extra_info)-->
+            {@ $options = explode(',', $extra_info->value)}
+            <div class="additional-info-item">
+                <p class="additional-info-item-title">{$extra_info->title}<!--@if($extra_info->required == 'Y')-->&nbsp;<span id="required">*</span><!--@endif--></p>
+                <!--@if($extra_info->type == 'text')-->
+                <input type="text" id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)">
+                <!--@elseif($extra_info->type == 'textarea')-->
+                <textarea id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)"></textarea>
+                <!--@elseif($extra_info->type == 'select')-->
+                <select id="extra_info_{$extra_info->key_name}" name="hotopay_extra_info[{$extra_info->key_name}]">
+                    <option value="" cond="!empty($extra_info->placeholder)">{$extra_info->placeholder}</option>
+                    <!--@foreach($options as $option)-->
+                    <option value="{$option}">{$option}</option>
+                    <!--@endforeach-->
+                </select>
+                <!--@elseif($extra_info->type == 'radio')-->
+                <!--@foreach($options as $option)-->
+                <label><input type="radio" id="extra_info_{$extra_info->key_name}_{$option}" name="hotopay_extra_info[{$extra_info->key_name}]" value="{$option}">&nbsp;{$option}</label>
+                <!--@endforeach-->
+                <!--@elseif($extra_info->type == 'checkbox')-->
+                <!--@foreach($options as $option)-->
+                <label><input type="checkbox" id="extra_info_{$extra_info->key_name}_{$option}" name="hotopay_extra_info[{$extra_info->key_name}][]" value="{$option}">&nbsp;{$option}</label>
+                <!--@endforeach-->
+                <!--@endif-->
+            </div>
+            <!--@endforeach-->
+        </section>
+
         <!--@if($hotopay_config->point_discount == 'Y')-->
         <section id="point_discount">
             <p>포인트 할인 (보유 {number_format($point)} P) <a href="javascript:void(0)" onclick="useTotalPoint()"|cond="$point_discount_allow">전체 적용</a></p>
-            <input type="number" id="use_point" name="use_point" value="0" min="0" max="{$point}" onkeyup="enforceMinMax(this)" onchange="optionChange()" disabled="disabled"|cond="!$point_discount_allow'"> P
+            <input type="number" id="use_point" name="use_point" value="0" min="0" max="{$point}" onkeyup="enforceMinMax(this)" onchange="optionChange()" disabled="disabled"|cond="!$point_discount_allow"> P
             <!--@if($purchase_type == 'billing')-->
             <p>정기결제 항목에는 포인트 할인을 적용할 수 없습니다.</p>
             <!--@elseif(!$point_discount_allow)-->

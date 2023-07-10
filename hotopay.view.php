@@ -130,6 +130,9 @@ class HotopayView extends Hotopay
 		$product_list = $oHotopayModel->getProducts($vars->product_id);
 		Context::set('product_list', $product_list);
 
+		$extra_info_list = $oHotopayModel->getProductExtraInfo(array_merge($vars->product_id, array(0)));
+		Context::set('extra_info_list', $extra_info_list);
+
 		$is_non_billing_product_exist = false;
 		$is_billing_product_exist = false;
 		$point_discount_allow = ($config->point_discount == 'Y');

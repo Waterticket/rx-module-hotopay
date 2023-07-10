@@ -991,12 +991,12 @@ class HotopayModel extends Hotopay
     /**
      * hotopay_product_extra_info 테이블에서 ProductExtraInfo를 가져온다.
      * 
-     * @param int $product_srl
+     * @param array $product_srl
      */
-    public static function getProductExtraInfo(int $product_srl): array
+    public static function getProductExtraInfo(array $product_srls): array
     {
         $args = new \stdClass();
-        $args->product_srl = $product_srl;
+        $args->product_srl = $product_srls;
 
         $output = executeQueryArray('hotopay.getProductExtraInfo', $args);
         if(!$output->toBool())
