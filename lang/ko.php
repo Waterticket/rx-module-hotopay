@@ -32,3 +32,4 @@ $lang->einfo_type = '형식';
 $lang->msg_already_exists_key = '이미 존재하는 확장변수 ID 입니다.';
 $lang->value = '기본값';
 $lang->placeholder = '힌트';
+$lang->required = '필수여부';

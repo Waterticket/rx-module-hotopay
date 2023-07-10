@@ -713,6 +713,7 @@ class HotopayAdminController extends Hotopay
         $args->description = $vars->description ?? '';
         $args->value = $vars->value ?? '';
         $args->placeholder = $vars->placeholder ?? '';
+        $args->required = empty($vars->required) ? 'N' : 'Y';
         $args->regdate = date('Y-m-d H:i:s');
         HotopayModel::insertProductExtraInfo($args);
 
@@ -735,6 +736,7 @@ class HotopayAdminController extends Hotopay
         if(!empty($vars->description) || ($vars->description === 0)) $args->description = $vars->description;
         if(!empty($vars->value) || ($vars->value === 0)) $args->value = $vars->value;
         if(!empty($vars->placeholder) || ($vars->placeholder === 0)) $args->placeholder = $vars->placeholder;
+        if(!empty($vars->required) || ($vars->required === 0)) $args->required = $vars->required;
         HotopayModel::updateProductExtraInfo($args);
 
         $this->setMessage('success_updated');

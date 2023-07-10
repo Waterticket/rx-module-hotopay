@@ -7,5 +7,6 @@
     <column name="description" type="varchar" size="300" notnull="notnull" />
     <column name="value" type="varchar" size="500" />
     <column name="placeholder" type="varchar" size="300" />
+    <column name="required" type="char" size="1" default="Y" />
     <column name="regdate" type="datetime" index="idx_regdate" />
 </table>

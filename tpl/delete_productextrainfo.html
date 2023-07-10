@@ -77,6 +77,14 @@
     </div>
 
     <div class="x_control-group">
+        <label class="x_control-label" for="required">{$lang->required}</label>
+        <div class="x_controls">
+            <input type="hidden" name="required" id="required" value="{$productextrainfo->required}">
+            <p>{$productextrainfo->required}</p>
+        </div>
+    </div>
+
+    <div class="x_control-group">
         <label class="x_control-label" for="regdate">{$lang->regdate}</label>
         <div class="x_controls">
             <input type="hidden" name="regdate" id="regdate" value="{$productextrainfo->regdate}">

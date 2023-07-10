@@ -11,6 +11,7 @@
         <column name="description" var="description" notnull="notnull" />
         <column name="value" var="value" />
         <column name="placeholder" var="placeholder" />
+        <column name="required" var="required" />
         <column name="regdate" var="regdate" default="curdate()" />
     </columns>
 </query>

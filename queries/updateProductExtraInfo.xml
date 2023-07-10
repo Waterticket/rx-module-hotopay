@@ -10,6 +10,7 @@
             <column name="description" var="description" />
             <column name="value" var="value" />
             <column name="placeholder" var="placeholder" />
+            <column name="required" var="required" />
     </columns>
     <conditions>
             <condition operation="equal" column="info_srl" var="info_srl" filter="number" notnull="notnull" />
