@@ -47,7 +47,7 @@ function _purchaseSubmit(form){return checkCheckbox();}
     <div id="r_content">
         <h1>주문서</h1>
         <br>
-        <form action="./" method="post" id="hotopay" onsubmit="return _purchaseSubmit(this);">
+        <form action="./" method="post" id="hotopay_form" onsubmit="return _purchaseSubmit(this);">
             <input type="hidden" name="module" value="hotopay" />
             <input type="hidden" name="act" value="procHotopayOrderProcess" />
             <table class="ht-table ht-orders">
@@ -157,11 +157,11 @@ function _purchaseSubmit(form){return checkCheckbox();}
                 <div class="additional-info-item">
                     <p class="additional-info-item-title">{$extra_info->title}<!--@if($extra_info->required == 'Y')-->&nbsp;<span id="required">*</span><!--@endif--></p>
                     <!--@if($extra_info->type == 'text')-->
-                    <input type="text" id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)">
+                    <input type="text" id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)" required="required"|cond="$extra_info->required == 'Y'">
                     <!--@elseif($extra_info->type == 'textarea')-->
-                    <textarea id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)"></textarea>
+                    <textarea id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)" required="required"|cond="$extra_info->required == 'Y'"></textarea>
                     <!--@elseif($extra_info->type == 'select')-->
-                    <select id="extra_info_{$extra_info->key_name}" name="hotopay_extra_info[{$extra_info->key_name}]">
+                    <select id="extra_info_{$extra_info->key_name}" name="hotopay_extra_info[{$extra_info->key_name}]" required="required"|cond="$extra_info->required == 'Y'">
                         <option value="" cond="!empty($extra_info->placeholder)">{$extra_info->placeholder}</option>
                         <!--@foreach($options as $option)-->
                         <option value="{$option}">{$option}</option>
@@ -169,12 +169,24 @@ function _purchaseSubmit(form){return checkCheckbox();}
                     </select>
                     <!--@elseif($extra_info->type == 'radio')-->
                     <!--@foreach($options as $option)-->
-                    <label><input type="radio" id="extra_info_{$extra_info->key_name}_{$option}" name="hotopay_extra_info[{$extra_info->key_name}]" value="{$option}">&nbsp;{$option}</label>
+                    <label><input type="radio" id="extra_info_{$extra_info->key_name}_{$option}" name="hotopay_extra_info[{$extra_info->key_name}]" value="{$option}" required="required"|cond="$extra_info->required == 'Y'">&nbsp;{$option}</label>
                     <!--@endforeach-->
                     <!--@elseif($extra_info->type == 'checkbox')-->
                     <!--@foreach($options as $option)-->
-                    <label><input type="checkbox" id="extra_info_{$extra_info->key_name}_{$option}" name="hotopay_extra_info[{$extra_info->key_name}][]" value="{$option}">&nbsp;{$option}</label>
+                    <label><input type="checkbox" class="extra_info_{$extra_info->key_name}" id="extra_info_{$extra_info->key_name}_{$option}" name="hotopay_extra_info[{$extra_info->key_name}][]" value="{$option}">&nbsp;{$option}</label>
                     <!--@endforeach-->
+                    <!--@if($extra_info->required == 'Y')-->
+                    <script>
+                        jQuery(function($) {
+                            $('#hotopay_form').submit(function() {
+                                if (!$('.extra_info_{$extra_info->key_name}:checked').length) {
+                                    alert('[{$extra_info->title}] 항목을 선택해주세요.');
+                                    return false;
+                                }
+                            });
+                        });
+                    </script>
+                    <!--@endif-->
                     <!--@endif-->
                 </div>
                 <!--@endforeach-->
