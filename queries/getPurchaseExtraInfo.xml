@@ -1,0 +1,19 @@
+<query id="getPurchaseExtraInfo" action="select">
+    <tables>
+        <table name="hotopay_purchase_extra_info" alias="pur_ei" />
+        <table name="hotopay_product_extra_info" alias="pro_ei" type="left join">
+            <conditions>
+                <condition operation="equal" column="pro_ei.key_name" default="pur_ei.key_name" />
+            </conditions>
+        </table>
+    </tables>
+    <columns>
+        <column name="pur_ei.*" />
+        <column name="pro_ei.type" />
+        <column name="pro_ei.title" />
+        <column name="pro_ei.product_srl" />
+    </columns>
+    <conditions>
+            <condition operation="equal" column="purchase_srl" var="purchase_srl" filter="number" />
+    </conditions>
+</query>

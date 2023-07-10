@@ -1087,4 +1087,23 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    /**
+     * hotopay_purchase_extra_info 테이블에서 PurchaseExtraInfo를 가져온다.
+     * 
+     * @param int $purchase_srl
+     */
+    public static function getPurchaseExtraInfo(int $purchase_srl): array
+    {
+        $args = new \stdClass();
+        $args->purchase_srl = $purchase_srl;
+
+        $output = executeQueryArray('hotopay.getPurchaseExtraInfo', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: [];
+    }
 }

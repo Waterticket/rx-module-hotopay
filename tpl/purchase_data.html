@@ -1,12 +1,16 @@
 <include target="__header.html" />
 
-{@ debugPrint($purchase_data); }
-
 <h1>결제 데이터</h1>
 
 <!--@foreach($purchase_data as $inc => $data)-->
 {@ if($inc == 'pay_data'): $data=print_r(json_decode($data), true); endif;}
 <p>{$inc}: </p>
 <pre><code>{$data}</code></pre>
+<br>
+<!--@endforeach-->
+
+<!--@foreach($purchase_extra_info as $data)-->
+<p>{$data->title} ({$data->key_name} / {$data->type}): </p>
+<pre><code>{$data->value}</code></pre>
 <br>
 <!--@endforeach-->

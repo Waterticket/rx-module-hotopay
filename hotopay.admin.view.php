@@ -241,6 +241,13 @@ class HotopayAdminView extends Hotopay
 
 		Context::set('purchase_data', $output->data);
 
+		$oHotopayModel = HotopayModel::getInstance();
+		$purchase_items = $oHotopayModel->getPurchaseItems($vars->purchase_srl);
+		Context::set('purchase_items', $purchase_items);
+
+		$purchase_extra_info = $oHotopayModel->getPurchaseExtraInfo($vars->purchase_srl);
+		Context::set('purchase_extra_info', $purchase_extra_info);
+
 		// 스킨 파일 지정
 		Context::setBrowserTitle('결제 데이터 - Hotopay');
 		$this->setTemplateFile('purchase_data');
