@@ -629,6 +629,8 @@ class HotopayController extends Hotopay
 
 					$print_esti_billing_date = date("Y-m-d", strtotime("+" . $subscription->period . " days"));
 					$billingTotal[] = $billingStatus->data;
+
+					$oHotopayModel->copyPurchaseExtraInfo($subscription->subscription_srl, $purchase_srl);
 				}
 
 				$args->pay_data = json_encode($billingTotal);
@@ -1134,6 +1136,7 @@ class HotopayController extends Hotopay
 
 								$subscription->esti_billing_date = date('Y-m-d H:i:s', strtotime('+'.$subscription->period.' days'));
 								$oHotopayModel->insertSubscription($subscription);
+								$oHotopayModel->copyPurchaseExtraInfo($subscription->subscription_srl, $purchase_srl);
 							}
 						}
 					}

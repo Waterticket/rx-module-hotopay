@@ -929,16 +929,11 @@ class HotopayModel extends Hotopay
 
     public static function insertProductExtraInfo(object $obj): object
     {
-        $oDB = DB::getInstance();
-        $oDB->begin();
-
         $output = executeQuery('hotopay.insertProductExtraInfo', $obj);
         if(!$output->toBool())
         {
-            $oDB->rollback();
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
         }
-        $oDB->commit();
 
         return new BaseObject();
     }
@@ -1074,16 +1069,11 @@ class HotopayModel extends Hotopay
      */
     public static function insertPurchaseExtraInfo(object $obj): object
     {
-        $oDB = DB::getInstance();
-        $oDB->begin();
-
         $output = executeQuery('hotopay.insertPurchaseExtraInfo', $obj);
         if(!$output->toBool())
         {
-            $oDB->rollback();
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
         }
-        $oDB->commit();
 
         return new BaseObject();
     }
@@ -1105,5 +1095,25 @@ class HotopayModel extends Hotopay
         }
 
         return $output->data ?: [];
+    }
+
+    public function copyPurchaseExtraInfo(int $target_srl, int $purchase_srl): BaseObject
+    {
+        $origin = self::getPurchaseExtraInfo($purchase_srl);
+
+        $oDB = DB::getInstance();
+        $oDB->begin();
+
+        foreach ($origin as $info)
+        {
+            unset($info->info_srl);
+            $info->purchase_srl = $target_srl;
+            $info->regdate = date('Y-m-d H:i:s');
+            self::insertPurchaseExtraInfo($info);
+        }
+
+        $oDB->commit();
+
+        return new BaseObject();
     }
 }
