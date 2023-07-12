@@ -284,6 +284,14 @@ class HotopayCronJob extends Hotopay {
 
         $this->oHotopayModel->copyPurchaseExtraInfo($purchase_srl, $subscription->subscription_srl);
 
+        $trigger_obj = new stdClass();
+        $trigger_obj->purchase_srl = $purchase_srl;
+        $trigger_obj->pay_status = $status;
+        $trigger_obj->pay_data = $subscription->pay_data;
+        $trigger_obj->pay_pg = $subscription->pg;
+        $trigger_obj->amount = $subscription->price;
+        ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+
         return $purchase_srl;
     }
 
