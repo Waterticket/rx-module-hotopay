@@ -282,6 +282,8 @@ class HotopayCronJob extends Hotopay {
         $stmt->execute();
         $this->oDB->commit();
 
+        $this->oHotopayModel->copyPurchaseExtraInfo($purchase_srl, $subscription->subscription_srl);
+
         return $purchase_srl;
     }
 
