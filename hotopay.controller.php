@@ -584,8 +584,9 @@ class HotopayController extends Hotopay
 				}
 				else
 				{
-					$key_idx = $_SESSION['hotopay_billing_key'];
+					$key = $_SESSION['hotopay_billing_key'];
 					unset($_SESSION['hotopay_billing_key']);
+					$key_idx = $key->key_idx;
 
 					$key = $oHotopayModel->getBillingKey($key_idx);
 					if (!$key->key_idx)
