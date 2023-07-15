@@ -53,9 +53,9 @@ $oHotopayAdminModel = getAdminModel('hotopay');
 </style>
 <h1>대시보드</h1>
 
-<!--@if(!$isLicenseValid)-->
+<!--@if(!$isLicenseValid && $total->sum_price > 100000)-->
 <div class="message pro">
-    <p>Hotopay 유지보수 지원과 빠른 기능 개선을 받고싶으시다면 <a href="https://potatosoft.kr/store/11330" target="_blank">Pro 라이선스를 이용해보세요!</a></p>
+    <p>Hotopay 공식 기술 지원과 빠른 기능 개선을 요청하고 싶으시다면 <a href="https://potatosoft.kr/store/11330" target="_blank">Pro 라이선스를 이용해보세요!</a></p>
 </div>
 <!--@endif-->
 <div class="square_container">
