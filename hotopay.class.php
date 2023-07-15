@@ -192,6 +192,8 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->purchase_refund_notification_method)) self::$_config_cache->purchase_refund_notification_method = array(1,); // 환불 알림 수단
 			
 			if(!isset(self::$_config_cache->hotopay_db_version)) self::$_config_cache->hotopay_db_version = 0; // DB 버전
+			if(!isset(self::$_config_cache->last_cron_execution_time)) self::$_config_cache->last_cron_execution_time = 0; // 마지막 크론 실행 시간
+			if(!isset(self::$_config_cache->last_cron_execution_success_time)) self::$_config_cache->last_cron_execution_success_time = 0; // 마지막 크론 성공 시간
 		}
 		return self::$_config_cache;
 	}

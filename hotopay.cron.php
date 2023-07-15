@@ -30,10 +30,12 @@ class HotopayCronJob extends Hotopay {
         $this->printLog("Domain: " . $_SERVER['HTTP_HOST']);
         $start_time = microtime(true);
 
+        $this->updateLastCronRunTime();
         $this->checkLicenseRenewalDate();
         $this->cancelExpiredPurchases();
         $this->updateCurrency();
         $this->renewSubscriptions();
+        $this->updateLastCronSuccessTime();
 
         $end_time = microtime(true);
         $this->printLog("Cron job finished");
@@ -45,6 +47,18 @@ class HotopayCronJob extends Hotopay {
     private function printLog(string $message, ...$args)
     {
         echo sprintf("[".date("Y-m-d H:i:s")."] " . $message, ...$args) . PHP_EOL;
+    }
+
+    private function updateLastCronRunTime()
+    {
+        $this->config->last_cron_execution_time = time();
+        $this->setConfig($this->config);
+    }
+
+    private function updateLastCronSuccessTime()
+    {
+        $this->config->last_cron_execution_success_time = time();
+        $this->setConfig($this->config);
     }
 
     private function checkLicenseRenewalDate()
