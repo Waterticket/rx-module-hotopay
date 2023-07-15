@@ -5,15 +5,19 @@ $oHotopayAdminModel = getAdminModel('hotopay');
 }
 
 <style>
-.dash_square
-{
-    float: left;
-    width: 300px;
-    height: 150px;
-    border: 2px solid #bbb;
-    border-radius: 20px;
-    padding: 15px;
+.square_container {
+    display: flex;
+    width: 100%;
+}
+
+.dash_square {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     margin: 10px;
+    text-align: center;
+    min-height: 150px;
 }
 
 .dash_square .title {
@@ -40,12 +44,20 @@ $oHotopayAdminModel = getAdminModel('hotopay');
     color: gray;
 }
 
-.square_container {
-    height: 180px;
+@media screen and (max-width: 1280px) {
+    .square_container {
+        flex-direction: column;
+    }
 }
+
 </style>
 <h1>대시보드</h1>
 
+<!--@if(!$isLicenseValid)-->
+<div class="message pro">
+    <p>Hotopay 유지보수 지원과 빠른 기능 개선을 받고싶으시다면 <a href="https://potatosoft.kr/store/11330" target="_blank">Pro 라이선스를 이용해보세요!</a></p>
+</div>
+<!--@endif-->
 <div class="square_container">
     <div class="dash_square">
         <p class="title">오늘의 매출 ({date('Y-m-d', strtotime("today midnight"))})</p>

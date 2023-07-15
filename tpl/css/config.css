@@ -28,3 +28,9 @@
 .paystatus.PENDING, .paystatus.WAITING_FOR_DEPOSIT {
     color: blue;
 }
+
+.message.pro {
+    border-color: rgb(255, 71, 87);
+    color: rgb(203, 44, 57);
+    background-color: rgb(255, 255, 255);
+}
