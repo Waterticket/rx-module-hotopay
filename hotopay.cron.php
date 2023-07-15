@@ -197,6 +197,39 @@ class HotopayCronJob extends Hotopay {
                 continue;
             }
 
+            $trigger_obj = new stdClass();
+            $trigger_obj->subscription_srl = $subscription->subscription_srl;
+            $trigger_obj->pg = $subscription->pg;
+            $trigger_obj->product_srl = $subscription->product_srl;
+            $trigger_obj->option_srl = $subscription->option_srl;
+            $trigger_obj->quantity = $subscription->quantity;
+            $trigger_obj->price = $subscription->price;
+            $trigger_obj->billing_key_idx = $subscription->billing_key_idx;
+            $trigger_obj->register_date = $subscription->register_date;
+            $trigger_obj->esti_billing_date = $subscription->esti_billing_date;
+            $output = ModuleHandler::triggerCall('hotopay.renewSubscription', 'before', $trigger_obj);
+            if ($output->toBool() === false)
+            {
+                $this->printLog("Error: Failed renew subscription due to hotopay.renewSubscription before trigger; " . $output->message);
+                $this->printLog("Update Subscription Status: FAILED_RENEW_TRIGGER");
+                $this->changeSubscriptionStatus($subscription->subscription_srl, 'FAILED_RENEW_TRIGGER');
+
+                $purchase_srl = $this->addPurchase('FAILED_RENEW_TRIGGER', $subscription);
+                $this->printLog("Add Purchase: #" . $purchase_srl);
+
+                $removeGroup = $this->removeMemberGroup($subscription->member_srl, $subscription->buyer_group);
+                if (!$removeGroup->toBool())
+                {
+                    $this->printLog("Error: Failed to remove member group; " . $removeGroup->message);
+                }
+                $this->printLog("Remove Member Group: " . $subscription->buyer_group);
+
+                $trigger_obj->purchase_srl = $purchase_srl;
+                $trigger_obj->billing_status = 'FAILED_RENEW_TRIGGER';
+                ModuleHandler::triggerCall('hotopay.renewSubscription', 'after', $trigger_obj);
+                continue;
+            }
+
             $this->printLog("Renewing Subscription...");
             $output = $this->requestBilling($subscription);
             if (isset($output->data->PCD_PAYER_ID)) $output->data->PCD_PAYER_ID = '*** secret ***';
@@ -217,6 +250,10 @@ class HotopayCronJob extends Hotopay {
                     $this->printLog("Error: Failed to remove member group; " . $removeGroup->message);
                 }
                 $this->printLog("Remove Member Group: " . $subscription->buyer_group);
+
+                $trigger_obj->purchase_srl = $purchase_srl;
+                $trigger_obj->billing_status = 'FAILED_RENEW';
+                ModuleHandler::triggerCall('hotopay.renewSubscription', 'after', $trigger_obj);
                 continue;
             }
 
@@ -224,8 +261,12 @@ class HotopayCronJob extends Hotopay {
             $this->minusOptionStock($subscription, 1);
             $this->addPurchase('DONE', $subscription, $output->data->purchase_srl);
             $this->printLog("Add Purchase: #" . $output->data->purchase_srl);
+            $next_esti_billing_date = $this->updateSubscriptionEstiBillingDate($subscription);
 
-            $this->updateSubscriptionEstiBillingDate($subscription);
+            $trigger_obj->purchase_srl = $output->data->purchase_srl;
+            $trigger_obj->billing_status = 'DONE';
+            $trigger_obj->esti_billing_date = $next_esti_billing_date;
+            ModuleHandler::triggerCall('hotopay.renewSubscription', 'after', $trigger_obj);
             $this->printLog("End renewing subscription");
         }
     }
@@ -348,7 +389,7 @@ class HotopayCronJob extends Hotopay {
         return $output;
     }
 
-    private function updateSubscriptionEstiBillingDate(object $subscription): object
+    private function updateSubscriptionEstiBillingDate(object $subscription): string
     {
         $esti_billing_date = date("Y-m-d H:i:s", strtotime("+" . $subscription->period . " days", strtotime($subscription->esti_billing_date)));
         $last_billing_date = date("Y-m-d H:i:s");
@@ -360,7 +401,7 @@ class HotopayCronJob extends Hotopay {
 
         $this->printLog("Update Esti billing date: %s -> %s", $subscription->esti_billing_date, $esti_billing_date);
 
-        return new BaseObject();
+        return $esti_billing_date;
     }
 
     private function removeMemberGroup(int $member_srl, int $group_srl): BaseObject
