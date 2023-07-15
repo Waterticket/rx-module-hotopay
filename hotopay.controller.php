@@ -113,6 +113,22 @@ class HotopayController extends Hotopay
 					break;
 				}
 			}
+
+			if (!isset($product->info) || empty($product->info))
+			{
+				return $this->createObject(-1, '상품 정보를 가져오는데 실패했습니다.');
+			}
+
+			$product_option_srls = array();
+			foreach ($product->info->product_option as $option)
+			{
+				$product_option_srls[] = $option->option_srl;
+			}
+
+			if (!in_array($product->option_srl, $product_option_srls))
+			{
+				return $this->createObject(-1, '유효한 옵션을 선택해주세요');
+			}
 		}
 
 		$title = "";
