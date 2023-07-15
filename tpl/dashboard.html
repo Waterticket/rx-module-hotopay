@@ -92,8 +92,12 @@ $oHotopayAdminModel = getAdminModel('hotopay');
 
 <p>최근 Cron 실행 시각 : <!--@if($hotopay_config->last_cron_execution_time > 0)-->{date('Y-m-d H:i:s', $hotopay_config->last_cron_execution_time)}<!--@else-->아직 데이터가 없습니다.<!--@endif--></p>
 <p>최근 Cron 성공 시각 : <!--@if($hotopay_config->last_cron_execution_success_time > 0)-->{date('Y-m-d H:i:s', $hotopay_config->last_cron_execution_success_time)}<!--@else-->아직 데이터가 없습니다.<!--@endif--></p>
+
+<!--@if($hotopay_config->last_cron_execution_time > 0 && $hotopay_config->last_cron_execution_time + (3 * 24 * 60 * 60) < time())-->
+<p style="color: red;">Cron이 3일 이상 실행되지 않았습니다. 확인해주세요.</p>
+<!--@endif-->
 <!--@if($hotopay_config->last_cron_execution_success_time + (3 * 24 * 60 * 60) < $hotopay_config->last_cron_execution_time)-->
-<p style="color: red;">Cron에 문제가 생겼을 수 있습니다. 확인해주세요.</p>
+<p style="color: red;">Cron이 3일 이상 성공하지 못했습니다. 확인해주세요.</p>
 <!--@endif-->
 <hr>
 
