@@ -484,7 +484,7 @@ class HotopayController extends Hotopay
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 		$logged_info = Context::get('logged_info');
-		$oHotopayModel = getModel('hotopay');
+		$oHotopayModel = HotopayModel::getInstance();
 
 		$purchase_srl = (int)substr($vars->order_id, 2);
 		if (!$purchase_srl) return $this->createObject(-1, "잘못된 주문번호입니다.");
@@ -521,59 +521,78 @@ class HotopayController extends Hotopay
 					return $this->createObject(-1, "결제 실패. (code: 1012)");
 				}
 
-				if (empty($vars->customerKey) || empty($vars->authKey))
-				{
-					return $this->createObject(-1, "결제 실패. (code: 1013)");
-				}
-
 				$tossController = new Toss(true);
-				$output = $tossController->requestBillingKey($vars->customerKey, $vars->authKey);
-				if (!$output->toBool())
+				if (!isset($_SESSION['hotopay_billing_key']))
 				{
-					return $this->createObject(-1, "결제 실패. ".($output->data->message ?? '')." (code: 1014)");
-				}
-
-				$billingKeyObject = $output->data;
-				$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->billingKey));
-				if ($purchase->data->pay_method == 'card')
-				{
-					$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->card->number));
-				}
-				$key = $oHotopayModel->getBillingKeyByKeyNumber($purchase->data->member_srl, $billingKeyObject->card->number);
-				$key_idx = $key->key_idx ?? 0;
-				if ($key_idx <= 0)
-				{
-					$key = new stdClass();
-					$key->key_idx = getNextSequence();
-					$key->member_srl = $purchase->data->member_srl;
-					$key->pg = 'toss';
-					$key->type = 'billing';
-					$key->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
-					$key->key_hash = $key_hash;
-					$key->regdate = time();
-
-					switch ($purchase->data->pay_method)
+					if (empty($vars->customerKey) || empty($vars->authKey))
 					{
-						case 'card':
-							$key->payment_type = 'card';
-							$key->alias = ($billingKeyObject->card->ownerType . $billingKeyObject->card->cardType) ?: 'CARD';
-							$key->number = $billingKeyObject->card->number ?? '0000********0000';
-							break;
-
-						default:
-							return $this->createObject(-1, "결제 실패. (code: 1015)");
+						return $this->createObject(-1, "결제 실패. (code: 1013)");
 					}
 
-					$oHotopayModel->insertBillingKey($key);
-					$key_idx = $key->key_idx;
+					$output = $tossController->requestBillingKey($vars->customerKey, $vars->authKey);
+					if (!$output->toBool())
+					{
+						return $this->createObject(-1, "결제 실패. ".($output->data->message ?? '')." (code: 1014)");
+					}
+
+					$billingKeyObject = $output->data;
+					$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->billingKey));
+					if ($purchase->data->pay_method == 'card')
+					{
+						$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->card->number));
+					}
+					$key = $oHotopayModel->getBillingKeyByKeyNumber($purchase->data->member_srl, $billingKeyObject->card->number);
+					$key_idx = $key->key_idx ?? 0;
+					if ($key_idx <= 0)
+					{
+						$key = new stdClass();
+						$key->key_idx = getNextSequence();
+						$key->member_srl = $purchase->data->member_srl;
+						$key->pg = 'toss';
+						$key->type = 'billing';
+						$key->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
+						$key->key_hash = $key_hash;
+						$key->regdate = time();
+
+						switch ($purchase->data->pay_method)
+						{
+							case 'card':
+								$key->payment_type = 'card';
+								$key->alias = ($billingKeyObject->card->ownerType . $billingKeyObject->card->cardType) ?: 'CARD';
+								$key->number = $billingKeyObject->card->number ?? '0000********0000';
+								break;
+
+							default:
+								return $this->createObject(-1, "결제 실패. (code: 1015)");
+						}
+
+						$oHotopayModel->insertBillingKey($key);
+						$key_idx = $key->key_idx;
+					}
+					else
+					{
+						$key_update_obj = new stdClass();
+						$key_update_obj->key_idx = $key_idx;
+						$key_update_obj->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
+						$key_update_obj->key_hash = $key_hash;
+						$oHotopayModel->updateBillingKey($key_update_obj);
+					}
 				}
 				else
 				{
-					$key_update_obj = new stdClass();
-					$key_update_obj->key_idx = $key_idx;
-					$key_update_obj->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
-					$key_update_obj->key_hash = $key_hash;
-					$oHotopayModel->updateBillingKey($key_update_obj);
+					$key_idx = $_SESSION['hotopay_billing_key'];
+					unset($_SESSION['hotopay_billing_key']);
+
+					$key = $oHotopayModel->getBillingKey($key_idx);
+					if (!$key->key_idx)
+					{
+						return $this->createObject(-1, "결제 실패. (code: 1017)");
+					}
+
+					if ($key->member_srl != $purchase->data->member_srl)
+					{
+						return $this->createObject(-1, "결제 실패. (code: 1018)");
+					}
 				}
 
 				$subscription = new stdClass();
