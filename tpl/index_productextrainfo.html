@@ -20,6 +20,7 @@
             <th scope="col">{$lang->einfo_type}</th>
             <th scope="col">{$lang->key_name}</th>
             <th scope="col">{$lang->title}</th>
+            <th scope="col">{$lang->value}</th>
             <th scope="col">{$lang->cmd_setup}</th>
             <th scope="col">{$lang->cmd_delete}</th>
         </tr>
@@ -34,6 +35,7 @@
             <td class="nowr">{$val->type}</td>
             <td class="nowr">{$val->key_name}</td>
             <td class="nowr">{$val->title}</td>
+            <td class="nowr">{$val->value}</td>
             <td class="nowr"><a href="{getUrl('act','dispHotopayAdminUpdateProductExtraInfo','info_srl',$val->info_srl)}" title="{$lang->cmd_setup}">{$lang->cmd_setup}</a></td>
             <td class="nowr"><a href="{getUrl('act','dispHotopayAdminDeleteProductExtraInfo','info_srl',$val->info_srl)}" title="{$lang->cmd_delete}">{$lang->cmd_delete}</a></td>
         </tr>
