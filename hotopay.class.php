@@ -165,7 +165,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->purchase_term_url)) self::$_config_cache->purchase_term_url = ''; // 결제 약관 URL
 
 			if(!isset(self::$_config_cache->admin_mailing)) self::$_config_cache->admin_mailing = 'Y'; // 관리자 알림 활성화
-			if(!isset(self::$_config_cache->admin_mailing_status)) self::$_config_cache->admin_mailing_status = ['DONE','REFUNDED']; // 관리자가 알림을 받을 주문 상태
+			if(!isset(self::$_config_cache->admin_mailing_status)) self::$_config_cache->admin_mailing_status = ['DONE','BILLING_DONE','REFUNDED']; // 관리자가 알림을 받을 주문 상태
 
 			if(!isset(self::$_config_cache->purchase_success_notification_message_note_title)) self::$_config_cache->purchase_success_notification_message_note_title = '상품 결제가 완료되었습니다'; // 결제성공 쪽지 제목
 			if(!isset(self::$_config_cache->purchase_success_notification_message_note)) self::$_config_cache->purchase_success_notification_message_note = '<p>"[상품명]" 상품이 성공적으로 결제되었습니다.</p><br><p>[주문확인링크]</p>'; // 결제성공 쪽지 내용
