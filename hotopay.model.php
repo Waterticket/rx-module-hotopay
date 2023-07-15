@@ -1122,6 +1122,7 @@ class HotopayModel extends Hotopay
         foreach ($origin as $info)
         {
             unset($info->info_srl);
+            $info->info_srl = getNextSequence();
             $info->purchase_srl = $target_srl;
             $info->regdate = date('Y-m-d H:i:s');
             self::insertPurchaseExtraInfo($info);
