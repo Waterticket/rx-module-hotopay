@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 6;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 7;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -809,6 +809,15 @@ class Hotopay extends ModuleObject
 								('USD', 1, 'KRW', 1320.830239, '2023-05-23 22:07:45');
 						");
 						$stmt->execute();
+						break;
+
+					case 7: // 기본 알림 타입에 정기결제도 추가
+						if (!empty($config->admin_mailing_status))
+						{
+							$config->admin_mailing_status = array_merge($config->admin_mailing_status, ['BILLING_DONE']);
+							$config->admin_mailing_status = array_unique($config->admin_mailing_status);
+							$this->setConfig($config);
+						}
 						break;
 				}
 
