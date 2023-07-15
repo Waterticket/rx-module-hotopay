@@ -1,0 +1,12 @@
+<query id="getBillingKeyByKeyNumber" action="select">
+    <tables>
+        <table name="hotopay_billing_key" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+            <condition operation="equal" column="member_srl" var="member_srl" filter="number" />
+            <condition operation="equal" column="number" var="number" />
+    </conditions>
+</query>

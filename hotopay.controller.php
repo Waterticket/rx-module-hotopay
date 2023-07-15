@@ -539,7 +539,7 @@ class HotopayController extends Hotopay
 				{
 					$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->card->number));
 				}
-				$key = $oHotopayModel->getBillingKeyByKeyHash($purchase->data->member_srl, $key_hash);
+				$key = $oHotopayModel->getBillingKeyByKeyNumber($purchase->data->member_srl, $billingKeyObject->card->number);
 				$key_idx = $key->key_idx ?? 0;
 				if ($key_idx <= 0)
 				{
@@ -566,6 +566,14 @@ class HotopayController extends Hotopay
 
 					$oHotopayModel->insertBillingKey($key);
 					$key_idx = $key->key_idx;
+				}
+				else
+				{
+					$key_update_obj = new stdClass();
+					$key_update_obj->key_idx = $key_idx;
+					$key_update_obj->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
+					$key_update_obj->key_hash = $key_hash;
+					$oHotopayModel->updateBillingKey($key_update_obj);
 				}
 
 				$subscription = new stdClass();
