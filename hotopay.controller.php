@@ -268,7 +268,11 @@ class HotopayController extends Hotopay
 				return $this->createObject(-1, "결제 정보가 올바르지 않습니다.");
 			}
 
-			if ($key->pg == 'payple')
+			if ($key->pg == 'toss')
+			{
+				$vars->pay_method = 'toss';
+			}
+			else if ($key->pg == 'payple')
 			{
 				$vars->pay_method = 'paypl_' . $key->payment_type;
 			}
