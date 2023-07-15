@@ -90,10 +90,10 @@ class HotopayView extends Hotopay
 			{
 				$filtered_password_keys[] = $key;
 			}
-			else if ($key->type == 'billing')
-			{
-				$filtered_billing_keys[] = $key;
-			}
+			// else if ($key->type == 'billing')
+			// {
+			// 	$filtered_billing_keys[] = $key;
+			// }
 		}
 
 		Context::set('password_keys', $filtered_password_keys);
