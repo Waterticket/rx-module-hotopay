@@ -1,5 +1,8 @@
 <?php
 
+// 해당 파일을 임의로 수정하거나, 외부 API를 통해 원격 호출하는 것을 "강력하게" 권장하지 않습니다.
+// 보안상 취약점에 노출될 수 있습니다.
+
 // Check Security
 require "../../common/scripts/common.php";
 set_time_limit(0);
