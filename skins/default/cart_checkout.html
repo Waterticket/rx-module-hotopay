@@ -90,9 +90,9 @@ function _purchaseSubmit(form){return checkCheckbox();}
             <section id="pay_method" style="margin-top:40px">
             <!--@endif-->
                 <br>
-                <!--@if(count($billing_keys) >= 1)-->
+                <!--@if(count($password_keys) >= 1)-->
                 <h2>기존 결제수단</h2>
-                <!--@foreach($billing_keys as $key)-->
+                <!--@foreach($password_keys as $key)-->
                 <input type="radio" name="pay_method" value="billing_key_{$key->key_idx}" id="billing_key_{$key->key_idx}" checked="checked" required="required"><label for="billing_key_{$key->key_idx}">[{$key->payment_type}] {$key->alias} ({$key->number})</label>
                 <br>
                 <!--@endforeach-->
@@ -135,6 +135,11 @@ function _purchaseSubmit(form){return checkCheckbox();}
             </section>
             <!--@elseif($purchase_type == 'billing')-->
             <section id="pay_method">
+                <!--@if(count($billing_keys) >= 1)-->
+                <!--@foreach($billing_keys as $key)-->
+                <input type="radio" name="pay_method" value="billing_key_{$key->key_idx}" id="billing_key_{$key->key_idx}" checked="checked" required="required"><label for="billing_key_{$key->key_idx}">[{$key->payment_type}] {$key->alias} ({$key->number})</label>
+                <!--@endforeach-->
+                <!--@endif-->
                 <!--@if($toss_enabled && $toss_billing_enabled)-->
                 <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked" required="required"><label for="pm_card"> 카드</label>&nbsp;
                 <!--@endif-->

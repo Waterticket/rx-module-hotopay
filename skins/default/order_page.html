@@ -100,6 +100,16 @@ function _purchaseSubmit(form){return checkCheckbox();}
         <!--@else-->
         <section id="pay_method">
         <!--@endif-->
+            <br>
+            <!--@if(count($password_keys) >= 1)-->
+            <h2>기존 결제수단</h2>
+            <!--@foreach($password_keys as $key)-->
+            <input type="radio" name="pay_method" value="billing_key_{$key->key_idx}" id="billing_key_{$key->key_idx}" checked="checked" required="required"><label for="billing_key_{$key->key_idx}">[{$key->payment_type}] {$key->alias} ({$key->number})</label>
+            <br>
+            <!--@endforeach-->
+            <br>
+            <!--@endif-->
+            <h2>신규 결제수단</h2>
             <!--@if($toss_enabled)-->
                 <!--@if(in_array(1, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_card" value="card" checked="checked" required="required"><label for="pm_card"> 카드</label>&nbsp;<!--@endif-->
                 <!--@if(in_array(6, $hotopay_config->toss_payments_list))--><input type="radio" name="pay_method" id="pm_acct" value="ts_account" required="required"><label for="pm_acct"> 계좌이체</label>&nbsp;<!--@endif-->
@@ -136,6 +146,11 @@ function _purchaseSubmit(form){return checkCheckbox();}
         </section>
         <!--@elseif($purchase_type == 'billing')-->
         <section id="pay_method">
+            <!--@if(count($billing_keys) >= 1)-->
+            <!--@foreach($billing_keys as $key)-->
+            <input type="radio" name="pay_method" value="billing_key_{$key->key_idx}" id="billing_key_{$key->key_idx}" checked="checked" required="required"><label for="billing_key_{$key->key_idx}">[{$key->payment_type}] {$key->alias} ({$key->number})</label>
+            <!--@endforeach-->
+            <!--@endif-->
             <!--@if($toss_enabled && $toss_billing_enabled)-->
             <input type="radio" name="pay_method" id="pm_card" value="card" checked="checked" required="required"><label for="pm_card"> 카드</label>&nbsp;
             <!--@endif-->

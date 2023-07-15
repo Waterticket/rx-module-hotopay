@@ -80,16 +80,23 @@ class HotopayView extends Hotopay
 		}
 		Context::set('purchase_price', $purchase_price);
 
+		$filtered_password_keys = array();
 		$filtered_billing_keys = array();
+
 		$billing_keys = $oHotopayModel->getBillingKeys($member_srl);
 		foreach ($billing_keys as $key)
 		{
 			if ($key->type == 'password')
 			{
+				$filtered_password_keys[] = $key;
+			}
+			else if ($key->type == 'billing')
+			{
 				$filtered_billing_keys[] = $key;
 			}
 		}
 
+		Context::set('password_keys', $filtered_password_keys);
 		Context::set('billing_keys', $filtered_billing_keys);
 
 		// 스킨 파일명 지정
