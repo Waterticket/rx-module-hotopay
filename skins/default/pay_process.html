@@ -16,6 +16,15 @@
 }
 
 <!--@if($purchase->pay_pg == 'toss')-->
+<!--@if(isset($_SESSION['hotopay_billing_key']))-->
+<script>
+function openPay()
+{
+  var url = '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","tossbill","pay_status","success","order_id","HT".$vars->order_id)}';
+  location.href = url;
+}
+</script>
+<!--@else-->
 <script src="https://js.tosspayments.com/v1"></script>
 <!--@if($purchase->is_billing == 'Y')-->
 <script>
@@ -70,6 +79,7 @@ function openPay()
   });
 }
 </script>
+<!--@endif-->
 <!--@endif-->
 <!--@elseif($purchase->pay_pg == 'paypal')-->
 <script>
@@ -171,12 +181,12 @@ function openPay()
 </script>
 <!--@elseif($purchase->pay_pg == 'point')-->
 <script>
-  function openPay()
-  {
-    var url = '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","point","pay_status","success","order_id","HT".$vars->order_id)}';
-    location.href = url;
-  }
-  </script>
+function openPay()
+{
+  var url = '{getNotEncodedUrl("","mid","hotopay","act","procHotopayPayStatus","pay_pg","point","pay_status","success","order_id","HT".$vars->order_id)}';
+  location.href = url;
+}
+</script>
 <!--@endif-->
 
 <script>
