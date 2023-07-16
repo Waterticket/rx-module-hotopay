@@ -2276,6 +2276,11 @@ class HotopayController extends Hotopay
 		$option_srl = Context::get('option_srl');
 		$quantity = Context::get('quantity');
 
+		if (!$product_srl || !$option_srl || !$quantity)
+		{
+			return new BaseObject(-1, '필수 정보가 없습니다.');
+		}
+
 		$product_info = $oHotopayModel->getProduct($product_srl);
 		if(!$product_info)
 		{
@@ -2332,6 +2337,11 @@ class HotopayController extends Hotopay
 
 		$cart_item_srl = Context::get('cart_item_srl');
 
+		if (!$cart_item_srl)
+		{
+			return new BaseObject(-1, '필수 정보가 없습니다.');
+		}
+
 		$oHotopayModel = getModel('hotopay');
 		$oHotopayModel->deleteCartItem($cart_item_srl, $member_srl);
 		$this->deleteCache('cart_item_count_' . $member_srl);
@@ -2357,6 +2367,11 @@ class HotopayController extends Hotopay
 		$cart_item_srl = Context::get('cart_item_srl');
 		$option_srl = Context::get('option_srl');
 		$quantity = Context::get('quantity');
+
+		if (!$cart_item_srl || !$option_srl || !$quantity)
+		{
+			return new BaseObject(-1, '필수 정보가 없습니다.');
+		}
 
 		$args = new stdClass();
 		$args->cart_item_srl = $cart_item_srl;
