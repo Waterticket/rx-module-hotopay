@@ -219,6 +219,7 @@ class HotopayCronJob extends Hotopay {
 
             $trigger_obj = new stdClass();
             $trigger_obj->subscription_srl = $subscription->subscription_srl;
+            $trigger_obj->member_srl = $subscription->member_srl;
             $trigger_obj->pg = $subscription->pg;
             $trigger_obj->product_srl = $subscription->product_srl;
             $trigger_obj->option_srl = $subscription->option_srl;
