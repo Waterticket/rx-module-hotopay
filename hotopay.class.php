@@ -812,13 +812,13 @@ class Hotopay extends ModuleObject
 					case 6: // 기본 환율 정보 추가
 						$oDB = DB::getInstance();
 						$stmt = $oDB->prepare("
-							INSERT INTO hotopay_currency (`base_currency`, `base_value`, `target_currency`, `target_value`, `update_time`)
+							INSERT INTO `rx_hotopay_currency` (`base_currency`, `base_value`, `target_currency`, `target_value`, `update_time`)
 							VALUES
-								('USD', 1, 'USD', 1, '2023-05-23 22:07:45'),
-								('USD', 1, 'CNY', 7.054802, '2023-05-23 22:07:45'),
-								('USD', 1, 'EUR', 0.92904, '2023-05-23 22:07:45'),
-								('USD', 1, 'JPY', 138.761975, '2023-05-23 22:07:45'),
-								('USD', 1, 'KRW', 1320.830239, '2023-05-23 22:07:45');
+								('USD', 1, 'CNY', 7.136341, '2023-07-16 11:00:02'),
+								('USD', 1, 'EUR', 0.889542, '2023-07-16 11:00:02'),
+								('USD', 1, 'JPY', 138.597055, '2023-07-16 11:00:02'),
+								('USD', 1, 'KRW', 1268.425214, '2023-07-16 11:00:02'),
+								('USD', 1, 'USD', 1, '2023-07-16 11:00:02');
 						");
 						$stmt->execute();
 						break;
