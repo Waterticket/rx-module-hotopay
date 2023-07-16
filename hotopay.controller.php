@@ -1429,6 +1429,17 @@ class HotopayController extends Hotopay
 		die();
 	}
 
+	public function procHotopayTossPaymentsCallbackStatusChanged()
+	{
+		Context::setRequestMethod('JSON');
+    	Context::setResponseMethod('JSON');
+
+		$config = $this->getConfig();
+		$vars = Context::getRequestVars();
+
+		die();
+	}
+
 	/**
 	 * 아임포트에서 넘어오는 결제 Callback을 처리합니다
 	 *

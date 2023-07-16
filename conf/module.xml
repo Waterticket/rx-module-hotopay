@@ -59,7 +59,13 @@
 		<action name="dispHotopayOrderResult" type="view" route="OrderResult/$order_id:any" />
 
 		<!-- Callback -->
-		<action name="procHotopayTossPaymentsCallback" type="controller" route="api/v1/toss/paymentCallback" check_csrf="false" />
+		<action name="procHotopayTossPaymentsCallback" type="controller" check_csrf="false">
+			<route route="api/v1/toss/paymentCallback" />
+			<route route="api/v2/toss/depositCallback" />
+		</action>
+		<action name="procHotopayTossPaymentsCallbackStatusChanged" type="controller" check_csrf="false">
+			<route route="api/v2/toss/paymentStatusChangedCallback" />
+		</action>
 		<action name="procHotopayIamportCallback" type="controller" check_csrf="false">
 			<route route="api/v1/iamport/paymentCallback" />
 			<route route="api/v1/portone/paymentCallback" />

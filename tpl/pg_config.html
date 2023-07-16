@@ -126,9 +126,12 @@
 		</script>
 
 		<div class="x_control-group">
-			<label class="x_control-label" for="toss_callback_url">Webhook 콜백 URL<br>가상계좌 입금 알림 URL</label>
+			<label class="x_control-label" for="toss_callback_url">Webhook URL</label>
 			<div class="x_controls">
-				<p style="margin-top:12px;">{getUrl()}hotopay/api/v1/toss/paymentCallback</p><br>
+				<p style="margin-top:-5px;"><ul>
+					<li><b>가상계좌 입금 알림 URL</b> : {getUrl()}hotopay/api/v2/toss/depositCallback</li>
+					<li><b>결제 상태 변경 이벤트 URL</b> : {getUrl()}hotopay/api/v2/toss/paymentStatusChangedCallback</li>
+				</ul></p><br>
 			</div>
 		</div>
 	</section>
