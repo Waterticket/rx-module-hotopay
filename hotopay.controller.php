@@ -1707,12 +1707,14 @@ class HotopayController extends Hotopay
 
 		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
 
+		$group_srls = array();
 		$oMemberController = getController('member');
 		foreach($products as $product)
 		{
 			$group_srl = $product->product_buyer_group;
 			if($group_srl != 0)
 			{
+				$group_srls[] = $group_srl;
 				$oMemberController->addMemberToGroup($member_srl, $group_srl);
 			}
 		}
@@ -1734,7 +1736,7 @@ class HotopayController extends Hotopay
 			}
 		}
 
-		$trigger_obj->group_srl = $group_srl;
+		$trigger_obj->group_srls = $group_srls;
 		ModuleHandler::triggerCall('hotopay.activePurchase', 'after', $trigger_obj);
 	}
 
