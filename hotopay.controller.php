@@ -1771,7 +1771,7 @@ class HotopayController extends Hotopay
 	 */
 	public function _RefundProcess($purchase_srl, $output_data = [])
 	{
-		$oHotopayModel = getModel('hotopay');
+		$oHotopayModel = HotopayModel::getInstance();
 		$purchase = $oHotopayModel->getPurchase($purchase_srl);
 		$member_srl = $purchase->member_srl;
 
@@ -1797,6 +1797,18 @@ class HotopayController extends Hotopay
 		}
 
 		$oHotopayModel->rollbackOptionStock($purchase_srl);
+
+		$items = $oHotopayModel->getPurchaseItems($purchase_srl);
+		foreach($items as $item)
+		{
+			if ($item->subscription_srl > 0)
+			{
+				$args = new stdClass();
+				$args->subscription_srl = $item->subscription_srl;
+				$args->status = 'CANCELED_REFUND';
+				HotopayModel::updateSubscription($args);
+			}
+		}
 
 		$oMemberController = getController('member');
 		if(version_compare(__XE_VERSION__, '2.0.0', '<'))
