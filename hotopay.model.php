@@ -1132,4 +1132,19 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    public function updatePurchaseItemSubscriptionSrl(int $item_srl, int $subscription_srl): BaseObject
+    {
+        $args = new \stdClass();
+        $args->item_srl = $item_srl;
+        $args->subscription_srl = $subscription_srl;
+
+        $output = executeQuery('hotopay.updatePurchaseItemSubscriptionSrl', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return new BaseObject();
+    }
 }

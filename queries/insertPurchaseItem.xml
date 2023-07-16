@@ -11,6 +11,7 @@
 	<column name="purchase_price" var="purchase_price" notnull="notnull" />
 	<column name="original_price" var="original_price" notnull="notnull" />
 	<column name="quantity" var="quantity" default="1" />
+	<column name="subscription_srl" var="subscription_srl" default="0" />
 	<column name="extra_vars" var="extra_vars" />
 	<column name="regdate" var="regdate" notnull="notnull" />
 	</columns>

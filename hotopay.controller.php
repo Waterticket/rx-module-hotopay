@@ -200,6 +200,7 @@ class HotopayController extends Hotopay
 			$obj->purchase_price = ($option->price + round($option->price * ($product->tax_rate / 100))) * $quantity;
 			$obj->original_price = $option->price * $quantity;
 			$obj->quantity = $quantity;
+			$obj->subscription_srl = 0;
 			$obj->extra_vars = serialize($option->extra_vars ?: new stdClass());
 			$obj->regdate = time();
 			executeQuery('hotopay.insertPurchaseItem', $obj);
@@ -636,6 +637,7 @@ class HotopayController extends Hotopay
 
 					$subscription->esti_billing_date = date('Y-m-d H:i:s');
 					$oHotopayModel->insertSubscription($subscription);
+					$oHotopayModel->updatePurchaseItemSubscriptionSrl($item->item_srl, $subscription->subscription_srl);
 
 					$billingStatus = $tossController->requestBilling($subscription);
 					if (!$billingStatus->toBool())

@@ -341,9 +341,10 @@ class HotopayCronJob extends Hotopay {
         $stmt->bindValue(":extra_vars", $extra_vars);
         $stmt->bindValue(":regdate", time());
         $stmt->execute();
-        $this->oDB->commit();
 
+        $this->oHotopayModel->updatePurchaseItemSubscriptionSrl($item_srl, $subscription->subscription_srl);
         $this->oHotopayModel->copyPurchaseExtraInfo($purchase_srl, $subscription->subscription_srl);
+        $this->oDB->commit();
 
         $trigger_obj = new stdClass();
         $trigger_obj->purchase_srl = $purchase_srl;

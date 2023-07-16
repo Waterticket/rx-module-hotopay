@@ -462,6 +462,8 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_purchase","is_billing")) return true;
 		if(!$oDB->isColumnExists("hotopay_product_option","billing_infinity_stock")) return true;
 		if(!$oDB->isColumnExists("hotopay_product","allow_use_point")) return true;
+		if(!$oDB->isColumnExists("hotopay_purchase_item","subscription_srl")) return true;
+		if(!$oDB->isIndexExists("hotopay_purchase_item","idx_subscription_srl")) return true;
 
 		$config = $this->getConfig();
 		if (self::HOTOPAY_NEEDED_DB_VERSION > $config->hotopay_db_version)
@@ -592,6 +594,16 @@ class Hotopay extends ModuleObject
 		if(!$oDB->isColumnExists("hotopay_product","allow_use_point"))
 		{
 			$oDB->addColumn('hotopay_product',"allow_use_point","char",1,'Y',false,"is_billing");
+		}
+
+		if(!$oDB->isColumnExists("hotopay_purchase_item","subscription_srl"))
+		{
+			$oDB->addColumn('hotopay_purchase_item',"subscription_srl","number",20,0,true,"quantity");
+		}
+
+		if(!$oDB->isIndexExists("hotopay_purchase_item","idx_subscription_srl"))
+		{
+			$oDB->addIndex('hotopay_purchase_item',"idx_subscription_srl","subscription_srl");
 		}
 
 		$config = $this->getConfig();

@@ -1,0 +1,11 @@
+<query id="updatePurchaseItemSubscriptionSrl" action="update">
+	<tables>
+		<table name="hotopay_purchase_item" />
+	</tables>
+	<columns>
+        <column name="subscription_srl" var="subscription_srl" notnull="notnull" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="item_srl" var="item_srl" notnull="notnull" />
+	</conditions>
+</query>
