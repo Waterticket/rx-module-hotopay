@@ -196,6 +196,10 @@ class HotopayModel extends Hotopay
                 return "결제 취소";
                 break;
 
+            case "EXPIRED":
+                return "결제 만료";
+                break;
+
             case "FAILED":
                 return "결제 실패";
                 break;
@@ -594,7 +598,7 @@ class HotopayModel extends Hotopay
         $args = new \stdClass();
         $args->pay_status = array('WAITING_FOR_DEPOSIT', 'PENDING');
         $args->regdate = time() - 86400 * 3; // 3 days
-        $args->pay_status_to = 'CANCELED';
+        $args->pay_status_to = 'EXPIRED';
         $output = executeQuery('hotopay.updateExpiredPurchaseStatus', $args);
         if(!$output->toBool())
         {

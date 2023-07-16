@@ -1437,7 +1437,72 @@ class HotopayController extends Hotopay
 		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
 
-		die();
+		$eventType = $vars->eventType;
+		if ($eventType != "PAYMENT_STATUS_CHANGED") {
+			die(json_encode(array("status"=>"success", "message"=>"pass event type")));
+		}
+
+		$data = $vars->data;
+		$status = $data->status;
+		if (!in_array($status, array("EXPIRED", "CANCELED", "PARTIAL_CANCELED"))) {
+			die(json_encode(array("status"=>"success", "message"=>"pass status")));
+		}
+
+		$orderId = $data->orderId;
+		$purchase_srl = (int)substr($orderId, 2);
+
+		$oHotopayModel = HotopayModel::getInstance();
+		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		if(!$purchase->purchase_srl)
+		{
+			http_response_code(400);
+			die(json_encode(array("status"=>"failed", "message"=>"unable to find purchase data")));
+		}
+
+		if ($purchase->product_purchase_price != $data->totalAmount)
+		{
+			http_response_code(400);
+			die(json_encode(array("status"=>"failed", "message"=>"price doesn't match")));
+		}
+
+		$pay_data = json_decode($purchase->pay_data);
+		if (!is_array($pay_data))
+		{
+			$pay_data = array($pay_data);
+		}
+
+		$paymentKeyEqual = false;
+		foreach ($pay_data as $value) {
+			if ($value->paymentKey == $data->paymentKey)
+			{
+				$paymentKeyEqual = true;
+				break;
+			}
+		}
+
+		if (!$paymentKeyEqual)
+		{
+			http_response_code(400);
+			die(json_encode(array("status"=>"failed", "message"=>"payment key doesn't match")));
+		}
+
+		switch($status)
+		{
+			case "EXPIRED":
+				$args = new stdClass();
+				$args->purchase_srl = $purchase_srl;
+				$args->pay_status = "EXPIRED";
+				executeQuery('hotopay.updatePurchaseStatus', $args);
+				break;
+
+			case "CANCELED":
+			case "PARTIAL_CANCELED":
+				$this->_RefundProcess($purchase_srl, $data);
+				break;
+		}
+
+		http_response_code(200);
+		die(json_encode(array("status"=>"success", "message"=>"success")));
 	}
 
 	/**
@@ -1951,7 +2016,7 @@ class HotopayController extends Hotopay
 
 		$member_srl = $purchase->member_srl;
 		$oMemberModel = getModel('member');
-		$oHotopayModel = getModel('hotopay');
+		$oHotopayModel = HotopayModel::getInstance();
 		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
 		$price = number_format($purchase->product_purchase_price);
 		$purchase_date = date("Y-m-d H:i:s", $purchase->regdate);
