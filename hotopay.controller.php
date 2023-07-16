@@ -2288,6 +2288,11 @@ class HotopayController extends Hotopay
 			return new BaseObject(-1, '옵션 정보가 없습니다.');
 		}
 
+		if ($option_info->product_srl != $product_srl)
+		{
+			return new BaseObject(-1, '상품과 옵션이 일치하지 않습니다.');
+		}
+
 		$cart_items = $oHotopayModel->getCartItems($member_srl);
 		foreach ($cart_items as $item)
 		{
