@@ -291,6 +291,7 @@ class HotopayController extends Hotopay
 		$args->regdate = time();
 		$args->pay_data = '';
 		$args->extra_vars = serialize($extra_vars);
+		$args->reward_point = round($config->purchase_reward_point_percent * $total_price);
 
 		$pg = in_array($vars->pg, ['toss']) ? $vars->pg : $vars->pay_method;
 		if(substr($pg, 0, 6) === 'paypl_')
@@ -1740,7 +1741,7 @@ class HotopayController extends Hotopay
 		$isLicenseValid = $validator->validate($config->hotopay_license_key);
 		if ($isLicenseValid)
 		{
-			$reward_point = round($config->purchase_reward_point_percent * $purchase->product_purchase_price);
+			$reward_point = $purchase->reward_point;
 
 			if ($reward_point > 0)
 			{
@@ -1903,18 +1904,13 @@ class HotopayController extends Hotopay
 		}
 
 		$config = $this->getConfig();
-		$validator = new HotopayLicenseValidator();
-		$isLicenseValid = $validator->validate($config->hotopay_license_key);
-		if ($isLicenseValid)
-		{
-			$reward_point = round($config->purchase_reward_point_percent * $purchase->product_purchase_price);
+		$reward_point = $purchase->reward_point;
 
-			if ($reward_point > 0)
-			{
-				$oPointController = \PointController::getInstance();
-				Context::set('__point_message__', sprintf('포인트 회수 #%d', $purchase_srl));
-				$oPointController->setPoint($member_srl, $reward_point, 'minus');
-			}
+		if ($reward_point > 0)
+		{
+			$oPointController = \PointController::getInstance();
+			Context::set('__point_message__', sprintf('포인트 회수 #%d', $purchase_srl));
+			$oPointController->setPoint($member_srl, $reward_point, 'minus');
 		}
 
 		$oMemberController = getController('member');
