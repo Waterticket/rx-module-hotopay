@@ -1736,6 +1736,20 @@ class HotopayController extends Hotopay
 			}
 		}
 
+		$validator = new HotopayLicenseValidator();
+		$isLicenseValid = $validator->validate($config->hotopay_license_key);
+		if ($isLicenseValid)
+		{
+			$reward_point = round($config->purchase_reward_point_percent * $purchase->product_purchase_price);
+
+			if ($reward_point > 0)
+			{
+				$oPointController = \PointController::getInstance();
+				Context::set('__point_message__', sprintf('포인트 적립 #%d', $purchase_srl));
+				$output = $oPointController->setPoint($member_srl, $reward_point, 'add');
+			}
+		}
+
 		$trigger_obj->group_srls = $group_srls;
 		ModuleHandler::triggerCall('hotopay.activePurchase', 'after', $trigger_obj);
 	}
@@ -1885,6 +1899,21 @@ class HotopayController extends Hotopay
 				$args->subscription_srl = $item->subscription_srl;
 				$args->status = 'CANCELED_REFUND';
 				HotopayModel::updateSubscription($args);
+			}
+		}
+
+		$config = $this->getConfig();
+		$validator = new HotopayLicenseValidator();
+		$isLicenseValid = $validator->validate($config->hotopay_license_key);
+		if ($isLicenseValid)
+		{
+			$reward_point = round($config->purchase_reward_point_percent * $purchase->product_purchase_price);
+
+			if ($reward_point > 0)
+			{
+				$oPointController = \PointController::getInstance();
+				Context::set('__point_message__', sprintf('포인트 회수 #%d', $purchase_srl));
+				$oPointController->setPoint($member_srl, $reward_point, 'minus');
 			}
 		}
 
