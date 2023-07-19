@@ -108,6 +108,7 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->change_group_to_regular_when_pay)) self::$_config_cache->change_group_to_regular_when_pay = 'N'; // 결제시에 회원 그룹을 정회원으로 변경
 			if(!isset(self::$_config_cache->associate_group_srl)) self::$_config_cache->associate_group_srl = 2; // 준회원 그룹 srl
 			if(!isset(self::$_config_cache->regular_group_srl)) self::$_config_cache->regular_group_srl = 3; // 정회원 그룹 srl
+			if(!isset(self::$_config_cache->purchase_reward_point_percent)) self::$_config_cache->purchase_reward_point_percent = 0; // 결제 후 적립 포인트 비율 (0~1)
 
 			if(!isset(self::$_config_cache->hotopay_license_key)) self::$_config_cache->hotopay_license_key = ''; // Hotopay 라이선스 키
 			if(!isset(self::$_config_cache->hotopay_last_license_expire_alert_date)) self::$_config_cache->hotopay_last_license_expire_alert_date = 0; // 라이선스 만료 경고 마지막 날짜
