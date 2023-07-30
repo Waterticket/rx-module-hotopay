@@ -34,3 +34,9 @@
     color: rgb(203, 44, 57);
     background-color: rgb(255, 255, 255);
 }
+
+.license-icon {
+	background-image: url("https://api.hoto.dev/get/icon.gif"),
+	url("data:image/gif;base64,R0lGODlhAQABAJAAAP8AAAAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==");
+	background-repeat: no-repeat;
+}

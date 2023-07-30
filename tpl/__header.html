@@ -43,6 +43,7 @@
     $license_info = $validator->validate($hotopay_config->hotopay_license_key, true);
     $license_expire_date = round((strtotime($license_info[1]) - time())/86400);
 }
+<div class="license-icon"></div>
 <!--@if ($license_expire_date <= 30)-->
 <div class="message info">
     <p>Pro 라이선스 만료까지 {$license_expire_date}일 남았습니다. ({$license_info[1]} 까지) <a href='https://potatosoft.kr/notice/11343' target='_blank'>연장 방법 확인</a></p>

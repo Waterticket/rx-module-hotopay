@@ -61,6 +61,14 @@
 		</div>
 
 		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_reward_point_percent">결제 후 포인트 비율</label>
+			<div class="x_controls">
+				<input type="number" name="purchase_reward_point_percent" id="purchase_reward_point_percent" value="{$hotopay_config->purchase_reward_point_percent * 100}"> %
+				<p class="x_help-block">결제 후 결제금액의 일정 퍼센트만큼 포인트로 지급합니다. 0으로 설정시 포인트를 지급하지 않습니다. 환불시 해당 포인트는 자동으로 회수됩니다. Pro 전용 기능입니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
 			<label class="x_control-label" for="change_group_to_regular_when_pay">결제 후 회원 그룹 변경</label>
 			<div class="x_controls">
 				<label><input type="checkbox" name="change_group_to_regular_when_pay" id="change_group_to_regular_when_pay" checked="checked"|cond="$hotopay_config->change_group_to_regular_when_pay == 'Y'">&nbsp;결제 이후 회원 그룹을 변경합니다.</label>
