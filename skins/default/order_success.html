@@ -262,3 +262,33 @@ window.onpopstate = function(event) {
     history.go(1);
 };
 </script>
+
+<!--@if($purchase->reward_point > 0)-->
+{@
+    $reward_point_str = number_format($purchase->reward_point);
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!--@if($pay_data->pay_status == "WAITING_FOR_DEPOSIT")-->
+<script>
+Swal.fire({
+    title: '결제해주셔서 감사합니다!',
+    html: '결제를 완료하신 후에 <b>{$reward_point_str}</b> 포인트를 적립해드리겠습니다!<br>'+
+          '앞으로도 많은 이용 부탁드립니다 😄',
+    icon: 'success',
+    confirmButtonText: '확인'
+});
+</script>
+<!--@else-->
+<script>
+Swal.fire({
+    title: '결제해주셔서 감사합니다!',
+    html: '감사의 마음을 담아 <b>{$reward_point_str}</b> 포인트를 적립해드렸습니다!<br>'+
+            '앞으로도 많은 이용 부탁드립니다 😄',
+    icon: 'success',
+    confirmButtonText: '확인'
+});
+</script>
+<!--@endif-->
+<!--@endif-->
