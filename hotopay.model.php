@@ -861,7 +861,7 @@ class HotopayModel extends Hotopay
         $args = new \stdClass();
         $args->member_srl = $member_srl;
         $args->product_srl = $product_srl;
-        $args->status = 'ACTIVE';
+        $args->status = ['ACTIVE'];
 
         $output = executeQueryArray('hotopay.getSubscriptionsByMemberSrlWithProductSrlAndStatus', $args);
         if(!$output->toBool())
