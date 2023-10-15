@@ -117,6 +117,7 @@ class Hotopay extends ModuleObject
 
 			if(!isset(self::$_config_cache->hotopay_currency_renew_api_type)) self::$_config_cache->hotopay_currency_renew_api_type = 'none'; // 환율 갱신 API 타입 (none/fixerio/exchangeratehost/hotoapi)
 			if(!isset(self::$_config_cache->fixer_io_api_key)) self::$_config_cache->fixer_io_api_key = ''; // Fixer.io API Key
+			if(!isset(self::$_config_cache->exchangeratehost_api_key)) self::$_config_cache->exchangeratehost_api_key = ''; // Exchangerate.host API Key
 			if(!isset(self::$_config_cache->hotopay_currency_renew_time)) self::$_config_cache->hotopay_currency_renew_time = 0; // 환율 갱신 API 마지막 시각
 
 			if(!isset(self::$_config_cache->hotopay_billingkey_encryption)) self::$_config_cache->hotopay_billingkey_encryption = 'none'; // 빌링키 암호화 수단 (none/awskms)

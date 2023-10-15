@@ -2,7 +2,10 @@
 namespace HotopayLib\Currency\driver;
 
 class Exchangeratehost {
-    public function __construct() {
+    private $api_key;
+
+    public function __construct(string $api_key) {
+        $this->api_key = $api_key;
     }
 
     public function getLatestCurrency(string $base = 'USD', array $symbols = ['KRW','JPY','CNY','EUR','USD'])
@@ -10,7 +13,7 @@ class Exchangeratehost {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.exchangerate.host/latest?symbols=".implode(',', $symbols)."&base=$base",
+            CURLOPT_URL => "https://api.exchangerate.host/latest?access_key=".$this->api_key."&symbols=".implode(',', $symbols)."&base=$base",
             CURLOPT_HTTPHEADER => array(
                 "Content-Type: application/json",
             ),

@@ -207,20 +207,35 @@
 						$('#hotopay_currency_renew_api_type').change(function() {
 							if($(this).val() == 'none') {
 								$('.currency_fixer_io').hide();
-							} else {
+								$('.currency_exchangeratehost_api_key').hide();
+							} else if($(this).val() == 'fixerio') {
 								$('.currency_fixer_io').show();
+								$('.currency_exchangeratehost_api_key').hide();
+							} else if($(this).val() == 'exchangeratehost') {
+								$('.currency_exchangeratehost_api_key').show();
+								$('.currency_fixer_io').hide();
 							}
 						});
+
+						$('#hotopay_currency_renew_api_type').change();
 					});
 				</script>
 			</div>
 		</div>
 
 		<div class="x_control-group" class="currency_fixer_io">
-			<label class="x_control-label" for="fixer_io_api_key">Fixer API Key</label>
+			<label class="x_control-label" for="fixer_io_api_key">Fixer.io API Key</label>
 			<div class="x_controls">
 				<input type="text" name="fixer_io_api_key" id="fixer_io_api_key" value="{$hotopay_config->fixer_io_api_key}"><br>
 				<p class="x_help-block">환율 정보를 받아오기 위해 Fixer.io에서 발급한 key를 입력해주세요.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group" class="currency_exchangeratehost_api_key">
+			<label class="x_control-label" for="exchangeratehost_api_key">Exchangerate.host API Key</label>
+			<div class="x_controls">
+				<input type="text" name="exchangeratehost_api_key" id="exchangeratehost_api_key" value="{$hotopay_config->exchangeratehost_api_key}"><br>
+				<p class="x_help-block">환율 정보를 받아오기 위해 Exchangerate.host에서 발급한 key를 입력해주세요.</p>
 			</div>
 		</div>
 	</section>
