@@ -107,6 +107,22 @@
 				</script>
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="hide_options">옵션 선택박스 숨기기</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="hide_options" id="hide_options" value="Y" checked="checked"|cond="$hotopay_config->hide_options == 'Y'">&nbsp;회원에게 옵션 선택박스 출력을 숨깁니다.</label>
+				<p class="x_help-block">구매 페이지에서 옵션 선택박스를 무조건 숨깁니다. 제일 위에 있는 옵션이 자동으로 선택됩니다. 다만 품절 등의 상황으로 구매 진행이 어려울 경우, 회원이 이를 인지하기 곤란할 수 있습니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="hide_options_if_one">옵션이 하나일 경우만 옵션 선택박스 숨기기</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="hide_options_if_one" id="hide_options_if_one" value="Y" checked="checked"|cond="$hotopay_config->hide_options_if_one == 'Y'">&nbsp;품목의 옵션이 하나일 경우에만 회원에게 옵션 선택박스 출력을 숨깁니다.</label>
+				<p class="x_help-block">구매 페이지에서 옵션이 하나인 경우에만 선택박스를 숨깁니다. 다만 품절 등의 상황으로 구매 진행이 어려울 경우, 회원이 이를 인지하기 곤란할 수 있습니다.</p>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">

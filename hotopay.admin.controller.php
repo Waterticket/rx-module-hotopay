@@ -31,6 +31,9 @@ class HotopayAdminController extends Hotopay
 		$config->change_group_to_regular_when_pay = empty($vars->change_group_to_regular_when_pay) ? 'N' : 'Y';
 		$config->associate_group_srl = $vars->associate_group_srl;
 		$config->regular_group_srl = $vars->regular_group_srl;
+		$config->hide_options = empty($vars->hide_options) ? 'N' : 'Y';
+		$config->hide_options_if_one = empty($vars->hide_options_if_one) ? 'N' : 'Y';
+
 		$config->hotopay_license_key = $vars->hotopay_license_key;
 
 		$config->hotopay_currency_renew_api_type = $vars->hotopay_currency_renew_api_type;
