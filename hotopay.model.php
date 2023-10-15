@@ -383,6 +383,11 @@ class HotopayModel extends Hotopay
                 $currency_data = $driver->getLatestCurrency($from, $to);
                 break;
 
+            case 'hotoapi':
+                $driver = new \HotopayLib\Currency\driver\Hotoapi();
+                $currency_data = $driver->getLatestCurrency($from, $to);
+                break;
+
             case 'none':
             default:
                 $currency_data = [];
