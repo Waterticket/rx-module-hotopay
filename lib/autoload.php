@@ -14,6 +14,7 @@ spl_autoload_register(function($className) {
         "Payple" => "Payple/Payple.php",
         "HotopayLib\Currency\driver\Fixer" => "Currency/driver/Fixer.php",
         "HotopayLib\Currency\driver\Exchangeratehost" => "Currency/driver/Exchangeratehost.php",
+        "HotopayLib\Currency\driver\Hotoapi" => "Currency/driver/Hotoapi.php",
     );
 
     if(array_key_exists($className, $target))
