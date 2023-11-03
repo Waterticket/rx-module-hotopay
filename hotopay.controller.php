@@ -1058,7 +1058,7 @@ class HotopayController extends Hotopay
 					$result = $payple->confirmPaywork($vars, $purchase->data, $PCD_PAYER_ID);
 					if (!$result->toBool())
 					{
-						$args->pay_status == "FAILED";
+						$args->pay_status = "FAILED";
 						executeQuery('hotopay.updatePurchaseStatus', $args);
 					}
 					else
