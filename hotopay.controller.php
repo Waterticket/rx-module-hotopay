@@ -1052,6 +1052,7 @@ class HotopayController extends Hotopay
 				executeQuery('hotopay.updatePurchaseStatus', $args);
 				executeQuery('hotopay.updatePurchaseData', $args);
 
+				$error_message = $vars->PCD_PAY_MSG;
 				if($args->pay_status == "DONE") // 결제 완료에 경우
 				{
 					$payple = new Payple();
@@ -1060,6 +1061,7 @@ class HotopayController extends Hotopay
 					{
 						$args->pay_status = "FAILED";
 						executeQuery('hotopay.updatePurchaseStatus', $args);
+						$error_message = $result->message;
 					}
 					else
 					{
@@ -1207,7 +1209,7 @@ class HotopayController extends Hotopay
 						"p_status" => "failed",
 						"orderId" => $vars->order_id,
 						"code" => "PAYPLE_FAILED",
-						"message" => "결제를 실패하였습니다. ".$vars->PCD_PAY_MSG." (code: 1011)"
+						"message" => "결제를 실패하였습니다. ".$error_message." (code: 1011)"
 					);
 
 					$oHotopayModel->rollbackOptionStock($purchase_srl);
