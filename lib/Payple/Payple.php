@@ -74,7 +74,7 @@ class Payple extends Hotopay {
         return $response;
     }
 
-    public function confirmPaywork($vars, $purchase)
+    public function confirmPaywork($vars, $purchase, $PCD_PAYER_ID)
     {
         $config = $this->getConfig();
         $http_host = $_SERVER['HTTP_HOST'];
@@ -89,7 +89,7 @@ class Payple extends Hotopay {
             return new BaseObject(-1, 'Referer domain is not matched.');
         }
 
-        if (empty($vars->PCD_AUTH_KEY) || empty($vars->PCD_PAY_REQKEY) || empty($vars->PCD_PAYER_ID))
+        if (empty($vars->PCD_AUTH_KEY) || empty($vars->PCD_PAY_REQKEY) || empty($PCD_PAYER_ID))
         {
             return new BaseObject(-1, 'missing required parameters.');
         }
@@ -105,7 +105,7 @@ class Payple extends Hotopay {
             "PCD_CUST_KEY" => $config->payple_cust_key,
             "PCD_AUTH_KEY" => $vars->PCD_AUTH_KEY,
             "PCD_PAY_REQKEY" => $vars->PCD_PAY_REQKEY,
-            "PCD_PAYER_ID" => $vars->PCD_PAYER_ID,
+            "PCD_PAYER_ID" => $PCD_PAYER_ID,
         );
 
         $post_field_string = json_encode($post_data);

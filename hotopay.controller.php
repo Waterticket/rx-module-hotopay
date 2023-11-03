@@ -1038,7 +1038,8 @@ class HotopayController extends Hotopay
 					return $this->createObject(-1, "결제 실패. (code: 1010)");
 				}
 
-				if (isset($vars->PCD_PAYER_ID)) $vars->PCD_PAYER_ID = '*** secret ***';
+				$PCD_PAYER_ID = $vars->PCD_PAYER_ID;
+				$vars->PCD_PAYER_ID = '*** secret ***';
 				$args->pay_data = json_encode($vars);
 				if ($vars->PCD_PAY_RST == 'success' && str_contains($vars->PCD_PAY_CODE, '0000'))
 				{
@@ -1054,7 +1055,7 @@ class HotopayController extends Hotopay
 				if($args->pay_status == "DONE") // 결제 완료에 경우
 				{
 					$payple = new Payple();
-					$result = $payple->confirmPaywork($vars, $purchase->data);
+					$result = $payple->confirmPaywork($vars, $purchase->data, $PCD_PAYER_ID);
 					if (!$result->toBool())
 					{
 						$args->pay_status == "FAILED";
