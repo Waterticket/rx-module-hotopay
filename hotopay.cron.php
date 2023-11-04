@@ -42,6 +42,7 @@ class HotopayCronJob extends Hotopay {
         $this->updateCurrency();
         $this->renewSubscriptions();
         $this->updateLastCronSuccessTime();
+        $this->callHotopayCronAfterTrigger();
 
         $end_time = microtime(true);
         $this->printLog("Cron job finished");
@@ -452,6 +453,12 @@ class HotopayCronJob extends Hotopay {
         $output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
 
         return $output;
+    }
+
+    private function callHotopayCronAfterTrigger()
+    {
+        $trigger_obj = new stdClass();
+        ModuleHandler::triggerCall('hotopay.cron', 'after', $trigger_obj);
     }
 }
 
