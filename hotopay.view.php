@@ -42,7 +42,7 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('로그인이 필요합니다.');
 		}
 
-		$oHotopayModel = getModel('hotopay');
+		$oHotopayModel = HotopayModel::getInstance();
 		$cart_items = $oHotopayModel->getCartItems($member_srl);
 		Context::set('cart_items', $cart_items);
 
@@ -76,7 +76,7 @@ class HotopayView extends Hotopay
 		$purchase_price = 0;
 		foreach ($cart_items as $item)
 		{
-			$purchase_price += $item->option_price * $item->quantity;
+			$purchase_price += ($item->option_price + ($item->option_price * $item->tax_rate/100)) * $item->quantity;
 		}
 		Context::set('purchase_price', $purchase_price);
 
