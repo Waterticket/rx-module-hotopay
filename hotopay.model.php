@@ -9,7 +9,7 @@
  */
 class HotopayModel extends Hotopay
 {
-    public function getProduct(int $product_srl)
+    public static function getProduct(int $product_srl)
     {
 		$cache_key = 'hotopay:product:' . $product_srl;
 		$product = Rhymix\Framework\Cache::get($cache_key);
@@ -21,17 +21,17 @@ class HotopayModel extends Hotopay
 
         if(!$output->toBool() || empty($output->data))
         {
-            return $this->createObject(-1, "Product does not exist.");
+            return new \BaseObject(-1, "Product does not exist.");
         }
 
-        $output->data->product_option = $this->getProductOptions($product_srl);
+        $output->data->product_option = self::getProductOptions($product_srl);
         $output->data->extra_vars = unserialize($output->data->extra_vars);
 
         Rhymix\Framework\Cache::set($cache_key, $output->data);
         return $output->data;
     }
 
-    public function getProducts(array $product_srls)
+    public static function getProducts(array $product_srls)
     {
         $args = new stdClass();
         $args->product_srl = $product_srls;
@@ -40,7 +40,7 @@ class HotopayModel extends Hotopay
 
         if(!$output->toBool() || empty($output->data))
         {
-            return $this->createObject(-1, "Product does not exist.");
+            return new \BaseObject(-1, "Product does not exist.");
         }
 
         foreach($output->data as &$val)
@@ -53,7 +53,7 @@ class HotopayModel extends Hotopay
                 continue;
             }
 
-            $val->product_option = $this->getProductOptions($val->product_srl);
+            $val->product_option = self::getProductOptions($val->product_srl);
             $val->extra_vars = unserialize($val->extra_vars);
             Rhymix\Framework\Cache::set($cache_key, $val);
         }
@@ -61,19 +61,19 @@ class HotopayModel extends Hotopay
         return $output->data;
     }
 
-    public function getProductsAll()
+    public static function getProductsAll()
     {
         $output = executeQueryArray('hotopay.getProductsAll');
 
         if(!$output->toBool() || empty($output->data))
         {
-            return $this->createObject(-1, "Product does not exist.");
+            return new \BaseObject(-1, "Product does not exist.");
         }
 
         return $output->data;
     }
 
-	public function getProductOptions($product_srl)
+	public static function getProductOptions($product_srl)
     {
         $args = new stdClass();
         $args->product_srl = $product_srl;
@@ -96,27 +96,27 @@ class HotopayModel extends Hotopay
         return $product_options;
     }
 
-    public function getPurchase($purchase_srl)
+    public static function getPurchase($purchase_srl)
     {
         $args = new stdClass();
         $args->purchase_srl = $purchase_srl;
         $purchase = executeQuery('hotopay.getPurchase', $args);
         if(!$purchase->toBool())
         {
-            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+            return new \BaseObject(-1, "결제 데이터가 존재하지 않습니다.");
         }
 
         return $purchase->data;
     }
 
-    public function getPurchaseItems($purchase_srl)
+    public static function getPurchaseItems($purchase_srl)
     {
         $args = new stdClass();
         $args->purchase_srl = $purchase_srl;
         $output = executeQueryArray('hotopay.getPurchaseItem', $args);
         if(!$output->toBool())
         {
-            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+            return new \BaseObject(-1, "결제 데이터가 존재하지 않습니다.");
         }
 
         return $output->data;
@@ -134,9 +134,9 @@ class HotopayModel extends Hotopay
         return $this->getProducts($products);
     }
 
-    public function getOptionsByPurchaseSrl($purchase_srl)
+    public static function getOptionsByPurchaseSrl($purchase_srl)
     {
-        $items = $this->getPurchaseItems($purchase_srl);
+        $items = self::getPurchaseItems($purchase_srl);
         $option_srls = [];
         foreach ($items as $item)
         {
@@ -148,7 +148,7 @@ class HotopayModel extends Hotopay
         $output = executeQueryArray('hotopay.getOptions', $args);
         if(!$output->toBool())
         {
-            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+            return new \BaseObject(-1, "결제 데이터가 존재하지 않습니다.");
         }
 
         $option_data = [];
@@ -161,14 +161,14 @@ class HotopayModel extends Hotopay
         return $option_data;
     }
 
-    public function getOption(int $option_srl): object
+    public static function getOption(int $option_srl): object
     {
         $args = new stdClass();
         $args->option_srl = $option_srl;
         $output = executeQuery('hotopay.getOptions', $args);
         if(!$output->toBool())
         {
-            return $this->createObject(-1, "결제 데이터가 존재하지 않습니다.");
+            return new \BaseObject(-1, "결제 데이터가 존재하지 않습니다.");
         }
 
         $output->data->extra_vars = unserialize($output->data->extra_vars);
