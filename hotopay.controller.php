@@ -2079,17 +2079,23 @@ class HotopayController extends Hotopay
 	 * @param int $member_srl 멤버 번호입니다.
 	 * @param string $mail_title 메일 제목입니다.
 	 * @param string $mail_content 메일 내용입니다.
-	 * @return void
+	 * @return boolean
 	 */
 	public function _sendMail($member_srl, $mail_title, $mail_content)
 	{
-		$oMemberModel = getModel('member');
-		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+		$member_info = \MemberModel::getMemberInfoByMemberSrl($member_srl);
+		if (empty($member_info->email_address))
+		{
+			return false;
+		}
+
+		$email_address = $member_info->email_address;
+		$nick_name = $member_info->nick_name ?? '구매자';
 
 		$oMail = new \Rhymix\Framework\Mail();
 		$oMail->setSubject($mail_title);
 		$oMail->setBody($mail_content);
-		$oMail->addTo($member_info->email_address, $member_info->nick_name);
+		$oMail->addTo($email_address, $nick_name);
 		$output = $oMail->send();
 
 		return $output;
@@ -2104,8 +2110,7 @@ class HotopayController extends Hotopay
 	 */
 	public function _sendSMS($member_srl, $content)
 	{
-		$oMemberModel = getModel('member');
-		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+		$member_info = \MemberModel::getMemberInfoByMemberSrl($member_srl);
 
 		$oSmsHandler = new Rhymix\Framework\SMS();
 		$phone_country = $member_info->phone_country;
