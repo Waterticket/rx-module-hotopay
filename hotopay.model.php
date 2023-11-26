@@ -122,16 +122,16 @@ class HotopayModel extends Hotopay
         return $output->data;
     }
 
-    public function getProductsByPurchaseSrl($purchase_srl)
+    public static function getProductsByPurchaseSrl($purchase_srl)
     {
-        $items = $this->getPurchaseItems($purchase_srl);
+        $items = self::getPurchaseItems($purchase_srl);
         $products = array();
         foreach($items as $item)
         {
             $products[] = $item->product_srl;
         }
 
-        return $this->getProducts($products);
+        return self::getProducts($products);
     }
 
     public static function getOptionsByPurchaseSrl($purchase_srl)
@@ -176,7 +176,7 @@ class HotopayModel extends Hotopay
         return $output->data;
     }
 
-    public function payStatusCodeToString($code)
+    public static function payStatusCodeToString($code)
     {
         switch($code)
         {
@@ -214,7 +214,7 @@ class HotopayModel extends Hotopay
         }
     }
 
-    public function purchaseMethodToString($pay_method)
+    public static function purchaseMethodToString($pay_method)
     {
         switch($pay_method)
         {
@@ -286,7 +286,7 @@ class HotopayModel extends Hotopay
         }
     }
 
-    public function stringCut($str,$length)
+    public static function stringCut($str,$length)
     {
         $result = "";
 
@@ -331,7 +331,7 @@ class HotopayModel extends Hotopay
         return $string;
     }
 
-    public function changeCurrency(string $original_currency, string $change_currency, $amount, int $round = 2)
+    public static function changeCurrency(string $original_currency, string $change_currency, $amount, int $round = 2)
     {
         if ($round > 5) $round = 5;
 
@@ -407,40 +407,44 @@ class HotopayModel extends Hotopay
         return true;
     }
 
-    public function minusOptionStock(int $option_srl, int $quantity = 1)
+    public static function minusOptionStock(int $option_srl, int $quantity = 1)
     {
-        $option = $this->getOption($option_srl);
+        $option = self::getOption($option_srl);
 
         $args = new stdClass();
         $args->option_srl = $option_srl;
         $args->stock = $option->stock - abs($quantity);
         $output = executeQuery('hotopay.updateOptionStock', $args);
+        
+        return $output;
     }
 
-    public function plusOptionStock(int $option_srl, int $quantity = 1)
+    public static function plusOptionStock(int $option_srl, int $quantity = 1)
     {
-        $option = $this->getOption($option_srl);
+        $option = self::getOption($option_srl);
 
         $args = new stdClass();
         $args->option_srl = $option_srl;
         $args->stock = $option->stock + abs($quantity);
         $output = executeQuery('hotopay.updateOptionStock', $args);
+
+        return $output;
     }
 
-    public function rollbackOptionStock(int $purchase_srl)
+    public static function rollbackOptionStock(int $purchase_srl)
     {
-        $items = $this->getPurchaseItems($purchase_srl);
+        $items = self::getPurchaseItems($purchase_srl);
 		foreach ($items as $item)
 		{
 			$option_srl = $item->option_srl;
 			if($option_srl != 0)
 			{
-				$this->plusOptionStock($option_srl, 1);
+				self::plusOptionStock($option_srl, 1);
 			}
 		}
     }
 
-    public function getProductByDocumentSrl(int $document_srl): object
+    public static function getProductByDocumentSrl(int $document_srl): object
     {
         $args = new stdClass();
         $args->document_srl = $document_srl;
@@ -451,10 +455,10 @@ class HotopayModel extends Hotopay
             throw new \Rhymix\Framework\Exceptions\DBError($output->getMessage());
         }
 
-        return $this->getProduct($output->data->product_srl ?: 0);
+        return self::getProduct($output->data->product_srl ?: 0);
     }
 
-    public function getProductsByDocumentSrls($document_srls)
+    public static function getProductsByDocumentSrls($document_srls)
     {
         $args = new stdClass();
         $args->document_srl = $document_srls;
@@ -471,7 +475,7 @@ class HotopayModel extends Hotopay
             $product_srls[] = $product->product_srl;
         }
 
-        $products = $this->getProducts($product_srls);
+        $products = self::getProducts($product_srls);
         $returns = array();
         foreach($products as $product)
         {
@@ -1121,7 +1125,7 @@ class HotopayModel extends Hotopay
         return $output->data ?: [];
     }
 
-    public function copyPurchaseExtraInfo(int $target_srl, int $purchase_srl): BaseObject
+    public static function copyPurchaseExtraInfo(int $target_srl, int $purchase_srl): BaseObject
     {
         $origin = self::getPurchaseExtraInfo($purchase_srl);
 
@@ -1142,7 +1146,7 @@ class HotopayModel extends Hotopay
         return new BaseObject();
     }
 
-    public function updatePurchaseItemSubscriptionSrl(int $item_srl, int $subscription_srl): BaseObject
+    public static function updatePurchaseItemSubscriptionSrl(int $item_srl, int $subscription_srl): BaseObject
     {
         $args = new \stdClass();
         $args->item_srl = $item_srl;
