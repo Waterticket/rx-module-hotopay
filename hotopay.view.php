@@ -166,10 +166,27 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('정기결제 상품과 일반결제 상품을 동시에 구매할 수 없습니다.');
 		}
 
+		$filtered_password_keys = array();
+		$filtered_billing_keys = array();
+
+		$billing_keys = HotopayModel::getBillingKeys($this->user->member_srl);
+		foreach ($billing_keys as $key)
+		{
+			if ($key->type == 'password')
+			{
+				$filtered_password_keys[] = $key;
+			}
+			else if ($key->type == 'billing')
+			{
+				$filtered_billing_keys[] = $key;
+			}
+		}
+
+		Context::set('password_keys', $filtered_password_keys);
+		Context::set('billing_keys', $filtered_billing_keys);
+
 		if ($is_billing_product_exist)
 		{
-			$billing_keys = HotopayModel::getBillingKeys($this->user->member_srl);
-			Context::set('billing_keys', $billing_keys);
 			Context::set('purchase_type', 'billing');
 		}
 		else
