@@ -1173,4 +1173,15 @@ class HotopayModel extends Hotopay
 
         return new BaseObject();
     }
+
+    public static function getCartItemList()
+    {
+        $output = executeQueryArray('hotopay.getCartItemList');
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output;
+    }
 }
