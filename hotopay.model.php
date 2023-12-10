@@ -1185,7 +1185,10 @@ class HotopayModel extends Hotopay
 
     public static function getCartItemList()
     {
-        $output = executeQueryArray('hotopay.getCartItemList');
+        $args = new \stdClass();
+        $args->order_type = "desc";
+
+        $output = executeQueryArray('hotopay.getCartItemList', $args);
         if(!$output->toBool())
         {
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
