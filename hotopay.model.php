@@ -856,7 +856,29 @@ class HotopayModel extends Hotopay
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
         }
 
-        return $output->data ?: new \stdClass();
+        return $output->data ?: [];
+    }
+
+    /**
+     * hotopay_subscription 테이블에서 유저의 활성화 상태인 구독을 가져온다.
+     *
+     * @param int $member_srl
+     * @param int $product_srl
+     */
+    public static function getActiveSubscriptionsByMemberSrlWithProductSrlAndStatus(int $member_srl, int $product_srl): array
+    {
+        $args = new \stdClass();
+        $args->member_srl = $member_srl;
+        $args->product_srl = $product_srl;
+        $args->status = ['ACTIVE'];
+
+        $output = executeQueryArray('hotopay.getSubscriptionsByMemberSrlWithProductSrlAndStatus', $args);
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output->data ?: [];
     }
 
     /**
@@ -1159,5 +1181,16 @@ class HotopayModel extends Hotopay
         }
 
         return new BaseObject();
+    }
+
+    public static function getCartItemList()
+    {
+        $output = executeQueryArray('hotopay.getCartItemList');
+        if(!$output->toBool())
+        {
+            throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
+        }
+
+        return $output;
     }
 }

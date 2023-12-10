@@ -1,0 +1,36 @@
+<query id="getCartItemList" action="select">
+    <tables>
+        <table name="hotopay_cart" />
+        <table name="hotopay_product" type="left join">
+            <conditions>
+                <condition operation="equal" column="hotopay_product.product_srl" default="hotopay_cart.product_srl" />
+            </conditions>
+        </table>
+        <table name="hotopay_product_option" type="left join">
+            <conditions>
+                <condition operation="equal" column="hotopay_product_option.option_srl" default="hotopay_cart.option_srl" />
+            </conditions>
+        </table>
+    </tables>
+    <columns>
+        <column name="hotopay_cart.*" />
+        <column name="hotopay_product.product_name" />
+        <column name="hotopay_product.product_status" />
+        <column name="hotopay_product.product_pic_src" />
+        <column name="hotopay_product.document_srl" />
+        <column name="hotopay_product.tax_rate" />
+        <column name="hotopay_product_option.title" alias="option_title" />
+        <column name="hotopay_product_option.description" alias="option_description" />
+        <column name="hotopay_product_option.price" alias="option_price" />
+        <column name="hotopay_product_option.stock" alias="stock" />
+        <column name="hotopay_product_option.status" alias="option_status" />
+    </columns>
+    <conditions>
+    </conditions>
+    <navigation>
+        <index var="sort_index" default="cart_item_srl" order="order_type" />
+        <list_count var="list_count" default="20" />
+        <page_count var="page_count" default="10" />
+        <page var="page" default="1" />
+    </navigation>
+</query>

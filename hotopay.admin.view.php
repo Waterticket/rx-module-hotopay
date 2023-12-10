@@ -515,4 +515,24 @@ class HotopayAdminView extends Hotopay
         // 스킨 파일 지정
         $this->setTemplateFile('delete_productextrainfo');
     }
+
+	public function dispHotopayAdminCartList()
+	{
+        // 현재 설정 상태 불러오기
+        $config = $this->getConfig();
+        $vars = Context::getRequestVars();
+        
+        // Context에 세팅
+		Context::set('hotopay_config', $config);
+		
+        $output = HotopayModel::getCartItemList();
+        Context::set('cart_item_list', $output->data);
+        Context::set('total_count', $output->total_count);
+        Context::set('total_page', $output->total_page);
+        Context::set('page', $output->page);
+        Context::set('page_navigation', $output->page_navigation);
+        
+        // 스킨 파일 지정
+        $this->setTemplateFile('index_cartlist');
+	}
 }

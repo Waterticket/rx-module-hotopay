@@ -1,0 +1,13 @@
+<query id="getSubscriptionsByMemberSrlWithProductSrlAndStatus" action="select">
+    <tables>
+        <table name="hotopay_subscription" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
+        <condition operation="equal" column="product_srl" var="product_srl" filter="number" notnull="notnull" pipe="and" />
+        <condition operation="in" column="status" var="status" notnull="notnull" pipe="and" />
+    </conditions>
+</query>
