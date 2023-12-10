@@ -1,19 +1,17 @@
 <?php
 namespace HotopayLib\Currency\driver;
 
-class Exchangeratehost {
-    private $api_key;
-
-    public function __construct(string $api_key) {
-        $this->api_key = $api_key;
+class Hotoapi {
+    public function __construct() {
     }
 
     public function getLatestCurrency(string $base = 'USD', array $symbols = ['KRW','JPY','CNY','EUR','USD'])
     {
         $curl = curl_init();
+        $domain = \RX_BASEURL;
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.exchangerate.host/latest?access_key=".$this->api_key."&symbols=".implode(',', $symbols)."&base=$base",
+            CURLOPT_URL => "https://api.hoto.dev/exchange.json?domain=".$domain."&symbols=".implode(',', $symbols)."&base=$base",
             CURLOPT_HTTPHEADER => array(
                 "Content-Type: application/json",
             ),
@@ -29,13 +27,13 @@ class Exchangeratehost {
         $response = curl_exec($curl);
         $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($http_code != 200)
-            throw new \Exception("Exchangeratehost API Error: $response");
+            throw new \Exception("Hotoapi API Error: $response");
 
         curl_close($curl);
         $result = json_decode($response);
 
         if (!$result->success)
-            throw new \Exception("Exchangeratehost API Error: $response");
+            throw new \Exception("Hotoapi API Error: $response");
 
         $arranged_data = array();
         $base = $result->base;

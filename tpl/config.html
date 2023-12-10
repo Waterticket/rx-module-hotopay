@@ -107,6 +107,22 @@
 				</script>
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="hide_options">옵션 선택박스 숨기기</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="hide_options" id="hide_options" value="Y" checked="checked"|cond="$hotopay_config->hide_options == 'Y'">&nbsp;회원에게 옵션 선택박스 출력을 숨깁니다.</label>
+				<p class="x_help-block">구매 페이지에서 옵션 선택박스를 무조건 숨깁니다. 제일 위에 있는 옵션이 자동으로 선택됩니다. 다만 품절 등의 상황으로 구매 진행이 어려울 경우, 회원이 이를 인지하기 곤란할 수 있습니다.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="hide_options_if_one">옵션이 하나일 경우만 옵션 선택박스 숨기기</label>
+			<div class="x_controls">
+				<label><input type="checkbox" name="hide_options_if_one" id="hide_options_if_one" value="Y" checked="checked"|cond="$hotopay_config->hide_options_if_one == 'Y'">&nbsp;품목의 옵션이 하나일 경우에만 회원에게 옵션 선택박스 출력을 숨깁니다.</label>
+				<p class="x_help-block">구매 페이지에서 옵션이 하나인 경우에만 선택박스를 숨깁니다. 다만 품절 등의 상황으로 구매 진행이 어려울 경우, 회원이 이를 인지하기 곤란할 수 있습니다.</p>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">
@@ -182,29 +198,45 @@
 			<div class="x_controls">
 				<select name="hotopay_currency_renew_api_type" id="hotopay_currency_renew_api_type">
 					<option value="none" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'none'">설정 안함</option>
+					<option value="hotoapi" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'hotoapi'">Hotopay 기본 API (무료, 안정성 보장 불가)</option>
 					<option value="fixerio" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'fixerio'">Fixer.io (API키 필요)</option>
-					<option value="exchangeratehost" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'exchangeratehost'">Exchangerate.host (무료)</option>
+					<option value="exchangeratehost" selected="selected"|cond="$hotopay_config->hotopay_currency_renew_api_type == 'exchangeratehost'">Exchangerate.host (API키 필요)</option>
 				</select>
 				<p class="x_help-block">환율 정보 갱신은 Cron이 설정되어있어야 합니다.</p>
 				<script>
 					$(document).ready(function() {
 						$('#hotopay_currency_renew_api_type').change(function() {
-							if($(this).val() == 'none') {
+							if($(this).val() == 'none' || $(this).val() == 'hotoapi') {
 								$('.currency_fixer_io').hide();
-							} else {
+								$('.currency_exchangeratehost_api_key').hide();
+							} else if($(this).val() == 'fixerio') {
 								$('.currency_fixer_io').show();
+								$('.currency_exchangeratehost_api_key').hide();
+							} else if($(this).val() == 'exchangeratehost') {
+								$('.currency_exchangeratehost_api_key').show();
+								$('.currency_fixer_io').hide();
 							}
 						});
+
+						$('#hotopay_currency_renew_api_type').change();
 					});
 				</script>
 			</div>
 		</div>
 
-		<div class="x_control-group" class="currency_fixer_io">
-			<label class="x_control-label" for="fixer_io_api_key">Fixer API Key</label>
+		<div class="x_control-group currency_fixer_io">
+			<label class="x_control-label" for="fixer_io_api_key">Fixer.io API Key</label>
 			<div class="x_controls">
 				<input type="text" name="fixer_io_api_key" id="fixer_io_api_key" value="{$hotopay_config->fixer_io_api_key}"><br>
 				<p class="x_help-block">환율 정보를 받아오기 위해 Fixer.io에서 발급한 key를 입력해주세요.</p>
+			</div>
+		</div>
+
+		<div class="x_control-group currency_exchangeratehost_api_key">
+			<label class="x_control-label" for="exchangeratehost_api_key">Exchangerate.host API Key</label>
+			<div class="x_controls">
+				<input type="text" name="exchangeratehost_api_key" id="exchangeratehost_api_key" value="{$hotopay_config->exchangeratehost_api_key}"><br>
+				<p class="x_help-block">환율 정보를 받아오기 위해 Exchangerate.host에서 발급한 key를 입력해주세요.</p>
 			</div>
 		</div>
 	</section>

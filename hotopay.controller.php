@@ -36,7 +36,7 @@ class HotopayController extends Hotopay
 			return $this->createObject(-1, "결제 수단을 선택해주세요.");
 		}
 
-		$oHotopayModel = getModel('hotopay');
+		$oHotopayModel = HotopayModel::getInstance();
 
 		$product_srl_list = [];
 		$product_list = [];
@@ -53,7 +53,7 @@ class HotopayController extends Hotopay
 			$product_list[] = $obj;
 		}
 
-		$product_info = $oHotopayModel->getProducts($product_srl_list);
+		$product_info = HotopayModel::getProducts($product_srl_list);
 
 		$is_non_billing_product_exist = false;
 		$is_billing_product_exist = false;
@@ -147,7 +147,7 @@ class HotopayController extends Hotopay
 		}
 
 		$vars->hotopay_extra_info = (array) $vars->hotopay_extra_info;
-		$extra_info_list_obj = $oHotopayModel->getProductExtraInfo(array_merge($product_srl_list, array(0)));
+		$extra_info_list_obj = HotopayModel::getProductExtraInfo(array_merge($product_srl_list, array(0)));
 		$extra_info_list = [];
 		foreach ($extra_info_list_obj as $extra_info)
 		{
@@ -210,7 +210,7 @@ class HotopayController extends Hotopay
 
 			if($option->infinity_stock != 'Y')
 			{
-				$oHotopayModel->minusOptionStock($option_srl, 1);
+				HotopayModel::minusOptionStock($option_srl, 1);
 			}
 		}
 
@@ -225,8 +225,7 @@ class HotopayController extends Hotopay
 		$input_point = intval($vars->use_point, 10) ?? 0;
 		if ($config->point_discount == 'Y' && $point_discount_allow)
 		{
-			$oPointModel = getModel('point');
-			$user_point = $oPointModel->getPoint($logged_info->member_srl, true);
+			$user_point = PointModel::getPoint($logged_info->member_srl, true);
 
 			if ($input_point < 0) $input_point = 0;
 
@@ -242,7 +241,7 @@ class HotopayController extends Hotopay
 
             Context::set('__point_message_id__', 'module.hotopay.buy_point_discount');
             Context::set('__point_message__', sprintf("[%s] 상품 구매시에 포인트를 사용하였습니다.", $title));
-			$oPointController = getController('point');
+			$oPointController = PointController::getInstance();
 			$oPointController->setPoint($logged_info->member_srl, $input_point, 'minus');
 
 			$total_price -= $input_point;
@@ -258,7 +257,7 @@ class HotopayController extends Hotopay
 		if (str_starts_with($vars->pay_method, 'billing_key_'))
 		{
 			$key_idx = intval(substr($vars->pay_method, 12));
-			$key = $oHotopayModel->getBillingKey($key_idx);
+			$key = HotopayModel::getBillingKey($key_idx);
 			if (!$key->key)
 			{
 				return $this->createObject(-1, "결제 정보가 올바르지 않습니다.");
@@ -302,7 +301,7 @@ class HotopayController extends Hotopay
 		switch($pg)
 		{
 			case 'paypal':
-				$usd_total = $oHotopayModel->changeCurrency('KRW', 'USD', $total_price);
+				$usd_total = HotopayModel::changeCurrency('KRW', 'USD', $total_price);
 
 				$paypalController = new Paypal();
 
@@ -547,7 +546,7 @@ class HotopayController extends Hotopay
 					{
 						$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $billingKeyObject->card->number));
 					}
-					$key = $oHotopayModel->getBillingKeyByKeyNumber($purchase->data->member_srl, $billingKeyObject->card->number);
+					$key = HotopayModel::getBillingKeyByKeyNumber($purchase->data->member_srl, $billingKeyObject->card->number);
 					$key_idx = $key->key_idx ?? 0;
 					if ($key_idx <= 0)
 					{
@@ -572,7 +571,7 @@ class HotopayController extends Hotopay
 								return $this->createObject(-1, "결제 실패. (code: 1015)");
 						}
 
-						$oHotopayModel->insertBillingKey($key);
+						HotopayModel::insertBillingKey($key);
 						$key_idx = $key->key_idx;
 					}
 					else
@@ -581,7 +580,7 @@ class HotopayController extends Hotopay
 						$key_update_obj->key_idx = $key_idx;
 						$key_update_obj->key = $oHotopayModel->encryptKey($billingKeyObject->billingKey);
 						$key_update_obj->key_hash = $key_hash;
-						$oHotopayModel->updateBillingKey($key_update_obj);
+						HotopayModel::updateBillingKey($key_update_obj);
 					}
 				}
 				else
@@ -590,7 +589,7 @@ class HotopayController extends Hotopay
 					unset($_SESSION['hotopay_billing_key']);
 					$key_idx = $key->key_idx;
 
-					$key = $oHotopayModel->getBillingKey($key_idx);
+					$key = HotopayModel::getBillingKey($key_idx);
 					if (!$key->key_idx)
 					{
 						return $this->createObject(-1, "결제 실패. (code: 1017)");
@@ -608,8 +607,8 @@ class HotopayController extends Hotopay
 				$subscription->register_date = date('Y-m-d H:i:s');
 				$subscription->last_billing_date = '0000-00-00 00:00:00';
 
-				$items = $oHotopayModel->getPurchaseItems($purchase_srl);
-				$_options = $oHotopayModel->getOptionsByPurchaseSrl($purchase_srl);
+				$items = HotopayModel::getPurchaseItems($purchase_srl);
+				$_options = HotopayModel::getOptionsByPurchaseSrl($purchase_srl);
 				$print_esti_billing_date = '';
 				$billingTotal = [];
 				foreach ($items as $item)
@@ -637,8 +636,8 @@ class HotopayController extends Hotopay
 					}
 
 					$subscription->esti_billing_date = date('Y-m-d H:i:s');
-					$oHotopayModel->insertSubscription($subscription);
-					$oHotopayModel->updatePurchaseItemSubscriptionSrl($item->item_srl, $subscription->subscription_srl);
+					HotopayModel::insertSubscription($subscription);
+					HotopayModel::updatePurchaseItemSubscriptionSrl($item->item_srl, $subscription->subscription_srl);
 
 					$billingStatus = $tossController->requestBilling($subscription);
 					if (!$billingStatus->toBool())
@@ -653,9 +652,9 @@ class HotopayController extends Hotopay
 						$subscription_update_obj = new stdClass();
 						$subscription_update_obj->subscription_srl = $subscription->subscription_srl;
 						$subscription_update_obj->status = "FAILED_INITIAL";
-						$oHotopayModel->updateSubscription($subscription_update_obj);
+						HotopayModel::updateSubscription($subscription_update_obj);
 
-						$oHotopayModel->rollbackOptionStock($purchase_srl);
+						HotopayModel::rollbackOptionStock($purchase_srl);
 
 						$args->pay_data = json_encode($billingStatus->data);
 						$args->pay_status = "FAILED";
@@ -686,7 +685,7 @@ class HotopayController extends Hotopay
 					$print_esti_billing_date = date("Y-m-d", strtotime("+" . $subscription->period . " days"));
 					$billingTotal[] = $billingStatus->data;
 
-					$oHotopayModel->copyPurchaseExtraInfo($subscription->subscription_srl, $purchase_srl);
+					HotopayModel::copyPurchaseExtraInfo($subscription->subscription_srl, $purchase_srl);
 				}
 
 				$args->pay_data = json_encode($billingTotal);
@@ -753,7 +752,7 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$oHotopayModel->rollbackOptionStock($purchase_srl);
+					HotopayModel::rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -844,7 +843,7 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$oHotopayModel->rollbackOptionStock($purchase_srl);
+					HotopayModel::rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -899,7 +898,7 @@ class HotopayController extends Hotopay
 					$args->pay_status = "FAILED";
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
-					$oHotopayModel->rollbackOptionStock($purchase_srl);
+					HotopayModel::rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -988,7 +987,7 @@ class HotopayController extends Hotopay
 						"message" => "결제를 실패하였습니다. (code: 1008)"
 					);
 
-					$oHotopayModel->rollbackOptionStock($purchase_srl);
+					HotopayModel::rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -1038,7 +1037,8 @@ class HotopayController extends Hotopay
 					return $this->createObject(-1, "결제 실패. (code: 1010)");
 				}
 
-				if (isset($vars->PCD_PAYER_ID)) $vars->PCD_PAYER_ID = '*** secret ***';
+				$PCD_PAYER_ID = $vars->PCD_PAYER_ID;
+				$vars->PCD_PAYER_ID = '*** secret ***';
 				$args->pay_data = json_encode($vars);
 				if ($vars->PCD_PAY_RST == 'success' && str_contains($vars->PCD_PAY_CODE, '0000'))
 				{
@@ -1051,14 +1051,16 @@ class HotopayController extends Hotopay
 				executeQuery('hotopay.updatePurchaseStatus', $args);
 				executeQuery('hotopay.updatePurchaseData', $args);
 
+				$error_message = $vars->PCD_PAY_MSG;
 				if($args->pay_status == "DONE") // 결제 완료에 경우
 				{
 					$payple = new Payple();
-					$result = $payple->confirmPaywork($vars, $purchase->data);
+					$result = $payple->confirmPaywork($vars, $purchase->data, $PCD_PAYER_ID);
 					if (!$result->toBool())
 					{
-						$args->pay_status == "FAILED";
+						$args->pay_status = "FAILED";
 						executeQuery('hotopay.updatePurchaseStatus', $args);
+						$error_message = $result->message;
 					}
 					else
 					{
@@ -1087,7 +1089,7 @@ class HotopayController extends Hotopay
 
 								$key_idx = $before_idx;
 
-								$key = $oHotopayModel->getBillingKey($before_idx);
+								$key = HotopayModel::getBillingKey($before_idx);
 								$calculated_key_hash = strtoupper(hash('sha256', $this->user->member_srl . $result->PCD_PAYER_ID));
 								if (!empty($key->key) && $key->key_hash != $calculated_key_hash)
 								{
@@ -1112,13 +1114,13 @@ class HotopayController extends Hotopay
 											break;
 									}
 
-									$oHotopayModel->updateBillingKey($billing_key_obj);
+									HotopayModel::updateBillingKey($billing_key_obj);
 								}
 							}
 							else
 							{
 								$key_hash = strtoupper(hash('sha256', $purchase->data->member_srl . $result->PCD_PAYER_ID));
-								$key = $oHotopayModel->getBillingKeyByKeyHash($purchase->data->member_srl, $key_hash);
+								$key = HotopayModel::getBillingKeyByKeyHash($purchase->data->member_srl, $key_hash);
 								if (!$key->key_idx)
 								{
 									$billing_key_obj = new stdClass();
@@ -1151,7 +1153,7 @@ class HotopayController extends Hotopay
 											break;
 									}
 
-									$oHotopayModel->insertBillingKey($billing_key_obj);
+									HotopayModel::insertBillingKey($billing_key_obj);
 									$key_idx = $billing_key_obj->key_idx;
 								}
 							}
@@ -1165,8 +1167,8 @@ class HotopayController extends Hotopay
 							$subscription->register_date = date('Y-m-d H:i:s');
 							$subscription->last_billing_date = date('Y-m-d H:i:s');
 
-							$items = $oHotopayModel->getPurchaseItems($purchase_srl);
-							$_options = $oHotopayModel->getOptionsByPurchaseSrl($purchase_srl);
+							$items = HotopayModel::getPurchaseItems($purchase_srl);
+							$_options = HotopayModel::getOptionsByPurchaseSrl($purchase_srl);
 							foreach ($items as $item)
 							{
 								$subscription->subscription_srl = getNextSequence();
@@ -1191,8 +1193,8 @@ class HotopayController extends Hotopay
 								}
 
 								$subscription->esti_billing_date = date('Y-m-d H:i:s', strtotime('+'.$subscription->period.' days'));
-								$oHotopayModel->insertSubscription($subscription);
-								$oHotopayModel->copyPurchaseExtraInfo($subscription->subscription_srl, $purchase_srl);
+								HotopayModel::insertSubscription($subscription);
+								HotopayModel::copyPurchaseExtraInfo($subscription->subscription_srl, $purchase_srl);
 							}
 						}
 					}
@@ -1206,10 +1208,10 @@ class HotopayController extends Hotopay
 						"p_status" => "failed",
 						"orderId" => $vars->order_id,
 						"code" => "PAYPLE_FAILED",
-						"message" => "결제를 실패하였습니다. ".$vars->PCD_PAY_MSG." (code: 1011)"
+						"message" => "결제를 실패하였습니다. ".$error_message." (code: 1011)"
 					);
 
-					$oHotopayModel->rollbackOptionStock($purchase_srl);
+					HotopayModel::rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -1282,7 +1284,7 @@ class HotopayController extends Hotopay
 						"message" => "결제를 실패하였습니다. (code: 1009)"
 					);
 
-					$oHotopayModel->rollbackOptionStock($purchase_srl);
+					HotopayModel::rollbackOptionStock($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -1336,7 +1338,7 @@ class HotopayController extends Hotopay
 			$args->purchase_srl = $purchase_srl;
 			$args->pay_status = "FAILED";
 
-			$oHotopayModel->rollbackOptionStock($purchase_srl);
+			HotopayModel::rollbackOptionStock($purchase_srl);
 
 			$res_array = array(
 				"p_status" => "failed",
@@ -1452,8 +1454,7 @@ class HotopayController extends Hotopay
 		$orderId = $data->orderId;
 		$purchase_srl = (int)substr($orderId, 2);
 
-		$oHotopayModel = HotopayModel::getInstance();
-		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$purchase = HotopayModel::getPurchase($purchase_srl);
 		if(!$purchase->purchase_srl)
 		{
 			http_response_code(400);
@@ -1529,8 +1530,7 @@ class HotopayController extends Hotopay
 		}
 		$purchase_srl = (int)substr($merchant_uid, 2);
 
-		$oHotopayModel = getModel('hotopay');
-		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$purchase = HotopayModel::getPurchase($purchase_srl);
 		if (!$purchase->toBool() || empty($purchase))
 		{
 			http_response_code(400);
@@ -1595,7 +1595,7 @@ class HotopayController extends Hotopay
 			}
 
 			$purchase_srl = (int) substr($vars->PCD_PAY_OID, 2);
-			$purchase = $oHotopayModel->getPurchase($purchase_srl);
+			$purchase = HotopayModel::getPurchase($purchase_srl);
 
 			if ($vars->PCD_REFUND_TOTAL)
 			{
@@ -1634,7 +1634,7 @@ class HotopayController extends Hotopay
 			{
 				// 카드/계좌 등록
 				$key_hash = strtoupper(hash('sha256', $member_srl . $payer_id));
-				$key = $oHotopayModel->getBillingKeyByKeyHash($member_srl, $key_hash);
+				$key = HotopayModel::getBillingKeyByKeyHash($member_srl, $key_hash);
 				if (!$key->key_idx)
 				{
 					$billing_key_obj = new stdClass();
@@ -1662,14 +1662,14 @@ class HotopayController extends Hotopay
 							break;
 					}
 
-					$oHotopayModel->insertBillingKey($billing_key_obj);
+					HotopayModel::insertBillingKey($billing_key_obj);
 				}
 			}
 			else
 			{
 				// 카드/계좌 해지
 				$key_hash = strtoupper(hash('sha256', $this->user->member_srl . $payer_id));
-				$oHotopayModel->deleteBillingKeyByKeyHash($member_srl, $key_hash);
+				HotopayModel::deleteBillingKeyByKeyHash($member_srl, $key_hash);
 			}
 		}
 
@@ -1688,8 +1688,7 @@ class HotopayController extends Hotopay
 		$logged_info = Context::get('logged_info');
 		if($member_srl == -1) $member_srl = $logged_info->member_srl;
 
-		$oHotopayModel = getModel('hotopay');
-		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$purchase = HotopayModel::getPurchase($purchase_srl);
 
 		$trigger_obj = new stdClass();
 		$trigger_obj->member_srl = $member_srl;
@@ -1706,10 +1705,10 @@ class HotopayController extends Hotopay
 		$this->_AdminMailer("DONE", $purchase);
 		$this->clearPurchasedCartItem($purchase);
 
-		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
+		$products = HotopayModel::getProductsByPurchaseSrl($purchase_srl);
 
 		$group_srls = array();
-		$oMemberController = getController('member');
+		$oMemberController = MemberController::getInstance();
 		foreach($products as $product)
 		{
 			$group_srl = $product->product_buyer_group;
@@ -1766,8 +1765,7 @@ class HotopayController extends Hotopay
 	 */
 	public function _CancelPurchase($purchase_srl, $cancel_reason = 'Hotopay Refund', $cancel_amount = -1, $bank_info = array())
 	{
-		$oHotopayModel = getModel('hotopay');
-		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$purchase = HotopayModel::getPurchase($purchase_srl);
 		$member_srl = $purchase->member_srl;
 		if(empty($member_srl))
 			return $this->createObject(-1, "member_srl을 찾을 수 없습니다.");
@@ -1811,7 +1809,7 @@ class HotopayController extends Hotopay
 
 			case 'paypal':
 				$paypalController = new Paypal();
-				$output = $paypalController->cancelOrder($purchase_srl, $cancel_reason, $oHotopayModel->changeCurrency('KRW', 'USD', $cancel_amount));
+				$output = $paypalController->cancelOrder($purchase_srl, $cancel_reason, HotopayModel::changeCurrency('KRW', 'USD', $cancel_amount));
 				break;
 
 			case 'kakaopay':
@@ -1864,8 +1862,7 @@ class HotopayController extends Hotopay
 	 */
 	public function _RefundProcess($purchase_srl, $output_data = [])
 	{
-		$oHotopayModel = HotopayModel::getInstance();
-		$purchase = $oHotopayModel->getPurchase($purchase_srl);
+		$purchase = HotopayModel::getPurchase($purchase_srl);
 		$member_srl = $purchase->member_srl;
 
 		$args = new stdClass();
@@ -1875,7 +1872,7 @@ class HotopayController extends Hotopay
 		executeQuery('hotopay.updatePurchaseStatus', $args);
 		executeQuery('hotopay.updatePurchaseData', $args);
 
-		$products = $oHotopayModel->getProductsByPurchaseSrl($purchase_srl);
+		$products = HotopayModel::getProductsByPurchaseSrl($purchase_srl);
 
 		foreach($products as $product)
 		{
@@ -1889,9 +1886,9 @@ class HotopayController extends Hotopay
 			}
 		}
 
-		$oHotopayModel->rollbackOptionStock($purchase_srl);
+		HotopayModel::rollbackOptionStock($purchase_srl);
 
-		$items = $oHotopayModel->getPurchaseItems($purchase_srl);
+		$items = HotopayModel::getPurchaseItems($purchase_srl);
 		foreach($items as $item)
 		{
 			if ($item->subscription_srl > 0)
@@ -1903,7 +1900,6 @@ class HotopayController extends Hotopay
 			}
 		}
 
-		$config = $this->getConfig();
 		$reward_point = $purchase->reward_point;
 
 		if ($reward_point > 0)
@@ -1913,7 +1909,7 @@ class HotopayController extends Hotopay
 			$oPointController->setPoint($member_srl, $reward_point, 'minus');
 		}
 
-		$oMemberController = getController('member');
+		$oMemberController = MemberController::getInstance();
 		if(version_compare(__XE_VERSION__, '2.0.0', '<'))
 		{
 			$oMemberController->_clearMemberCache($member_srl); // for old rhymix
@@ -1947,7 +1943,8 @@ class HotopayController extends Hotopay
 
 		$config = $this->getConfig();
 		$member_srl = $purchase_data->member_srl;
-		$oHotopayModel = getModel('hotopay');
+		$oHotopayModel = HotopayModel::getInstance();
+		$oCommController = \CommunicationController::getInstance();
 
 		switch($status)
 		{
@@ -1955,7 +1952,6 @@ class HotopayController extends Hotopay
 				if(in_array(1, $config->purchase_success_notification_method))
 				{
 					// 쪽지 알림
-					$oCommController = getController('communication');
 					$oCommController->sendMessage(4, $member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_note_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_success_notification_message_note, $purchase_data));
 				}
 
@@ -1976,7 +1972,6 @@ class HotopayController extends Hotopay
 				if(in_array(1, $config->purchase_account_notification_method))
 				{
 					// 쪽지 알림
-					$oCommController = getController('communication');
 					$oCommController->sendMessage(4, $member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_note_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_account_notification_message_note, $purchase_data));
 				}
 
@@ -1997,7 +1992,6 @@ class HotopayController extends Hotopay
 				if(in_array(1, $config->purchase_refund_notification_method))
 				{
 					// 쪽지 알림
-					$oCommController = getController('communication');
 					$oCommController->sendMessage(4, $member_srl, $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_note_title, $purchase_data), $oHotopayModel->changeMessageRegisterKey($config->purchase_refund_notification_message_note, $purchase_data));
 				}
 
@@ -2042,12 +2036,10 @@ class HotopayController extends Hotopay
 		}
 
 		$member_srl = $purchase->member_srl;
-		$oMemberModel = getModel('member');
-		$oHotopayModel = HotopayModel::getInstance();
-		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+		$member_info = \MemberModel::getMemberInfoByMemberSrl($member_srl);
 		$price = number_format($purchase->product_purchase_price);
 		$purchase_date = date("Y-m-d H:i:s", $purchase->regdate);
-		$pay_method_korean = $oHotopayModel->purchaseMethodToString($purchase->pay_method);
+		$pay_method_korean = HotopayModel::purchaseMethodToString($purchase->pay_method);
 		$purchase_title_substr = mb_substr($purchase->title, 0, 18);
 
 		switch($status)
@@ -2076,17 +2068,23 @@ class HotopayController extends Hotopay
 	 * @param int $member_srl 멤버 번호입니다.
 	 * @param string $mail_title 메일 제목입니다.
 	 * @param string $mail_content 메일 내용입니다.
-	 * @return void
+	 * @return boolean
 	 */
 	public function _sendMail($member_srl, $mail_title, $mail_content)
 	{
-		$oMemberModel = getModel('member');
-		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+		$member_info = \MemberModel::getMemberInfoByMemberSrl($member_srl);
+		if (empty($member_info->email_address))
+		{
+			return false;
+		}
+
+		$email_address = $member_info->email_address;
+		$nick_name = $member_info->nick_name ?? '구매자';
 
 		$oMail = new \Rhymix\Framework\Mail();
 		$oMail->setSubject($mail_title);
 		$oMail->setBody($mail_content);
-		$oMail->addTo($member_info->email_address, $member_info->nick_name);
+		$oMail->addTo($email_address, $nick_name);
 		$output = $oMail->send();
 
 		return $output;
@@ -2101,8 +2099,7 @@ class HotopayController extends Hotopay
 	 */
 	public function _sendSMS($member_srl, $content)
 	{
-		$oMemberModel = getModel('member');
-		$member_info = $oMemberModel->getMemberInfoByMemberSrl($member_srl);
+		$member_info = \MemberModel::getMemberInfoByMemberSrl($member_srl);
 
 		$oSmsHandler = new Rhymix\Framework\SMS();
 		$phone_country = $member_info->phone_country;
@@ -2134,8 +2131,7 @@ class HotopayController extends Hotopay
 
 	public function clearPurchasedCartItem($purchase): object
 	{
-		$oHotopayModel = HotopayModel::getInstance();
-		$items = $oHotopayModel->getPurchaseItems($purchase->purchase_srl);
+		$items = HotopayModel::getPurchaseItems($purchase->purchase_srl);
 		$member_srl = $purchase->member_srl;
 
 		$oDB = DB::getInstance();
@@ -2171,7 +2167,7 @@ class HotopayController extends Hotopay
 		$logged_info = Context::get('logged_info');
 		if ($logged_info->is_admin === 'Y')
 		{
-			$oMemberController = getController('member');
+			$oMemberController = MemberController::getInstance();
 			$url = getUrl('', 'mid', 'hotopay', 'act', 'dispHotopayOrderList', 'target_member_srl', $obj->member_srl);
 			$oMemberController->addMemberPopupMenu($url, '회원 구매 기록');
 		}
@@ -2188,8 +2184,7 @@ class HotopayController extends Hotopay
 		$config = $this->getConfig();
 		$mid = $obj->mid;
 
-		$oModuleModel = getModel('module');
-		$module_info = $oModuleModel->getModuleInfoByMid($mid);
+		$module_info = ModuleModel::getModuleInfoByMid($mid);
 		if(in_array($module_info->module_srl, $config->board_module_srl))
 		{
 			if(!isset($obj->sale_option)) return;
@@ -2218,7 +2213,7 @@ class HotopayController extends Hotopay
 			Context::set('extra_vars', $extra_vars, true);
 			Context::set('document_srl', $obj->document_srl, true);
 
-			$oHotopayAdminController = getAdminController('hotopay');
+			$oHotopayAdminController = HotopayAdminController::getInstance();
 			$output = $oHotopayAdminController->procHotopayAdminInsertProduct();
 		}
 	}
@@ -2234,8 +2229,7 @@ class HotopayController extends Hotopay
 		$config = $this->getConfig();
 		$mid = $obj->mid;
 
-		$oModuleModel = getModel('module');
-		$module_info = $oModuleModel->getModuleInfoByMid($mid);
+		$module_info = ModuleModel::getModuleInfoByMid($mid);
 		if(in_array($module_info->module_srl, $config->board_module_srl))
 		{
 			if(!isset($obj->sale_option)) return;
@@ -2271,7 +2265,7 @@ class HotopayController extends Hotopay
 			Context::set('product_option', $product_option, true);
 			Context::set('product_buyer_group', 0, true);
 			Context::set('extra_vars', $extra_vars, true);
-			$oHotopayAdminController = getAdminController('hotopay');
+			$oHotopayAdminController = HotopayAdminController::getInstance();
 			$output = $oHotopayAdminController->procHotopayAdminModifyProduct();
 		}
 	}
@@ -2292,8 +2286,7 @@ class HotopayController extends Hotopay
 		}
 
 		$config = $this->getConfig();
-		$oHotopayModel = getModel('hotopay');
-		$current_cart_item_count = $oHotopayModel->getCartItemCount($member_srl);
+		$current_cart_item_count = HotopayModel::getCartItemCount($member_srl);
 		if($current_cart_item_count >= $config->cart_item_limit)
 		{
 			return new BaseObject(-1, '장바구니에는 최대 ' . $config->cart_item_limit . '개의 상품만 담을 수 있습니다.');
@@ -2308,13 +2301,13 @@ class HotopayController extends Hotopay
 			return new BaseObject(-1, '필수 정보가 없습니다.');
 		}
 
-		$product_info = $oHotopayModel->getProduct($product_srl);
+		$product_info = HotopayModel::getProduct($product_srl);
 		if(!$product_info)
 		{
 			return new BaseObject(-1, '상품 정보가 없습니다.');
 		}
 
-		$option_info = $oHotopayModel->getOption($option_srl);
+		$option_info = HotopayModel::getOption($option_srl);
 		if(!$option_info)
 		{
 			return new BaseObject(-1, '옵션 정보가 없습니다.');
@@ -2325,7 +2318,7 @@ class HotopayController extends Hotopay
 			return new BaseObject(-1, '상품과 옵션이 일치하지 않습니다.');
 		}
 
-		$cart_items = $oHotopayModel->getCartItems($member_srl);
+		$cart_items = HotopayModel::getCartItems($member_srl);
 		foreach ($cart_items as $item)
 		{
 			if($item->product_srl == $product_srl && $item->option_srl == $option_srl)
@@ -2341,7 +2334,7 @@ class HotopayController extends Hotopay
 		$args->quantity = $quantity;
 		$args->regdate = date('YmdHis');
 
-		$oHotopayModel->insertCartItem($args);
+		HotopayModel::insertCartItem($args);
 		$this->deleteCache('cart_item_count_' . $member_srl);
 
 		$this->setMessage('장바구니에 추가되었습니다.');
@@ -2369,8 +2362,7 @@ class HotopayController extends Hotopay
 			return new BaseObject(-1, '필수 정보가 없습니다.');
 		}
 
-		$oHotopayModel = getModel('hotopay');
-		$oHotopayModel->deleteCartItem($cart_item_srl, $member_srl);
+		HotopayModel::deleteCartItem($cart_item_srl, $member_srl);
 		$this->deleteCache('cart_item_count_' . $member_srl);
 
 		$this->setMessage('장바구니에서 삭제되었습니다.');
@@ -2407,8 +2399,7 @@ class HotopayController extends Hotopay
 		$args->quantity = $quantity;
 		$args->regdate = date('YmdHis');
 
-		$oHotopayModel = getModel('hotopay');
-		$oHotopayModel->updateCartItem($args);
+		HotopayModel::updateCartItem($args);
 
 		$this->setMessage('장바구니가 수정되었습니다.');
 	}

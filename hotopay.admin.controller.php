@@ -31,10 +31,14 @@ class HotopayAdminController extends Hotopay
 		$config->change_group_to_regular_when_pay = empty($vars->change_group_to_regular_when_pay) ? 'N' : 'Y';
 		$config->associate_group_srl = $vars->associate_group_srl;
 		$config->regular_group_srl = $vars->regular_group_srl;
+		$config->hide_options = empty($vars->hide_options) ? 'N' : 'Y';
+		$config->hide_options_if_one = empty($vars->hide_options_if_one) ? 'N' : 'Y';
+
 		$config->hotopay_license_key = $vars->hotopay_license_key;
 
 		$config->hotopay_currency_renew_api_type = $vars->hotopay_currency_renew_api_type;
 		$config->fixer_io_api_key = $vars->fixer_io_api_key;
+		$config->exchangeratehost_api_key = $vars->exchangeratehost_api_key;
 
 		$config->hotopay_billingkey_encryption = $vars->hotopay_billingkey_encryption;
 		$config->hotopay_aws_kms_arn = $vars->hotopay_aws_kms_arn;
@@ -501,7 +505,7 @@ class HotopayAdminController extends Hotopay
 
 		// 설정 화면으로 리다이렉트
 		$this->setMessage('success_registed');
-		$this->setRedirectUrl(getNotEncodedUrl('','mid','admin','act','dispHotopayAdminProductList'));
+		$this->setRedirectUrl(getNotEncodedUrl('','module','admin','act','dispHotopayAdminProductList'));
 	}
 
 	public function procHotopayAdminInsertNotification()
@@ -737,7 +741,7 @@ class HotopayAdminController extends Hotopay
         if(!empty($vars->description) || ($vars->description === 0)) $args->description = $vars->description;
         if(!empty($vars->value) || ($vars->value === 0)) $args->value = $vars->value;
         if(!empty($vars->placeholder) || ($vars->placeholder === 0)) $args->placeholder = $vars->placeholder;
-        if(!empty($vars->required) || ($vars->required === 0)) $args->required = $vars->required;
+        $args->required = empty($vars->required) ? 'N' : 'Y';
         HotopayModel::updateProductExtraInfo($args);
 
         $this->setMessage('success_updated');

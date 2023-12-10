@@ -109,12 +109,15 @@ class Hotopay extends ModuleObject
 			if(!isset(self::$_config_cache->associate_group_srl)) self::$_config_cache->associate_group_srl = 2; // 준회원 그룹 srl
 			if(!isset(self::$_config_cache->regular_group_srl)) self::$_config_cache->regular_group_srl = 3; // 정회원 그룹 srl
 			if(!isset(self::$_config_cache->purchase_reward_point_percent)) self::$_config_cache->purchase_reward_point_percent = 0; // 결제 후 적립 포인트 비율 (0~1)
+			if(!isset(self::$_config_cache->hide_options)) self::$_config_cache->hide_options = 'N'; // 옵션 선택박스 숨기기
+			if(!isset(self::$_config_cache->hide_options_if_one)) self::$_config_cache->hide_options_if_one = 'N'; // 옵션이 하나면 옵션 선택박스 숨기기
 
 			if(!isset(self::$_config_cache->hotopay_license_key)) self::$_config_cache->hotopay_license_key = ''; // Hotopay 라이선스 키
 			if(!isset(self::$_config_cache->hotopay_last_license_expire_alert_date)) self::$_config_cache->hotopay_last_license_expire_alert_date = 0; // 라이선스 만료 경고 마지막 날짜
 
-			if(!isset(self::$_config_cache->hotopay_currency_renew_api_type)) self::$_config_cache->hotopay_currency_renew_api_type = 'exchangeratehost'; // 환율 갱신 API 타입 (none/fixerio/exchangeratehost)
+			if(!isset(self::$_config_cache->hotopay_currency_renew_api_type)) self::$_config_cache->hotopay_currency_renew_api_type = 'hotoapi'; // 환율 갱신 API 타입 (none/hotoapi/fixerio/exchangeratehost)
 			if(!isset(self::$_config_cache->fixer_io_api_key)) self::$_config_cache->fixer_io_api_key = ''; // Fixer.io API Key
+			if(!isset(self::$_config_cache->exchangeratehost_api_key)) self::$_config_cache->exchangeratehost_api_key = ''; // Exchangerate.host API Key
 			if(!isset(self::$_config_cache->hotopay_currency_renew_time)) self::$_config_cache->hotopay_currency_renew_time = 0; // 환율 갱신 API 마지막 시각
 
 			if(!isset(self::$_config_cache->hotopay_billingkey_encryption)) self::$_config_cache->hotopay_billingkey_encryption = 'none'; // 빌링키 암호화 수단 (none/awskms)

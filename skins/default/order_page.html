@@ -66,8 +66,8 @@ function _purchaseSubmit(form){return checkCheckbox();}
                         <span>상품명</span>{$product->product_name}<br>
                         <span>상품 설명</span>{$product->product_des}<br>
                         <span>판매 가격</span>{number_format($product->product_sale_price + round($product->product_sale_price * ($product->tax_rate / 100)))} ₩<br><br>
-                        <span>옵션</span>
-                        <select name="purchase_info[{$no}][option_srl]" hotopay-product-srl="{$product->product_srl}" hotopay-type="option" onchange="optionChange()">
+                        <span class="option_section p{$product->product_srl}">옵션</span>
+                        <select name="purchase_info[{$no}][option_srl]" hotopay-product-srl="{$product->product_srl}" hotopay-type="option" onchange="optionChange()" class="option_section p{$product->product_srl}">
                             <!--@foreach($product->product_option as $option)-->
                             {@
                                 $sub_price = $option->price - $product->product_sale_price;
@@ -86,6 +86,13 @@ function _purchaseSubmit(form){return checkCheckbox();}
                             <!--@endforeach-->
                         </select>
                         <br>
+                        <!--@if($hotopay_config->hide_options == 'Y' || ($hotopay_config->hide_options_if_one == 'Y' && count($product->product_option) <= 1))-->
+                        <style>
+                            .option_section.p{$product->product_srl} {
+                                display: none;
+                            }
+                        </style>
+                        <!--@endif-->
                     </p>
                 </div>
             </li>

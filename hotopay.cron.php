@@ -42,6 +42,7 @@ class HotopayCronJob extends Hotopay {
         $this->updateCurrency();
         $this->renewSubscriptions();
         $this->updateLastCronSuccessTime();
+        $this->callHotopayCronAfterTrigger();
 
         $end_time = microtime(true);
         $this->printLog("Cron job finished");
@@ -107,7 +108,7 @@ class HotopayCronJob extends Hotopay {
         $title = "Hotopay Pro {$expiry_date}일 후 만료 안내";
         $body = "Hotopay Pro 라이선스가 {$expiry_date}일 후 만료됩니다. <br><br>만료 시 Pro 기능을 이용할 수 없게 되니 만료 전에 라이선스를 갱신해주세요. <br><br>갱신 방법은 <a href='https://potatosoft.kr/notice/11343' target='_blank'>홈페이지</a>에서 확인 가능합니다. <br>";
 
-        $oCommController = getController('communication');
+        $oCommController = CommunicationController::getInstance();
         $oCommController->sendMessage(4, 4, $title, $body);
     }
 
@@ -126,14 +127,23 @@ class HotopayCronJob extends Hotopay {
 
     private function updateCurrency()
     {
-        $output = $this->oHotopayModel->updateCurrency();
-        if ($output === true)
+        try
         {
-            $this->printLog("Success: Update currency");
+            $output = $this->oHotopayModel->updateCurrency();
+            if ($output === true)
+            {
+                $this->printLog("Success: Update currency");
+            }
+            else
+            {
+                $this->printLog("Warning: Failed to update currency; " . $output->message);
+            }
         }
-        else
+        catch (Exception $e)
         {
-            $this->printLog("Warning: Failed to update currency; " . $output->message);
+            $this->printLog("Warning: Failed to update currency; " . $e->getMessage());
+            $this->sendFailedToUpdateCurrencyAlert($e->getMessage());
+            return false;
         }
 
         $one_usd_to_krw = $this->oHotopayModel->changeCurrency('USD', 'KRW', 1);
@@ -157,6 +167,15 @@ class HotopayCronJob extends Hotopay {
         {
             $this->printLog("Test: 1,000 KRW = %.2f USD", $one_thousand_krw_to_usd);
         }
+    }
+
+    private function sendFailedToUpdateCurrencyAlert($message)
+    {
+        $title = "Hotopay 환율 갱신 실패 알림";
+        $body = "Hotopay Cron 실행 과정에서 환율 정보 갱신을 실패하였습니다. <br><br>환율 정보가 중요하다면 API 통신을 확인해주시길 바라며, 그렇지 않다면 환율 갱신 수단을 \"설정 안함\"으로 변경하는 것을 권장드립니다. <br><br>에러 메시지: {$message} <br>";
+
+        $oCommController = CommunicationController::getInstance();
+        $oCommController->sendMessage(4, 4, $title, $body);
     }
 
     private function renewSubscriptions()
@@ -434,6 +453,12 @@ class HotopayCronJob extends Hotopay {
         $output = executeQuery('member.deleteMemberGroupMember', $args); // 그룹제거
 
         return $output;
+    }
+
+    private function callHotopayCronAfterTrigger()
+    {
+        $trigger_obj = new stdClass();
+        ModuleHandler::triggerCall('hotopay.cron', 'after', $trigger_obj);
     }
 }
 

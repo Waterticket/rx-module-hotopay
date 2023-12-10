@@ -42,8 +42,7 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('로그인이 필요합니다.');
 		}
 
-		$oHotopayModel = getModel('hotopay');
-		$cart_items = $oHotopayModel->getCartItems($member_srl);
+		$cart_items = HotopayModel::getCartItems($member_srl);
 		Context::set('cart_items', $cart_items);
 
 		if (empty($cart_items))
@@ -76,14 +75,14 @@ class HotopayView extends Hotopay
 		$purchase_price = 0;
 		foreach ($cart_items as $item)
 		{
-			$purchase_price += $item->option_price * $item->quantity;
+			$purchase_price += ($item->option_price + ($item->option_price * $item->tax_rate/100)) * $item->quantity;
 		}
 		Context::set('purchase_price', $purchase_price);
 
 		$filtered_password_keys = array();
 		$filtered_billing_keys = array();
 
-		$billing_keys = $oHotopayModel->getBillingKeys($member_srl);
+		$billing_keys = HotopayModel::getBillingKeys($member_srl);
 		foreach ($billing_keys as $key)
 		{
 			if ($key->type == 'password')
@@ -133,11 +132,10 @@ class HotopayView extends Hotopay
 			$vars->product_id = array($vars->product_id);
 		}
 
-		$oHotopayModel = getModel('hotopay');
-		$product_list = $oHotopayModel->getProducts($vars->product_id);
+		$product_list = HotopayModel::getProducts($vars->product_id);
 		Context::set('product_list', $product_list);
 
-		$extra_info_list = $oHotopayModel->getProductExtraInfo(array_merge($vars->product_id, array(0)));
+		$extra_info_list = HotopayModel::getProductExtraInfo(array_merge($vars->product_id, array(0)));
 		Context::set('extra_info_list', $extra_info_list);
 
 		$is_non_billing_product_exist = false;
@@ -168,10 +166,27 @@ class HotopayView extends Hotopay
 			throw new \Rhymix\Framework\Exception('정기결제 상품과 일반결제 상품을 동시에 구매할 수 없습니다.');
 		}
 
+		$filtered_password_keys = array();
+		$filtered_billing_keys = array();
+
+		$billing_keys = HotopayModel::getBillingKeys($this->user->member_srl);
+		foreach ($billing_keys as $key)
+		{
+			if ($key->type == 'password')
+			{
+				$filtered_password_keys[] = $key;
+			}
+			else if ($key->type == 'billing')
+			{
+				$filtered_billing_keys[] = $key;
+			}
+		}
+
+		Context::set('password_keys', $filtered_password_keys);
+		Context::set('billing_keys', $filtered_billing_keys);
+
 		if ($is_billing_product_exist)
 		{
-			$billing_keys = $oHotopayModel->getBillingKeys($this->user->member_srl);
-			Context::set('billing_keys', $billing_keys);
 			Context::set('purchase_type', 'billing');
 		}
 		else
@@ -180,7 +195,7 @@ class HotopayView extends Hotopay
 		}
 
 		$logged_info = Context::get('logged_info');
-		$oPointModel = getModel('point');
+		$oPointModel = PointModel::getInstance();
 		$point = $oPointModel->getPoint($logged_info->member_srl, true);
 		Context::set('point', $point);
 
@@ -389,8 +404,7 @@ class HotopayView extends Hotopay
 			return $this->createObject(-1, "로그인이 필요합니다.");
 		}
 
-		$oHotopayModel = getModel('hotopay');
-		$cart_items = $oHotopayModel->getCartItems($member_srl);
+		$cart_items = HotopayModel::getCartItems($member_srl);
 		Context::set('cart_items', $cart_items);
 
 		$this->setTemplateFile('cart');
