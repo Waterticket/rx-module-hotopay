@@ -182,6 +182,10 @@ function _purchaseSubmit(form){return checkCheckbox();}
                 <input type="text" id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)" required="required"|cond="$extra_info->required == 'Y'">
                 <!--@elseif($extra_info->type == 'textarea')-->
                 <textarea id="extra_info_{$extra_info->key_name}" class="additional-info-item-value" name="hotopay_extra_info[{$extra_info->key_name}]" placeholder="{$extra_info->placeholder}"|cond="!empty($extra_info->placeholder)" required="required"|cond="$extra_info->required == 'Y'"></textarea>
+                <!--@elseif($extra_info->type == 'date')-->
+                <input type="date" id="extra_info_{$extra_info->key_name}" name="hotopay_extra_info[{$extra_info->key_name}]" required="required"|cond="$extra_info->required == 'Y'">
+                <!--@elseif($extra_info->type == 'datetime')-->
+                <input type="datetime-local" id="extra_info_{$extra_info->key_name}" name="hotopay_extra_info[{$extra_info->key_name}]" required="required"|cond="$extra_info->required == 'Y'">
                 <!--@elseif($extra_info->type == 'select')-->
                 <select id="extra_info_{$extra_info->key_name}" name="hotopay_extra_info[{$extra_info->key_name}]" required="required"|cond="$extra_info->required == 'Y'">
                     <option value="" cond="!empty($extra_info->placeholder)">{$extra_info->placeholder}</option>
