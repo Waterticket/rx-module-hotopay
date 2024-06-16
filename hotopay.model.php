@@ -13,19 +13,21 @@ class HotopayModel extends Hotopay
     {
 		$cache_key = 'hotopay:product:' . $product_srl;
 		$product = Rhymix\Framework\Cache::get($cache_key);
-        if($product) return $product;
+        if(!$product->product_srl) {
+            $args = new stdClass();
+            $args->product_srl = $product_srl;
+            $output = executeQuery('hotopay.getProducts', $args);
 
-        $args = new stdClass();
-        $args->product_srl = $product_srl;
-        $output = executeQuery('hotopay.getProducts', $args);
+            if(!$output->toBool() || empty($output->data))
+            {
+                return new \BaseObject(-1, "Product does not exist.");
+            }
 
-        if(!$output->toBool() || empty($output->data))
-        {
-            return new \BaseObject(-1, "Product does not exist.");
+            $output->data->extra_vars = unserialize($output->data->extra_vars);
+            $product = $output->data;
         }
 
-        $output->data->product_option = self::getProductOptions($product_srl);
-        $output->data->extra_vars = unserialize($output->data->extra_vars);
+        $product->product_option = self::getProductOptions($product_srl);
 
         Rhymix\Framework\Cache::set($cache_key, $output->data);
         return $output->data;
@@ -49,6 +51,7 @@ class HotopayModel extends Hotopay
             $cache = Rhymix\Framework\Cache::get($cache_key);
             if($cache)
             {
+                $cache->product_option = self::getProductOptions($val->product_srl);
                 $val = $cache;
                 continue;
             }
