@@ -444,6 +444,16 @@ class HotopayModel extends Hotopay
 		}
     }
 
+    public static function setOptionStock(int $option_srl, int $quantity = 1)
+    {
+        $args = new stdClass();
+        $args->option_srl = $option_srl;
+        $args->stock = $quantity;
+        $output = executeQuery('hotopay.updateOptionStock', $args);
+
+        return $output;
+    }
+
     public static function getProductByDocumentSrl(int $document_srl): object
     {
         $args = new stdClass();
