@@ -416,7 +416,7 @@ class HotopayCronJob extends Hotopay {
         switch($subscription->pg)
         {
             case "toss":
-                $oToss = new Toss();
+                $oToss = new Toss(true);
                 $output = $oToss->requestBilling($subscription);
                 $output->data->receipt_url = $output->data->receipt->url ?? "";
                 break;
