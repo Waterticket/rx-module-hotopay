@@ -29,8 +29,8 @@ class HotopayModel extends Hotopay
 
         $product->product_option = self::getProductOptions($product_srl);
 
-        Rhymix\Framework\Cache::set($cache_key, $output->data);
-        return $output->data;
+        Rhymix\Framework\Cache::set($cache_key, $product);
+        return $product;
     }
 
     public static function getProducts(array $product_srls)
