@@ -1340,6 +1340,7 @@ class HotopayController extends Hotopay
 			$args->pay_status = "FAILED";
 
 			HotopayModel::rollbackOptionStock($purchase_srl);
+			// Rollback point
 
 			$res_array = array(
 				"p_status" => "failed",

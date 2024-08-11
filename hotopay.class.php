@@ -83,7 +83,7 @@ class Hotopay extends ModuleObject
 	 */
 	protected static $_cache_handler_cache = null;
 
-	protected const HOTOPAY_NEEDED_DB_VERSION = 7;
+	protected const HOTOPAY_NEEDED_DB_VERSION = 8;
 	
 	/**
 	 * 모듈 설정을 가져오는 함수.
@@ -846,6 +846,12 @@ class Hotopay extends ModuleObject
 							$config->admin_mailing_status = array_unique($config->admin_mailing_status);
 							$this->setConfig($config);
 						}
+						break;
+
+					case 8: // 포인트 할인값 데이터 추가
+						$oDB = DB::getInstance();
+						$stmt = $oDB->prepare('UPDATE hotopay_purchase SET `used_point` = `product_original_price` - `product_purchase_price`');
+						$stmt->execute();
 						break;
 				}
 
