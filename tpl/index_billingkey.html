@@ -41,7 +41,7 @@
             <td class="nowr">{$val->type}</td>
             <td class="nowr">{$val->payment_type}</td>
             <td class="nowr">{$val->alias}</td>
-            <td class="nowr">카드번호는 데모 사이트에서 공개되지 않습니다.</td>
+            <td class="nowr">{$val->number}</td>
             <td class="nowr">{(($val->regdate > 0) ? date("Y-m-d H:i:s", $val->regdate) : "-")}</td>
             <td class="nowr"><a href="{getUrl('act','dispHotopayAdminUpdateBillingKey','key_idx',$val->key_idx)}" title="{$lang->cmd_setup}">{$lang->cmd_setup}</a></td>
             <td class="nowr"><a href="{getUrl('act','dispHotopayAdminDeleteBillingKey','key_idx',$val->key_idx)}" title="{$lang->cmd_delete}">{$lang->cmd_delete}</a></td>
