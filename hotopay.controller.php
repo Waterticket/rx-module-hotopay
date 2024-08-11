@@ -656,6 +656,7 @@ class HotopayController extends Hotopay
 						HotopayModel::updateSubscription($subscription_update_obj);
 
 						HotopayModel::rollbackOptionStock($purchase_srl);
+						$this->refundUsedPoint($purchase_srl);
 
 						$args->pay_data = json_encode($billingStatus->data);
 						$args->pay_status = "FAILED";
@@ -754,6 +755,7 @@ class HotopayController extends Hotopay
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
 					HotopayModel::rollbackOptionStock($purchase_srl);
+					$this->refundUsedPoint($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -845,6 +847,7 @@ class HotopayController extends Hotopay
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
 					HotopayModel::rollbackOptionStock($purchase_srl);
+					$this->refundUsedPoint($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -900,6 +903,7 @@ class HotopayController extends Hotopay
 					executeQuery('hotopay.updatePurchaseStatus', $args);
 
 					HotopayModel::rollbackOptionStock($purchase_srl);
+					$this->refundUsedPoint($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -989,6 +993,7 @@ class HotopayController extends Hotopay
 					);
 
 					HotopayModel::rollbackOptionStock($purchase_srl);
+					$this->refundUsedPoint($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -1213,6 +1218,7 @@ class HotopayController extends Hotopay
 					);
 
 					HotopayModel::rollbackOptionStock($purchase_srl);
+					$this->refundUsedPoint($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -1286,6 +1292,7 @@ class HotopayController extends Hotopay
 					);
 
 					HotopayModel::rollbackOptionStock($purchase_srl);
+					$this->refundUsedPoint($purchase_srl);
 
 					$trigger_obj = new stdClass();
 					$trigger_obj->purchase_srl = $purchase_srl;
@@ -1340,7 +1347,7 @@ class HotopayController extends Hotopay
 			$args->pay_status = "FAILED";
 
 			HotopayModel::rollbackOptionStock($purchase_srl);
-			// Rollback point
+			$this->refundUsedPoint($purchase_srl);
 
 			$res_array = array(
 				"p_status" => "failed",
@@ -1889,6 +1896,7 @@ class HotopayController extends Hotopay
 		}
 
 		HotopayModel::rollbackOptionStock($purchase_srl);
+		$this->refundUsedPoint($purchase_srl);
 
 		$items = HotopayModel::getPurchaseItems($purchase_srl);
 		foreach($items as $item)
@@ -1930,6 +1938,23 @@ class HotopayController extends Hotopay
 		$this->_AdminMailer("REFUNDED", $purchase);
 
 		return $this->createObject();
+	}
+
+	/**
+	 * 구매시 사용한 포인트를 환불해주는 함수입니다.
+	 *
+	 * @param int $purchase_srl 결제 번호입니다.
+	 * @return void
+	 */
+	private function refundUsedPoint(int $purchase_srl)
+	{
+		$purchase = HotopayModel::getPurchase($purchase_srl);
+		$member_srl = $purchase->member_srl;
+		$used_point = $purchase->used_point;
+
+		$oPointController = \PointController::getInstance();
+		Context::set('__point_message__', sprintf('상품 구매시 사용한 포인트 환불 #%d', $purchase_srl));
+		$oPointController->setPoint($member_srl, $used_point, 'plus');
 	}
 
 	/**
