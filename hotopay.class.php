@@ -849,9 +849,7 @@ class Hotopay extends ModuleObject
 						break;
 
 					case 8: // 포인트 할인값 데이터 추가
-						$oDB = DB::getInstance();
-						$stmt = $oDB->prepare('UPDATE hotopay_purchase SET `used_point` = `product_original_price` - `product_purchase_price`');
-						$stmt->execute();
+						// 버그성 이슈로 삭제
 						break;
 				}
 
