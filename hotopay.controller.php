@@ -286,6 +286,7 @@ class HotopayController extends Hotopay
 		$args->pay_method = $vars->pay_method;
 		$args->product_purchase_price = $total_price;
 		$args->product_original_price = $original_price;
+		$args->used_point = $input_point;
 		$args->pay_status = "PENDING";
 		$args->regdate = time();
 		$args->pay_data = '';

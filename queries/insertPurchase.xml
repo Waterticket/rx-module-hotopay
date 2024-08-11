@@ -10,6 +10,7 @@
 	<column name="pay_method" var="pay_method" notnull="notnull" />
 	<column name="product_purchase_price" var="product_purchase_price" />
 	<column name="product_original_price" var="product_original_price" />
+	<column name="used_point" var="used_point" />
 	<column name="pay_status" var="pay_status" />
 	<column name="pay_data" var="pay_data" />
 	<column name="is_billing" var="is_billing" />

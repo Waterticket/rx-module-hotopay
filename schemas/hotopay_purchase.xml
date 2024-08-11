@@ -6,6 +6,7 @@
 	<column name="pay_method" type="varchar" size="20" notnull="notnull" />
 	<column name="product_purchase_price" type="number" size="10" default="0" />
 	<column name="product_original_price" type="number" size="10" default="0" />
+	<column name="used_point" type="number" size="10" notnull="notnull" default="0" />
 	<column name="pay_status" type="varchar" size="50" />
 	<column name="pay_data" type="varchar" size="5000" default="" />
 	<column name="iamport_uid" type="varchar" size="20" default="" />
