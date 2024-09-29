@@ -1946,7 +1946,7 @@ class HotopayController extends Hotopay
 	 * @param int $purchase_srl 결제 번호입니다.
 	 * @return void
 	 */
-	private function refundUsedPoint(int $purchase_srl)
+	public function refundUsedPoint(int $purchase_srl)
 	{
 		$purchase = HotopayModel::getPurchase($purchase_srl);
 		$member_srl = $purchase->member_srl;

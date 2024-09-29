@@ -614,20 +614,43 @@ class HotopayModel extends Hotopay
 
     public static function updateExpiredPurchaseStatus(): object
     {
-        $oDB = DB::getInstance();
-        $oDB->begin();
+        $oHotopayController = HotopayController::getInstance();
 
         $args = new \stdClass();
         $args->pay_status = array('WAITING_FOR_DEPOSIT', 'PENDING');
         $args->regdate = time() - 86400 * 3; // 3 days
-        $args->pay_status_to = 'EXPIRED';
-        $output = executeQuery('hotopay.updateExpiredPurchaseStatus', $args);
+        $output = executeQueryArray('hotopay.getExpiredPurchase', $args);
         if(!$output->toBool())
         {
-            $oDB->rollback();
             throw new \Rhymix\Framework\Exceptions\DBError(sprintf("DB Error: %s in %s line %s", $output->getMessage(), __FILE__, __LINE__));
         }
-        $oDB->commit();
+
+        foreach ($output->data as $purchase_data)
+        {
+            $purchase_srl = $purchase_data->purchase_srl;
+
+            $args = new stdClass();
+            $args->purchase_srl = $purchase_srl;
+            $args->pay_status = 'EXPIRED';
+            executeQuery('hotopay.updatePurchaseStatus', $args);
+
+            HotopayModel::rollbackOptionStock($purchase_srl);
+            $oHotopayController->refundUsedPoint($purchase_srl);
+
+            $trigger_obj = new stdClass();
+            $trigger_obj->purchase_srl = $purchase_srl;
+            $trigger_obj->pay_status = 'EXPIRED';
+            $trigger_obj->pay_data = new stdClass();
+            $trigger_obj->pay_pg = 'PG';
+            $trigger_obj->amount = $purchase_data->product_purchase_price;
+            ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
+        }
+
+        if (!empty($output->data)) {
+            $trigger_obj = new stdClass();
+            $trigger_obj->update_count = count($output->data);
+            ModuleHandler::triggerCall('hotopay.updateExpiredPurchaseStatus', 'after', $trigger_obj);
+        }
 
         return new BaseObject();
     }

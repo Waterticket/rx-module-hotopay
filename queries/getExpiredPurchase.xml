@@ -1,9 +1,10 @@
-<query id="updateExpiredPurchaseStatus" action="update">
-	<tables>
+<query id="getExpiredPurchase" action="select">
+    <tables>
 		<table name="hotopay_purchase" />
 	</tables>
 	<columns>
-        <column name="pay_status" var="pay_status_to" default="CANCELED" />
+        <column name="purchase_srl" />
+        <column name="product_purchase_price" />
 	</columns>
 	<conditions>
 		<condition operation="in" column="pay_status" var="pay_status" notnull="notnull" />
