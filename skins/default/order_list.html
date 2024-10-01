@@ -26,11 +26,16 @@ $daily = array('일','월','화','수','목','금','토');
             <tbody>
                 <!--@foreach($purchase_list as $purchase)-->
                 <!--@foreach($purchase->items as $idx => $item)-->
+                {@
+                    $order_id = 'HT' . str_pad($purchase->purchase_srl, 4, "0", STR_PAD_LEFT);
+                }
+
                 <tr class="ht-order">
                     <!--@if($idx == 0)-->
                     <td rowspan="{count($purchase->items)}" style="vertical-align:top;padding-top: 20px">
-                        <span class="ht-order-id">HT{str_pad($purchase->purchase_srl, 4, "0", STR_PAD_LEFT)}</span>
+                        <span class="ht-order-id">{$order_id}</span>
                         <span class="ht-tag ht-order-status" data-status="{$purchase->pay_status}">{$oHotopayModel->payStatusCodeToString($purchase->pay_status)}</span>
+                        <!--@if(in_array($purchase->pay_status, ['WAITING_FOR_DEPOSIT', 'PENDING']))--><a href="javascript:void(0)" onclick="cancelOrder('{$order_id}')">(취소하기)</a><!--@endif-->
                     </td>
                     <!--@endif-->
                     <td>
@@ -73,3 +78,26 @@ $daily = array('일','월','화','수','목','금','토');
     </div>
     </div>
 </section>
+
+<script>
+    function cancelOrder(order_id)
+    {
+        if(!confirm('주문을 취소하시겠습니까?'))
+        {
+            return;
+        }
+
+        $.exec_json('hotopay.procHotopayPayStatus', {
+            module: 'hotopay',
+            mid: 'hotopay',
+            pay_pg: "pg",
+            pay_status: "fail",
+            order_id: order_id,
+            code: "PAY_PROCESS_CANCELED",
+            message: "유저가 결제를 취소하였습니다.",
+        }, function(data){
+            alert('주문이 취소되었습니다.');
+            location.reload();
+        });
+    }
+</script>

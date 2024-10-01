@@ -1342,6 +1342,12 @@ class HotopayController extends Hotopay
 			$message = Context::get('message');
 			$order_id = Context::get('order_id');
 
+			$purchase = HotopayModel::getPurchase($purchase_srl);
+			if(!in_array($purchase->pay_status, ['WAITING_FOR_DEPOSIT', 'PENDING']))
+			{
+				return $this->createObject(-1, "잘못된 접근입니다.");
+			}
+
 			$args = new stdClass();
 			$args->purchase_srl = $purchase_srl;
 			$args->pay_status = "FAILED";
