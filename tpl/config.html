@@ -123,6 +123,14 @@
 				<p class="x_help-block">구매 페이지에서 옵션이 하나인 경우에만 선택박스를 숨깁니다. 다만 품절 등의 상황으로 구매 진행이 어려울 경우, 회원이 이를 인지하기 곤란할 수 있습니다.</p>
 			</div>
 		</div>
+
+		<div class="x_control-group">
+			<label class="x_control-label" for="purchase_expire_seconds">결제 만료되는 시간</label>
+			<div class="x_controls">
+				<input type="number" name="purchase_expire_seconds" id="purchase_expire_seconds" value="{$hotopay_config->purchase_expire_seconds}"> 초
+				<p class="x_help-block">회원이 결제를 진행할때 결제가 완료되지 않을 경우 만료시키는 시간입니다. 결제 만료시 사용한 포인트가 있을 경우 포인트가 환불됩니다.</p>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">

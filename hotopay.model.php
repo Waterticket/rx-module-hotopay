@@ -615,10 +615,12 @@ class HotopayModel extends Hotopay
     public static function updateExpiredPurchaseStatus(): object
     {
         $oHotopayController = HotopayController::getInstance();
+        $config = $oHotopayController->getConfig();
+        $purchase_expire_seconds = $config->purchase_expire_seconds ?? 86400;
 
         $args = new \stdClass();
         $args->pay_status = array('WAITING_FOR_DEPOSIT', 'PENDING');
-        $args->regdate = time() - 86400 * 3; // 3 days
+        $args->regdate = time() - $purchase_expire_seconds;
         $output = executeQueryArray('hotopay.getExpiredPurchase', $args);
         if(!$output->toBool())
         {

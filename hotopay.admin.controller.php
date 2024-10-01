@@ -33,6 +33,7 @@ class HotopayAdminController extends Hotopay
 		$config->regular_group_srl = $vars->regular_group_srl;
 		$config->hide_options = empty($vars->hide_options) ? 'N' : 'Y';
 		$config->hide_options_if_one = empty($vars->hide_options_if_one) ? 'N' : 'Y';
+		$config->purchase_expire_seconds = $vars->purchase_expire_seconds;
 
 		$config->hotopay_license_key = $vars->hotopay_license_key;
 
