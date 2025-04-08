@@ -120,19 +120,22 @@ class HotopayAdminController extends Hotopay
 		$this->setRedirectUrl(Context::get('success_return_url'));
 	}
 
-	public function procHotopayAdminInsertProduct()
+	public function procHotopayAdminInsertProduct($vars = null, bool $manual_insert = false)
 	{
 		// 현재 설정 상태 불러오기
 		$config = $this->getConfig();
+		$logged_info = Context::get('logged_info');
 		
 		// 제출받은 데이터 불러오기
-		$vars = Context::getRequestVars();
-		$logged_info = Context::get('logged_info');
+		if ($vars === null)
+		{
+			$vars = Context::getRequestVars();
+		}
 
 		$product_srl = $vars->product_srl ?: getNextSequence();
 
-		$args = new stdClass();
-		$args->member_srl = $logged_info->member_srl;
+		$args = new BaseObject();
+		$args->member_srl = ($manual_insert && isset($vars->member_srl)) ? $vars->member_srl : $logged_info->member_srl;
 		$args->product_srl = $product_srl;
 		$args->product_name = $vars->product_name;
 		$args->product_des = $vars->product_des;
@@ -181,24 +184,18 @@ class HotopayAdminController extends Hotopay
                 return $this->createObject(-1, "file ext error");
             }
 
-			// 기존에 파일이 있을 경우
-			// $oFileController = getController('file');
-            // $mainstream_srl = json_decode(base64_decode(Context::get('guild_logo_urls')))->tg_srl;
-			// $oFileController->deleteFiles($mainstream_srl);
-
 			$module_info = Context::get("module_info");
 			$module_srl = $module_info->module_srl;
-            $upload_target_srl = getNextSequence();
 
-			$oFileController = getController('file');
-			$output = $oFileController->insertFile($upfile, $module_srl, $upload_target_srl,0,true);
+			$oFileController = FileController::getInstance();
+			$output = $oFileController->insertFile($upfile, $module_srl, $product_srl, 0, true);
 			$args->product_pic_src = $output->get('uploaded_filename');
-			$args->product_pic_srl = $upload_target_srl;
+			$args->product_pic_srl = $output->get('file_srl');
             
-            $oFileController->setFilesValid($upload_target_srl);
+            $oFileController->setFilesValid($product_srl);
         }else{
-			$product_pic_org_srl = Context::get('product_pic_org_srl');
-			$product_pic_org_src = Context::get('product_pic_org_src');
+			$product_pic_org_srl = $vars->product_pic_org_srl;
+			$product_pic_org_src = $vars->product_pic_org_src;
 
 			if(empty($product_pic_org_srl) || empty($product_pic_org_src)) // 물품 수정이 아니라면 + 이미지를 업로드 하지 않았다면
 			{
@@ -207,8 +204,8 @@ class HotopayAdminController extends Hotopay
 			}
 			else
 			{
-				$args->product_pic_src = Context::get('product_pic_org_src');
-				$args->product_pic_srl = Context::get('product_pic_org_srl');
+				$args->product_pic_src = $product_pic_org_src;
+				$args->product_pic_srl = $product_pic_org_srl;
 			}
         }
 
@@ -247,8 +244,12 @@ class HotopayAdminController extends Hotopay
 
 		
 		// 설정 화면으로 리다이렉트
-		$this->setMessage('success_registed');
-		$this->setRedirectUrl(Context::get('success_return_url'));
+		if (!$manual_insert)
+		{
+			$this->setMessage('success_registed');
+			$this->setRedirectUrl(Context::get('success_return_url'));
+		}
+
 		return $args;
 	}
 
@@ -336,16 +337,32 @@ class HotopayAdminController extends Hotopay
 		$this->setRedirectUrl(getNotEncodedUrl("","module","admin","act","dispHotopayAdminInsertPurchase"));
 	}
 
-	public function procHotopayAdminModifyProduct()
+	public function procHotopayAdminModifyProduct($vars = null, bool $manual_insert = false)
 	{
 		// 현재 설정 상태 불러오기
 		$config = $this->getConfig();
 		
 		// 제출받은 데이터 불러오기
-		$vars = Context::getRequestVars();
+		if ($vars === null)
+		{
+			$vars = Context::getRequestVars();
+		}
+
+		if (empty($vars->product_srl))
+		{
+			return $this->createObject(-1, "msg_invalid_request");
+		}
+
+		$oProduct = HotopayModel::getProduct(intval($vars->product_srl));
+		if (!$oProduct->product_srl)
+		{
+			return $this->createObject(-1, "msg_not_exist_data");
+		}
+
+		$product_srl = $vars->product_srl;
 
 		$args = new stdClass();
-		$args->product_srl = $vars->product_srl;
+		$args->product_srl = $product_srl;
 		$args->product_name = $vars->product_name;
 		$args->product_des = $vars->product_des;
 		$args->product_sale_price = $vars->product_sale_price;
@@ -386,25 +403,19 @@ class HotopayAdminController extends Hotopay
                 return $this->createObject(-1, "file ext error");
             }
 
-			// 기존에 파일이 있을 경우
-			// $oFileController = getController('file');
-            // $mainstream_srl = json_decode(base64_decode(Context::get('guild_logo_urls')))->tg_srl;
-			// $oFileController->deleteFiles($mainstream_srl);
-
 			$module_info = Context::get("module_info");
 			$module_srl = $module_info->module_srl;
-            $upload_target_srl = getNextSequence();
 
-			$oFileController = getController('file');
-			$output = $oFileController->insertFile($upfile, $module_srl, $upload_target_srl,0,true);
+			$oFileController = FileController::getInstance();
+			$output = $oFileController->insertFile($upfile, $module_srl, $product_srl, 0, true);
 			$args->product_pic_src = $output->get('uploaded_filename');
-			$args->product_pic_srl = $upload_target_srl;
+			$args->product_pic_srl = $output->get('file_srl');
             
-            $oFileController->setFilesValid($upload_target_srl);
+            $oFileController->setFilesValid($product_srl);
 			if($vars->product_pic_org_srl != 0 || !empty($vars->remove_img)) $oFileController->deleteFile($vars->product_pic_org_srl);
         }else{
-			$product_pic_org_srl = Context::get('product_pic_org_srl');
-			$product_pic_org_src = Context::get('product_pic_org_src');
+			$product_pic_org_srl = $vars->product_pic_org_srl;
+			$product_pic_org_src = $vars->product_pic_org_src;
 
 			if(empty($product_pic_org_srl) || empty($product_pic_org_src) || !empty($vars->remove_img)) // 물품 수정이 아니라면 or 이미지를 업로드 하지 않았다면 or 이미지 제거에 체크했다면
 			{
@@ -485,8 +496,13 @@ class HotopayAdminController extends Hotopay
         Rhymix\Framework\Cache::delete($cache_key);
 		
 		// 설정 화면으로 리다이렉트
-		$this->setMessage('success_registed');
-		$this->setRedirectUrl(Context::get('success_return_url'));
+		if (!$manual_insert)
+		{
+			$this->setMessage('success_registed');
+			$this->setRedirectUrl(Context::get('success_return_url'));
+		}
+
+		return new BaseObject();
 	}
 
 	public function procHotopayAdminDeleteProduct()
