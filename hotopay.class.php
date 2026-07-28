@@ -22,6 +22,7 @@ class Hotopay extends ModuleObject
 		array('member.getMemberMenu', 'after', 'controller', 'triggerAddMemberMenu'),
 		array('document.insertDocument', 'after', 'controller', 'triggerAfterInsertDocument'),
 		array('document.updateDocument', 'after', 'controller', 'triggerAfterUpdateDocument'),
+		array('notify.collectTriggerClasses', 'after', 'controller', 'afterCollectNotifyTriggerClasses'),
 		// array('document.deleteDocument', 'after', 'controller', 'triggerAfterDeleteDocument'),
 	);
 	

@@ -12,6 +12,11 @@
  * @copyright Copyright (c) Waterticket
  */
 
+use Rhymix\Modules\Hotopay\Notify\PurchaseStatusUpdateAfterTrigger;
+use Rhymix\Modules\Hotopay\Notify\PurchaseActiveAfterTrigger;
+use Rhymix\Modules\Hotopay\Notify\PurchaseRefundAfterTrigger;
+use Rhymix\Modules\Hotopay\Notify\SubscriptionRenewAfterTrigger;
+
 class HotopayController extends Hotopay
 {
 	/**
@@ -2444,5 +2449,13 @@ class HotopayController extends Hotopay
 		HotopayModel::updateCartItem($args);
 
 		$this->setMessage('장바구니가 수정되었습니다.');
+	}
+
+	public function afterCollectNotifyTriggerClasses($obj)
+	{
+		$obj->triggers['hotopay.updatePurchaseStatus'] = PurchaseStatusUpdateAfterTrigger::class;
+		$obj->triggers['hotopay.activePurchase'] = PurchaseActiveAfterTrigger::class;
+		$obj->triggers['hotopay.refundPurchase'] = PurchaseRefundAfterTrigger::class;
+		$obj->triggers['hotopay.renewSubscription'] = SubscriptionRenewAfterTrigger::class;
 	}
 }
