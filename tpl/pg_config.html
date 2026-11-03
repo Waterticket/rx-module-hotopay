@@ -376,8 +376,9 @@
 			<div class="x_controls">
 				<p style="margin-top:-5px;"><ul>
 					<li><b>결제결과 수신 URL</b> : {getUrl()}hotopay/api/v1/payple/paymentCallback/paymentResult</li>
-					<li><b>계좌(카드)해지결과 수신 URL</b> : {getUrl()}hotopay/api/v1/payple/paymentCallback/paymentMethodTermination</li>
-				</ul></p><br>
+					<li>결제수단은 주문 승인 후 저장합니다. 별도 등록·해지 웹훅은 처리하지 않습니다.</li>
+				</ul></p>
+				<p class="x_help-block">환불 통보는 페이플 거래조회에서 전액 취소를 확인한 후 반영합니다. 리퍼러 도메인을 반드시 설정해주세요. 부분취소는 자동으로 구매 권한을 회수하지 않습니다.</p>
 			</div>
 		</div>
 	</section>

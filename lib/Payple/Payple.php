@@ -6,10 +6,115 @@ class Payple extends Hotopay {
     public function __construct()
     {
         $config = $this->getConfig();
+        self::$PAYPLE_URL = 'https://cpay.payple.kr';
         if ($config->payple_server == 'demo')
         {
             self::$PAYPLE_URL = 'https://democpay.payple.kr'; // 테스트용 도메인
         }
+    }
+
+    /** Webhook fields are hints only; they are never proof of payment or ownership. */
+    protected function requestJson(string $path, array $data): object
+    {
+        $config = $this->getConfig();
+        $domain = $config->payple_referer_domain ?? '';
+        if (!$domain || preg_match('/[\\r\\n]/', $domain))
+        {
+            throw new RuntimeException('Payple Referer domain must be configured.');
+        }
+        $ch = curl_init(self::$PAYPLE_URL . $path);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Cache-Control: no-cache', 'Referer: https://' . $domain],
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+            CURLOPT_FOLLOWLOCATION => false,
+        ]);
+        $body = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        $result = is_string($body) ? json_decode($body) : null;
+        if ($status !== 200 || !is_object($result))
+        {
+            throw new RuntimeException('Payple verification unavailable.');
+        }
+        return $result;
+    }
+
+    /** PAY_DATE list responses include current state and remaining balance (single lookup does not). */
+    public function getVerifiedRefund(object $purchase): object
+    {
+        $config = $this->getConfig();
+        $saved = json_decode($purchase->pay_data ?? '');
+        // Older versions may have saved an array of payment responses.
+        if (is_array($saved)) $saved = end($saved);
+        $time = preg_replace('/[^0-9]/', '', $saved->PCD_PAY_TIME ?? '');
+        if (strlen($time) < 8)
+        {
+            throw new RuntimeException('Stored Payple approval date is missing.');
+        }
+        $date = substr($time, 0, 8);
+        if (!checkdate((int) substr($date, 4, 2), (int) substr($date, 6, 2), (int) substr($date, 0, 4)))
+        {
+            throw new RuntimeException('Invalid Payple approval date.');
+        }
+        $auth = $this->requestJson('/php/auth.php', [
+            'cst_id' => $config->payple_cst_id,
+            'custKey' => $config->payple_cust_key,
+            'PCD_PAYCHK_LIST_FLAG' => 'Y',
+        ]);
+        if (($auth->result ?? '') !== 'success' || empty($auth->cst_id) || empty($auth->custKey) || empty($auth->AuthKey))
+        {
+            throw new RuntimeException('Payple verification authentication failed.');
+        }
+        $request = [
+            'PCD_CST_ID' => $auth->cst_id, 'PCD_CUST_KEY' => $auth->custKey,
+            'PCD_AUTH_KEY' => $auth->AuthKey, 'PCD_PAYCHK_LIST_FLAG' => 'Y',
+            'PCD_START_DATE' => $date, 'PCD_END_DATE' => $date,
+            'PCD_PAY_TYPE' => substr($purchase->pay_method, 6),
+            'PCD_DATE_TYPE' => 'PAY_DATE', 'PCD_LIMIT' => 1000,
+        ];
+        $oid = 'HT'.str_pad($purchase->purchase_srl, 4, '0', STR_PAD_LEFT);
+        $seen = [];
+        for ($page = 0; $page < 20; $page++)
+        {
+            $result = $this->requestJson('/php/PayChkActList.php', $request);
+            if (($result->PCD_PAY_RST ?? 'success') !== 'success' || ($result->PCD_PAY_CODE ?? '') !== 'PCHK0000' || !is_array($result->PCD_DATA->PCD_CONTENT ?? null))
+            {
+                throw new RuntimeException('Invalid Payple verification response.');
+            }
+            foreach ($result->PCD_DATA->PCD_CONTENT as $payment)
+            {
+                if (($payment->PCD_PAY_OID ?? '') !== $oid) continue;
+                if ((string) ($payment->PCD_CST_ID ?? '') !== (string) $config->payple_cst_id
+                    || (string) ($payment->PCD_PAYER_NO ?? '') !== (string) $purchase->member_srl
+                    || ($payment->PCD_PAY_TYPE ?? '') !== $request['PCD_PAY_TYPE']
+                    || !self::sameAmount($payment->PCD_PAY_AMOUNT ?? null, $purchase->product_purchase_price)
+                    || !self::sameAmount($payment->PCD_PAY_TOTAL ?? null, 0)
+                    || ($payment->PCD_PAY_STATE ?? '') !== '승인취소완료')
+                {
+                    throw new RuntimeException('Payple full refund was not verified.');
+                }
+                return $payment;
+            }
+            if (($result->PCD_DATA->PCD_HAS_MORE ?? null) === false) break;
+            $last = $result->PCD_DATA->PCD_LASTKEY ?? null;
+            if (!is_string($last) || $last === '' || isset($seen[$last])) break;
+            $seen[$last] = true;
+            $request['PCD_LASTKEY'] = $last;
+        }
+        throw new RuntimeException('Payple transaction not found within verification limit.');
+    }
+
+    public static function sameAmount($actual, $expected): bool
+    {
+        return (is_int($actual) || is_string($actual)) && preg_match('/^[0-9]{1,10}$/D', (string) $actual)
+            && (string) (int) $actual === (string) (int) $expected;
     }
 
     public function getPartnerAuth($PCD_PAYCANCEL_FLAG = false, $PCD_PAY_TYPE = '')
@@ -55,8 +160,11 @@ class Payple extends Hotopay {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
         curl_setopt($ch, CURLOPT_POST, true);
         $response_json = curl_exec($ch);
@@ -66,7 +174,7 @@ class Payple extends Hotopay {
         $output = json_decode($response_json);
 
         $response = new stdClass();
-        $response->error = ($http_code == 200 && $output->result == 'success') ? 0 : -1;
+        $response->error = ($http_code == 200 && ($output->result ?? '') == 'success') ? 0 : -1;
         $response->message = ($output->result_msg) ?? 'success';
         $response->http_code = $http_code;
         $response->data = $output;
@@ -94,12 +202,15 @@ class Payple extends Hotopay {
             return new BaseObject(-1, 'missing required parameters.');
         }
 
-        $url = self::$PAYPLE_URL."/php/PayCardConfirmAct.php?ACT_=PAYM";
-        $headers = array(
-            'Content-Type: application/json;charset=utf-8',
-            'Cache-Control: no-cache',
-            'Referer: https://'.$config->payple_referer_domain,
-        );
+        $auth = json_decode($purchase->pay_data ?? '');
+        if (!self::sameAmount($vars->PCD_PAY_TOTAL ?? null, $purchase->product_purchase_price)
+            || ($vars->PCD_PAY_OID ?? '') !== 'HT'.str_pad($purchase->purchase_srl, 4, '0', STR_PAD_LEFT)
+            || !is_string($auth->AuthKey ?? null) || !is_string($vars->PCD_AUTH_KEY)
+            || !hash_equals($auth->AuthKey, $vars->PCD_AUTH_KEY))
+        {
+            return new BaseObject(-1, '결제 인증 정보가 주문과 일치하지 않습니다.');
+        }
+        $path = $purchase->pay_method === 'paypl_transfer' ? '/php/PayConfirmAct.php?ACT_=PAYM' : '/php/PayCardConfirmAct.php?ACT_=PAYM';
         $post_data = array(
             "PCD_CST_ID" => $config->payple_cst_id,
             "PCD_CUST_KEY" => $config->payple_cust_key,
@@ -108,33 +219,34 @@ class Payple extends Hotopay {
             "PCD_PAYER_ID" => $PCD_PAYER_ID,
         );
 
-        $post_field_string = json_encode($post_data);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
-        curl_setopt($ch, CURLOPT_POST, true);
-        $response_json = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close ($ch);
-
-        $output = json_decode($response_json);
-
-        if ($output->PCD_PAY_RST != "success" || !str_contains($output->PCD_PAY_CODE, "0000"))
+        try
         {
-            return new BaseObject(-1, $output->PCD_PAY_MSG);
+            $output = $this->requestJson($path, $post_data);
+        }
+        catch (\Throwable $e)
+        {
+            return new BaseObject(-1, 'Payple request failed.');
         }
 
-        if ($output->PCD_PAY_TOTAL != $vars->PCD_PAY_TOTAL)
+        if (($output->PCD_PAY_RST ?? '') != "success" || !in_array($output->PCD_PAY_CODE ?? '', ['0000', 'PCOF0000'], true))
+        {
+            return new BaseObject(-1, $output->PCD_PAY_MSG ?? 'Payple request failed.');
+        }
+
+        if (($output->PCD_PAY_OID ?? '') !== 'HT'.str_pad($purchase->purchase_srl, 4, '0', STR_PAD_LEFT)
+            || (string) ($output->PCD_PAYER_NO ?? '') !== (string) $purchase->member_srl
+            || ($output->PCD_PAY_TYPE ?? '') !== substr($purchase->pay_method, 6)
+            || ($output->PCD_PAYER_ID ?? '') !== $PCD_PAYER_ID)
+        {
+            return new BaseObject(-1, '결제 주문 또는 결제수단이 일치하지 않습니다.');
+        }
+
+        if (!self::sameAmount($output->PCD_PAY_TOTAL ?? null, $vars->PCD_PAY_TOTAL))
         {
             return new BaseObject(-1, '결제금액이 일치하지 않습니다. ERR1');
         }
 
-        if ($output->PCD_PAY_TOTAL != $purchase->product_purchase_price)
+        if (!self::sameAmount($output->PCD_PAY_TOTAL ?? null, $purchase->product_purchase_price))
         {
             return new BaseObject(-1, '결제금액이 일치하지 않습니다. ERR2');
         }
@@ -202,8 +314,11 @@ class Payple extends Hotopay {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
         curl_setopt($ch, CURLOPT_POST, true);
         $response_json = curl_exec($ch);
@@ -211,10 +326,10 @@ class Payple extends Hotopay {
         curl_close ($ch);
 
         $output = json_decode($response_json);
-        $is_success = $output->PCD_PAY_RST == "success" && str_contains($output->PCD_PAY_CODE, "0000");
+        $is_success = $http_code == 200 && is_object($output) && ($output->PCD_PAY_RST ?? '') == "success" && in_array($output->PCD_PAY_CODE ?? '', ['PAYC0000'], true);
         if(!$is_success)
         {
-            return new BaseObject(-1, $output->PCD_PAY_MSG);
+            return new BaseObject(-1, $output->PCD_PAY_MSG ?? 'Payple request failed.');
         }
 
         $cancel_obj = new stdClass();
@@ -270,8 +385,11 @@ class Payple extends Hotopay {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_field_string);
         curl_setopt($ch, CURLOPT_POST, true);
         $response_json = curl_exec($ch);
@@ -279,10 +397,10 @@ class Payple extends Hotopay {
         curl_close ($ch);
 
         $output = json_decode($response_json);
-        $is_success = $output->PCD_PAY_RST == "success" && str_contains($output->PCD_PAY_CODE, "0000");
+        $is_success = $http_code == 200 && is_object($output) && ($output->PCD_PAY_RST ?? '') == "success" && in_array($output->PCD_PAY_CODE ?? '', ['SPCD0000', 'SPAY0000'], true);
         if(!$is_success)
         {
-            return new BaseObject(-1, $output->PCD_PAY_MSG);
+            return new BaseObject(-1, $output->PCD_PAY_MSG ?? 'Payple request failed.');
         }
 
         $output->purchase_srl = $purchase_srl;

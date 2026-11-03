@@ -1051,7 +1051,7 @@ class HotopayController extends Hotopay
 				$PCD_PAYER_ID = $vars->PCD_PAYER_ID;
 				$vars->PCD_PAYER_ID = '*** secret ***';
 				$args->pay_data = json_encode($vars);
-				if ($vars->PCD_PAY_RST == 'success' && str_contains($vars->PCD_PAY_CODE, '0000'))
+				if ($vars->PCD_PAY_RST == 'success' && in_array($vars->PCD_PAY_CODE, ['0000', 'BILL0000'], true))
 				{
 					$args->pay_status = "DONE";
 				}
@@ -1059,8 +1059,10 @@ class HotopayController extends Hotopay
 				{
 					$args->pay_status = "FAILED";
 				}
-				executeQuery('hotopay.updatePurchaseStatus', $args);
-				executeQuery('hotopay.updatePurchaseData', $args);
+				if ($args->pay_status === 'FAILED')
+				{
+					executeQuery('hotopay.updatePurchaseStatus', $args);
+				}
 
 				$error_message = $vars->PCD_PAY_MSG;
 				if($args->pay_status == "DONE") // 결제 완료에 경우
@@ -1076,6 +1078,11 @@ class HotopayController extends Hotopay
 					else
 					{
 						$result = $result->data;
+						$stored_result = clone $result;
+						$stored_result->PCD_PAYER_ID = '*** secret ***';
+						unset($stored_result->PCD_AUTH_KEY, $stored_result->PCD_PAY_REQKEY);
+						$args->pay_data = json_encode($stored_result);
+						executeQuery('hotopay.updatePurchaseData', $args);
 
 						$this->_ActivePurchase($purchase_srl);
 						$receipt_args = new stdClass();
@@ -1599,102 +1606,100 @@ class HotopayController extends Hotopay
 		die(json_encode(array("status"=>"success", "message"=>"success")));
 	}
 
+	protected function getPaypleCallbackClient(): Payple
+	{
+		return new Payple();
+	}
+
 	public function procHotopayPaypleCallback()
 	{
 		Context::setRequestMethod('JSON');
 		Context::setResponseMethod('JSON');
-
-		$config = $this->getConfig();
 		$vars = Context::getRequestVars();
-		$oHotopayModel = HotopayModel::getInstance();
-
-		if ($vars->PCD_PAY_OID)
+		// AUTH/PUSERDEL callbacks cannot establish billing-key ownership. Keys are
+		// saved only by the authenticated CERT flow, after server-side approval.
+		if (empty($vars->PCD_PAY_OID))
 		{
-			if ($vars->PCD_PAY_RST != 'success' || !str_contains($vars->PCD_PAY_CODE, "0000"))
-			{
-				return new BaseObject();
-			}
-
-			$purchase_srl = (int) substr($vars->PCD_PAY_OID, 2);
-			$purchase = HotopayModel::getPurchase($purchase_srl);
-
-			if ($vars->PCD_REFUND_TOTAL)
-			{
-				// 결제 취소
-				if (!in_array($purchase->status, ['CANCELED', 'FAILED', 'REFUNDED', 'REFUNDING']))
-				{
-					$args = new stdClass();
-					$args->purchase_srl = $purchase_srl;
-					$args->pay_status = 'REFUNDED';
-					executeQuery('hotopay.updatePurchaseStatus', $args);
-
-					$this->_RefundProcess($purchase_srl, $vars);
-				}
-			}
-			else
-			{
-				// 결제 성공
-				// if ($purchase->pay_status != "DONE")
-				// {
-				// 	$this->_ActivePurchase($purchase_srl, $purchase->member_srl);
-				// }
-
-				// Payple은 CERT 방식으로 결제하기 때문에 Webhook으로 결제 성공 처리를 할 필요가 없음
-			}
+			http_response_code(400);
+			return new BaseObject(-1, 'msg_invalid_request');
 		}
-		else
+		if (!is_string($vars->PCD_PAY_OID) || !preg_match('/^HT[0-9]{4,18}$/D', $vars->PCD_PAY_OID))
 		{
-			$member_srl = $vars->PCD_PAYER_NO;
-			$payer_id = $vars->PCD_PAYER_ID;
-			if (!$member_srl || !$payer_id)
+			http_response_code(400);
+			return new BaseObject(-1, 'msg_invalid_request');
+		}
+		// Approval is handled by CERT, never by an unauthenticated webhook.
+		if (!isset($vars->PCD_REFUND_TOTAL)) return new BaseObject();
+		$purchase_srl = (int) substr($vars->PCD_PAY_OID, 2);
+		$purchase = HotopayModel::getPurchase($purchase_srl);
+		if (!$purchase || ($purchase->pay_pg ?? '') !== 'payple'
+			|| !in_array($purchase->pay_method ?? '', ['paypl_card', 'paypl_transfer'], true)
+			|| $vars->PCD_PAY_OID !== 'HT'.str_pad($purchase_srl, 4, '0', STR_PAD_LEFT)
+			|| !Payple::sameAmount($vars->PCD_REFUND_TOTAL, $purchase->product_purchase_price)
+			|| ($vars->PCD_PAY_RST ?? '') !== 'success'
+			|| !in_array($vars->PCD_PAY_CODE ?? '', ['PAYC0000'], true))
+		{
+			http_response_code(400);
+			return new BaseObject(-1, 'msg_invalid_request');
+		}
+		if ($purchase->pay_status === 'REFUNDED') return new BaseObject();
+		if ($purchase->pay_status !== 'DONE')
+		{
+			http_response_code(409);
+			return new BaseObject(-1, 'msg_invalid_request');
+		}
+		try
+		{
+			$verified = $this->getPaypleCallbackClient()->getVerifiedRefund($purchase);
+		}
+		catch (\Throwable $e)
+		{
+			http_response_code(503);
+			return new BaseObject(-1, 'Payple 환불 내역을 확인할 수 없습니다.');
+		}
+		// Serialize concurrent deliveries using a database row lock, across hosts.
+		$db = DB::getInstance();
+		$db->begin();
+		if ($db->isError())
+		{
+			$db->rollback();
+			http_response_code(503);
+			return new BaseObject(-1, 'Payple 환불 처리를 시작할 수 없습니다.');
+		}
+		try
+		{
+			$stmt = $db->query('SELECT * FROM hotopay_purchase WHERE purchase_srl = ? FOR UPDATE', [$purchase_srl]);
+			$current = $stmt ? $stmt->fetchObject() : null;
+			if (!$current || $current->pay_status !== 'DONE')
 			{
+				$db->rollback();
+				if ($current && $current->pay_status === 'REFUNDED') return new BaseObject();
+				http_response_code(409);
 				return new BaseObject(-1, 'msg_invalid_request');
 			}
-
-			if ($vars->PCD_AUTH_KEY)
+			if ($current->pay_pg !== $purchase->pay_pg || $current->member_srl != $purchase->member_srl
+				|| $current->product_purchase_price != $purchase->product_purchase_price || $current->pay_data !== $purchase->pay_data)
 			{
-				// 카드/계좌 등록
-				$key_hash = strtoupper(hash('sha256', $member_srl . $payer_id));
-				$key = HotopayModel::getBillingKeyByKeyHash($member_srl, $key_hash);
-				if (!$key->key_idx)
-				{
-					$billing_key_obj = new stdClass();
-					$billing_key_obj->key_idx = getNextSequence();
-					$billing_key_obj->member_srl = $member_srl;
-					$billing_key_obj->pg = 'payple';
-					$billing_key_obj->type = $config->payple_purchase_type ?? 'password';
-					$billing_key_obj->key = $oHotopayModel->encryptKey($payer_id);
-					$billing_key_obj->key_hash = $key_hash;
-					$billing_key_obj->regdate = time();
-
-					switch ($vars->PCD_PAY_TYPE)
-					{
-						case 'transfer':
-							$billing_key_obj->payment_type = 'transfer';
-							$billing_key_obj->alias = $vars->PCD_PAY_BANKNAME ?? 'BANK';
-							$billing_key_obj->number = $vars->PCD_PAY_BANKNUM ?? '0000*******0000';
-							break;
-
-						case 'card':
-						default:
-							$billing_key_obj->payment_type = 'card';
-							$billing_key_obj->alias = $vars->PCD_PAY_CARDNAME ?? 'CARD';
-							$billing_key_obj->number = $vars->PCD_PAY_CARDNUM ?? '0000-****-****-0000';
-							break;
-					}
-
-					HotopayModel::insertBillingKey($billing_key_obj);
-				}
+				throw new \RuntimeException('Purchase changed during verification.');
 			}
-			else
+			// Persist only the provider response, never callback-supplied payment data.
+			unset($verified->PCD_PAYER_ID);
+			$output = $this->_RefundProcess($purchase_srl, $verified);
+			if (!$output->toBool())
 			{
-				// 카드/계좌 해지
-				$key_hash = strtoupper(hash('sha256', $this->user->member_srl . $payer_id));
-				HotopayModel::deleteBillingKeyByKeyHash($member_srl, $key_hash);
+				$db->rollback();
+				http_response_code(503);
+				return $output;
 			}
+			$db->commit();
+			return $output;
 		}
-
-		return new BaseObject();
+		catch (\Throwable $e)
+		{
+			$db->rollback();
+			http_response_code(503);
+			return new BaseObject(-1, 'Payple 환불 처리에 실패했습니다.');
+		}
 	}
 
 	/**
@@ -1890,8 +1895,10 @@ class HotopayController extends Hotopay
 		$args->purchase_srl = $purchase_srl;
 		$args->pay_status = 'REFUNDED';
 		$args->pay_data = json_encode($output_data);
-		executeQuery('hotopay.updatePurchaseStatus', $args);
-		executeQuery('hotopay.updatePurchaseData', $args);
+		$result = executeQuery('hotopay.updatePurchaseStatus', $args);
+		if (!$result->toBool()) return $result;
+		$result = executeQuery('hotopay.updatePurchaseData', $args);
+		if (!$result->toBool()) return $result;
 
 		$products = HotopayModel::getProductsByPurchaseSrl($purchase_srl);
 
