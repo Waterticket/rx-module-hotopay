@@ -20,6 +20,45 @@ use Rhymix\Modules\Hotopay\Notify\SubscriptionRenewAfterTrigger;
 class HotopayController extends Hotopay
 {
 	/**
+	 * Normalize an untrusted purchase quantity to a positive integer.
+	 *
+	 * @param mixed $quantity
+	 * @return int|null
+	 */
+	private function normalizePositiveQuantity($quantity): ?int
+	{
+		if (!is_int($quantity) && !is_string($quantity)) return null;
+		$normalized = filter_var($quantity, FILTER_VALIDATE_INT, [
+			'options' => ['min_range' => 1],
+		]);
+		return $normalized === false ? null : $normalized;
+	}
+
+	/** Validate stored line items, including orders created before quantity validation. */
+	private function isValidPointPurchase($purchase): bool
+	{
+		if ($purchase->pay_method !== 'point' || $purchase->pay_status !== 'PENDING'
+			|| $purchase->product_purchase_price !== 0 || !is_numeric($purchase->used_point)
+			|| $purchase->used_point < 0)
+		{
+			return false;
+		}
+		$items = HotopayModel::getPurchaseItems($purchase->purchase_srl);
+		if (!is_array($items) || !$items) return false;
+		$total = 0;
+		foreach ($items as $item)
+		{
+			if ($this->normalizePositiveQuantity($item->quantity) === null
+				|| !is_numeric($item->purchase_price) || $item->purchase_price < 0)
+			{
+				return false;
+			}
+			$total += $item->purchase_price;
+		}
+		return is_finite((float) $total) && $total <= PHP_INT_MAX && $total == $purchase->used_point;
+	}
+
+	/**
 	 * PG사로 데이터를 넘기기 전에 Form에서 넘어온 데이터를 처리합니다
 	 *
 	 * @return void
@@ -43,18 +82,28 @@ class HotopayController extends Hotopay
 
 		$oHotopayModel = HotopayModel::getInstance();
 
+		if (!is_array($vars->purchase_info) || !$vars->purchase_info)
+		{
+			return $this->createObject(-1, '구매할 상품 정보가 없습니다.');
+		}
+
 		$product_srl_list = [];
 		$product_list = [];
 		foreach ($vars->purchase_info as $product)
 		{
-			if(!isset($product['option_srl'])) return $this->createObject(-1, "유효한 옵션을 선택해주세요");
+			if(!is_array($product) || !isset($product['product_srl'], $product['option_srl'])) return $this->createObject(-1, "유효한 옵션을 선택해주세요");
+			$quantity = $this->normalizePositiveQuantity($product['quantity'] ?? null);
+			if ($quantity === null)
+			{
+				return $this->createObject(-1, '상품 수량은 1 이상의 정수여야 합니다.');
+			}
 
 			$product_srl_list[] = $product['product_srl'];
 			$obj = new stdClass();
 			$obj->product_srl = $product['product_srl'];
 			$obj->option_srl = $product['option_srl'];
-			$obj->cart_item_srl = $product['cart_item_srl'];
-			$obj->quantity = $product['quantity'] ?: 1;
+			$obj->cart_item_srl = $product['cart_item_srl'] ?? null;
+			$obj->quantity = $quantity;
 			$product_list[] = $obj;
 		}
 
@@ -150,6 +199,18 @@ class HotopayController extends Hotopay
 
 			if($option->infinity_stock != 'Y' && $option->stock < 1) return $this->createObject(-1, "재고가 부족한 항목이 있습니다.");
 		}
+
+		foreach ($product_list as $product)
+		{
+			$option = $product->info->product_option[$product->option_srl];
+			$amount = ($option->price + round($option->price * ($product->info->tax_rate / 100))) * $product->quantity;
+			$total_price += $amount;
+			if (!is_finite((float) $amount) || $amount < 0 || !is_finite((float) $total_price) || $total_price > PHP_INT_MAX)
+			{
+				return $this->createObject(-1, '결제 금액이 올바르지 않습니다.');
+			}
+		}
+		$total_price = 0;
 
 		$vars->hotopay_extra_info = (array) $vars->hotopay_extra_info;
 		$extra_info_list_obj = HotopayModel::getProductExtraInfo(array_merge($product_srl_list, array(0)));
@@ -247,7 +308,11 @@ class HotopayController extends Hotopay
             Context::set('__point_message_id__', 'module.hotopay.buy_point_discount');
             Context::set('__point_message__', sprintf("[%s] 상품 구매시에 포인트를 사용하였습니다.", $title));
 			$oPointController = PointController::getInstance();
-			$oPointController->setPoint($logged_info->member_srl, $input_point, 'minus');
+			$point_result = $oPointController->setPoint($logged_info->member_srl, $input_point, 'minus');
+			if (!$point_result || !$point_result->toBool())
+			{
+				return $this->createObject(-1, '포인트 차감에 실패했습니다.');
+			}
 
 			$total_price -= $input_point;
 			$extra_vars->use_point = $input_point;
@@ -257,7 +322,7 @@ class HotopayController extends Hotopay
 			return $this->createObject(-1, "포인트 사용이 불가능합니다.");
 		}
 
-		if ($total_price <= 0) $vars->pay_method = 'point';
+		if ($total_price == 0) $vars->pay_method = 'point';
 
 		if (str_starts_with($vars->pay_method, 'billing_key_'))
 		{
@@ -1295,30 +1360,10 @@ class HotopayController extends Hotopay
 			}
 			else if(strcmp($vars->pay_pg, "point") === 0) // 포인트 결제 (0원) 처리
 			{
-				if ($purchase->data->product_purchase_price !== 0)
+				if (!$this->isValidPointPurchase($purchase->data))
 				{
-					$_SESSION['hotopay_'.$vars->order_id] = array(
-						"p_status" => "failed",
-						"orderId" => $vars->order_id,
-						"code" => "POINT_PURCHASE_FAILED",
-						"message" => "결제를 실패하였습니다. (code: 1009)"
-					);
-
-					HotopayModel::rollbackOptionStock($purchase_srl);
-					$this->refundUsedPoint($purchase_srl);
-
-					$trigger_obj = new stdClass();
-					$trigger_obj->purchase_srl = $purchase_srl;
-					$trigger_obj->pay_status = "FAILED";
-					$trigger_obj->pay_data = new stdClass();
-					$trigger_obj->pay_pg = "point";
-					$trigger_obj->amount = $purchase->data->product_purchase_price;
-					ModuleHandler::triggerCall('hotopay.updatePurchaseStatus', 'after', $trigger_obj);
-
-					$this->setRedirectUrl(getNotEncodedUrl('','mid','hotopay','act','dispHotopayOrderResult','order_id',$vars->order_id));
-					return;
+					return $this->createObject(-1, '포인트 결제 정보가 올바르지 않습니다.');
 				}
-
 				$args->pay_status = 'DONE';
 				executeQuery('hotopay.updatePurchaseStatus', $args);
 
@@ -2348,11 +2393,15 @@ class HotopayController extends Hotopay
 
 		$product_srl = Context::get('product_srl');
 		$option_srl = Context::get('option_srl');
-		$quantity = Context::get('quantity');
+		$quantity = $this->normalizePositiveQuantity(Context::get('quantity'));
 
-		if (!$product_srl || !$option_srl || !$quantity)
+		if (!$product_srl || !$option_srl)
 		{
 			return new BaseObject(-1, '필수 정보가 없습니다.');
+		}
+		if ($quantity === null)
+		{
+			return new BaseObject(-1, '상품 수량은 1 이상의 정수여야 합니다.');
 		}
 
 		$product_info = HotopayModel::getProduct($product_srl);
@@ -2439,11 +2488,15 @@ class HotopayController extends Hotopay
 
 		$cart_item_srl = Context::get('cart_item_srl');
 		$option_srl = Context::get('option_srl');
-		$quantity = Context::get('quantity');
+		$quantity = $this->normalizePositiveQuantity(Context::get('quantity'));
 
-		if (!$cart_item_srl || !$option_srl || !$quantity)
+		if (!$cart_item_srl || !$option_srl)
 		{
 			return new BaseObject(-1, '필수 정보가 없습니다.');
+		}
+		if ($quantity === null)
+		{
+			return new BaseObject(-1, '상품 수량은 1 이상의 정수여야 합니다.');
 		}
 
 		$args = new stdClass();
